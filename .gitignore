@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Données dérivées et artefacts de build
+*.duckdb
+*.duckdb.wal
+site/
+build/
+
+# Environnement
+.env
+.env.*
+
+# OS / éditeurs
+.DS_Store
+.idea/
+.vscode/
