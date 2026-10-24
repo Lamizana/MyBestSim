@@ -46,11 +46,10 @@ quand un total paraît faux.
 | `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
 | `metrics.py` | `unlimited_share(df)` | `dict` | 12,9 % (653 / 5 056) |
 | `metrics.py` | `price_per_gb_stats(df)` | `dict` | médiane 2,55 sur 4 403 offres |
-| `metrics.py` | `offers_profile(df)` | `dict` | 5G 34,7 %, rechargeable 54,2 % |
-| `metrics.py` | `validity_distribution(df)` | `list` | 7 / 15 / 30 jours |
+| `metrics.py` | `bundle_spread(df)` | `dict` | 1 033 bundles, écart médian 13,4 % |
 | `metrics.py` | `provider_stats(df)` | `list` | 18 fournisseurs enrichis |
 | `metrics.py` | `cheapest_by_destination(df)` | `list` | 50 pays × 6 paliers |
-| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les 12 KPI |
+| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les 11 KPI |
 
 ## `mybestsim/config.py`
 
@@ -321,22 +320,24 @@ price_per_gb_stats(clean)
 - L'écart va de 0,91 € (Yesim, Philippines 50 Go) à 11,86 € (Yatelo, Europe
   1 Go 30 jours), soit un facteur 13.
 
-### `offers_profile(df) -> dict`
+### `bundle_spread(df, min_fournisseurs=2) -> dict`
 
-Part des offres 5G et rechargeables.
-
-```python
-offers_profile(clean)  # {'part_5g_pct': 34.7, 'part_top_up_pct': 54.2}
-```
-
-### `validity_distribution(df) -> list`
-
-Répartition des offres par durée de validité, triée par durée croissante.
+Écart de prix entre fournisseurs pour un même bundle (destination, volume,
+durée).
 
 ```python
-validity_distribution(clean)
-# [{'jours': 7, 'offres': 1679, 'part_pct': 33.2}, ...]
+bundle_spread(clean)
+# {'nb_bundles': 1033, 'ecart_median_pct': 13.4, 'ecart_max_pct': 64.3,
+#  'part_superieur_20_pct': 5.7, 'exemples': [...]}
 ```
+
+- Les offres zonales sont incluses : comparer « Europe 10 Go 15 jours » entre
+  fournisseurs est légitime. C'est différent de `cheapest_by_destination`, qui
+  exclut les zones parce qu'on y compare des pays.
+- Un bundle n'est retenu que s'il est proposé par au moins 2 fournisseurs.
+- `exemples` donne les trois plus gros écarts, triés de façon déterministe.
+- Interprétation : la moitié des bundles comparables varient de plus de 13,4 %
+  selon le fournisseur, et 5,7 % dépassent 20 %.
 
 ### `provider_stats(df) -> list`
 
@@ -390,8 +391,7 @@ Structure :
     "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." },
     "part_illimite": { "valeur": { "part_pct": 12.9, "nb": 653, "total": 5056 }, "...": "..." },
     "prix_au_go": { "valeur": { "mediane": 2.55, "q1": 1.67, "q3": 3.82, "min": 0.91, "max": 11.86, "nb_offres": 4403 }, "...": "..." },
-    "profil_offres": { "valeur": { "part_5g_pct": 34.7, "part_top_up_pct": 54.2 }, "...": "..." },
-    "durees": { "valeur": [ { "jours": 7, "offres": 1679, "part_pct": 33.2 } ], "...": "..." },
+    "ecart_bundles": { "valeur": { "nb_bundles": 1033, "ecart_median_pct": 13.4 }, "...": "..." },
     "fournisseurs_detail": { "valeur": [ { "provider": "Airalo", "prix_go_median": 2.76 } ], "...": "..." },
     "meilleure_offre_par_destination": { "valeur": [ { "country_code": "ES", "offres": [] } ], "...": "..." }
   }
@@ -426,11 +426,11 @@ Structure :
 make test        # ou : python -m pytest
 ```
 
-39 tests, répartis en trois fichiers :
+38 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
-- `tests/test_metrics.py` — les 12 KPI, les invariants de la répartition
+- `tests/test_metrics.py` — les 11 KPI, les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
   `metrics.json` et le refus de `NaN`.

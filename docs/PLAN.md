@@ -137,8 +137,6 @@ Règles : `sku` unique ; `price` > 0 ; `currency` = EUR ; `network` ∈ {4G, 5G}
 |---|---|
 | Part d'illimité | 653 cartes, 12,9 % |
 | Prix au Go | médiane 2,55 € |
-| Part de 5G / top-up | 34,7 % / 54,2 % |
-| Distribution des durées | 7 / 15 / 30 jours ≈ tiers chacun |
 | Quartiles de prix | 11,76 / 20,70 / 39,29 € |
 | **Écart inter-fournisseurs** | 1 033 bundles, écart médian 13,4 % |
 | Prix moyen par fournisseur | 4S eSIM 24,26 € → Yesim 32,10 € |

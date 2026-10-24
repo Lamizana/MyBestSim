@@ -63,8 +63,7 @@ class MetricsTest(unittest.TestCase):
                 "fournisseurs",
                 "part_illimite",
                 "prix_au_go",
-                "profil_offres",
-                "durees",
+                "ecart_bundles",
                 "fournisseurs_detail",
                 "meilleure_offre_par_destination",
             },
@@ -124,21 +123,17 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(stats["max"], 11.86)
         self.assertEqual(stats["nb_offres"], 4403)
 
-    def test_offers_profile(self):
-        self.assertEqual(
-            metrics.offers_profile(self.clean),
-            {"part_5g_pct": 34.7, "part_top_up_pct": 54.2},
-        )
-
-    def test_validity_distribution(self):
-        self.assertEqual(
-            metrics.validity_distribution(self.clean),
-            [
-                {"jours": 7, "offres": 1679, "part_pct": 33.2},
-                {"jours": 15, "offres": 1667, "part_pct": 33.0},
-                {"jours": 30, "offres": 1710, "part_pct": 33.8},
-            ],
-        )
+    def test_bundle_spread(self):
+        ecart = metrics.bundle_spread(self.clean)
+        self.assertEqual(ecart["nb_bundles"], 1033)
+        self.assertEqual(ecart["ecart_median_pct"], 13.4)
+        self.assertEqual(ecart["ecart_max_pct"], 64.3)
+        self.assertEqual(ecart["part_superieur_20_pct"], 5.7)
+        self.assertEqual(len(ecart["exemples"]), 3)
+        for exemple in ecart["exemples"]:
+            self.assertLess(exemple["prix_min"], exemple["prix_max"])
+        ecarts = [exemple["ecart_pct"] for exemple in ecart["exemples"]]
+        self.assertEqual(ecarts, sorted(ecarts, reverse=True))
 
     def test_provider_stats(self):
         stats = metrics.provider_stats(self.clean)

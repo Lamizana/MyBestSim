@@ -70,26 +70,54 @@ def price_per_gb_stats(df: pd.DataFrame) -> dict:
     }
 
 
-def offers_profile(df: pd.DataFrame) -> dict:
-    """Part des offres 5G et rechargeables."""
+def bundle_spread(df: pd.DataFrame, min_fournisseurs: int = 2) -> dict:
+    """Écart de prix entre fournisseurs pour un même bundle.
+
+    Un bundle est identifié par (destination, volume, durée). Les offres
+    zonales sont incluses : comparer « Europe 10 Go 15 jours » entre
+    fournisseurs est légitime, contrairement à une comparaison pays/zone.
+    """
+    stats = (
+        df.groupby(["country_code", "country_name", "data_display", "validity_days"])
+        .agg(
+            prix_min=("price", "min"),
+            prix_max=("price", "max"),
+            nb_fournisseurs=("provider", "nunique"),
+        )
+        .reset_index()
+    )
+    comparables = stats[stats["nb_fournisseurs"] >= min_fournisseurs].copy()
+    comparables["ecart_pct"] = (
+        (comparables["prix_max"] - comparables["prix_min"])
+        / comparables["prix_min"]
+        * 100
+    )
+
+    exemples = comparables.sort_values(
+        ["ecart_pct", "country_name", "data_display", "validity_days"],
+        ascending=[False, True, True, True],
+        kind="stable",
+    ).head(3)
+
     return {
-        "part_5g_pct": round(float(df["network"].eq("5G").mean() * 100), 1),
-        "part_top_up_pct": round(float(df["top_up"].mean() * 100), 1),
+        "nb_bundles": int(len(comparables)),
+        "ecart_median_pct": round(float(comparables["ecart_pct"].median()), 1),
+        "ecart_max_pct": round(float(comparables["ecart_pct"].max()), 1),
+        "part_superieur_20_pct": round(
+            float(comparables["ecart_pct"].gt(20).mean() * 100), 1
+        ),
+        "exemples": [
+            {
+                "destination": ligne.country_name,
+                "data_display": ligne.data_display,
+                "validity_days": int(ligne.validity_days),
+                "prix_min": round(float(ligne.prix_min), 2),
+                "prix_max": round(float(ligne.prix_max), 2),
+                "ecart_pct": round(float(ligne.ecart_pct), 1),
+            }
+            for ligne in exemples.itertuples()
+        ],
     }
-
-
-def validity_distribution(df: pd.DataFrame) -> list:
-    """Répartition des offres par durée de validité."""
-    total = int(len(df))
-    comptes = df["validity_days"].value_counts().sort_index()
-    return [
-        {
-            "jours": int(jours),
-            "offres": int(nombre),
-            "part_pct": round(int(nombre) * 100 / total, 1),
-        }
-        for jours, nombre in comptes.items()
-    ]
 
 
 def provider_stats(df: pd.DataFrame) -> list:
@@ -176,8 +204,7 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
     fournisseurs = provider_distribution(clean)
     illimite = unlimited_share(clean)
     prix_go = price_per_gb_stats(clean)
-    profil = offers_profile(clean)
-    durees = validity_distribution(clean)
+    ecart = bundle_spread(clean)
     stats = provider_stats(clean)
     destinations = cheapest_by_destination(clean)
 
@@ -228,15 +255,10 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
                 "definition": "distribution du prix au Go sur les offres à volume fini",
                 "perimetre": f"{prix_go['nb_offres']} offres finies, illimitées exclues",
             },
-            "profil_offres": {
-                "valeur": profil,
-                "definition": "part des offres 5G et rechargeables",
-                "perimetre": f"{total} offres",
-            },
-            "durees": {
-                "valeur": durees,
-                "definition": "répartition des offres par durée de validité",
-                "perimetre": f"{total} offres",
+            "ecart_bundles": {
+                "valeur": ecart,
+                "definition": "écart de prix entre fournisseurs pour un même bundle",
+                "perimetre": f"{ecart['nb_bundles']} bundles proposés par au moins 2 fournisseurs",
             },
             "fournisseurs_detail": {
                 "valeur": stats,

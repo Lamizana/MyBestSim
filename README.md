@@ -54,7 +54,7 @@ pip install -e ".[dev]"
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
 | `make report` | `python -m mybestsim.report` | lit le CSV propre, affiche les KPI et écrit `metrics.json` |
-| `make test` | `python -m pytest` | exécute les 39 tests |
+| `make test` | `python -m pytest` | exécute les 38 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
@@ -86,14 +86,13 @@ Les six indicateurs demandés :
 | Prix moyen | 29,30 € (médiane 20,70 €) |
 | Répartition par fournisseur | 18 fournisseurs, Airalo 722 → 4S eSIM 92 |
 
-Six indicateurs complémentaires :
+Cinq indicateurs complémentaires :
 
 | Indicateur | Valeur |
 |---|---|
 | Part d'illimité | 12,9 % (653 offres) |
 | Prix au Go | médiane 2,55 € — q1 1,67 / q3 3,82 — de 0,91 à 11,86 € |
-| Part de 5G / rechargeable | 34,7 % / 54,2 % |
-| Distribution des durées | 7 j 33,2 % — 15 j 33,0 % — 30 j 33,8 % |
+| Écart sur un même bundle | 1 033 bundles, écart médian 13,4 %, max 64,3 % |
 | Prix moyen par fournisseur | 24,26 € (4S eSIM) → 32,10 € (Yesim) |
 | Meilleure offre par destination | 50 pays × 6 paliers de volume, à 15 jours |
 
@@ -103,7 +102,7 @@ Six indicateurs complémentaires :
 |---|---|
 | `data/processed/all_products.csv` | fusion brute : 5 056 lignes, 12 colonnes, valeurs texte inchangées |
 | `data/processed/clean_products.csv` | fusion typée : 5 056 lignes, 15 colonnes |
-| `data/processed/metrics.json` | les 12 KPI, chacun avec sa définition et son périmètre |
+| `data/processed/metrics.json` | les 11 KPI, chacun avec sa définition et son périmètre |
 
 `data/raw/` est la matière première et n'est jamais modifiée : toute règle de
 nettoyage peut être rejouée sans retélécharger les fichiers.
@@ -180,8 +179,8 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-39 tests couvrent les invariants des données réelles (5 056 lignes, 653
-illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 12 KPI, la
+38 tests couvrent les invariants des données réelles (5 056 lignes, 653
+illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 11 KPI, la
 structure de `metrics.json`, le round-trip de la table propre et le rejet des
 cas invalides (valeurs vides, SKU dupliqué, prix non positif, illimité
 incohérent, durée illisible ou non positive, colonnes différentes, dossier
