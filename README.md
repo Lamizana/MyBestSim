@@ -19,7 +19,10 @@ data & automatisation).
 │   ├── metrics.py          # KPI
 │   ├── merge.py            # produit data/processed/
 │   ├── report.py           # affiche les KPI depuis le CSV propre
+│   ├── site.py             # rend la page depuis metrics.json
 │   └── __main__.py         # enchaîne merge puis report
+├── templates/
+│   └── index.html.j2       # gabarit de la page
 ├── data/
 │   ├── raw/                # les 18 CSV fournisseurs, jamais modifiés
 │   └── processed/          # sorties régénérées (ignorées par git)
@@ -31,7 +34,7 @@ data & automatisation).
 
 ## Prérequis
 
-Python ≥ 3.11. Une seule dépendance d'exécution : pandas.
+Python ≥ 3.11. Deux dépendances d'exécution : pandas et Jinja2.
 
 ## Installation
 
@@ -54,7 +57,8 @@ pip install -e ".[dev]"
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
 | `make report` | `python -m mybestsim.report` | lit le CSV propre, affiche les KPI et écrit `metrics.json` |
-| `make test` | `python -m pytest` | exécute les 40 tests |
+| `make site` | `python -m mybestsim.site` | rend `site/index.html` depuis `metrics.json` |
+| `make test` | `python -m pytest` | exécute les 47 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
@@ -106,6 +110,17 @@ Cinq indicateurs complémentaires :
 
 `data/raw/` est la matière première et n'est jamais modifiée : toute règle de
 nettoyage peut être rejouée sans retélécharger les fichiers.
+
+## Page
+
+`make site` écrit `site/index.html` : une page **autonome** (CSS et données
+inclus dans le fichier, aucune requête réseau) qui reprend la palette MyBestSim
+— bleu `#007bff`, jaune `#ffcc00`, rouge `#de1414`, police Poppins avec repli
+système.
+
+Elle contient les six KPI demandés, la répartition par fournisseur,
+l'histogramme des prix, le prix au Go par volume, l'écart sur un même bundle,
+un sélecteur de destination (50 pays) et la méthodologie.
 
 ## Contrat de données
 
@@ -179,7 +194,7 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-40 tests couvrent les invariants des données réelles (5 056 lignes, 653
+47 tests couvrent les invariants des données réelles (5 056 lignes, 653
 illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 11 KPI, la
 structure de `metrics.json`, le round-trip de la table propre et le rejet des
 cas invalides (valeurs vides, SKU dupliqué, prix non positif, illimité

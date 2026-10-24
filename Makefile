@@ -1,7 +1,7 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
 
-.PHONY: install data report test lint clean
+.PHONY: install data report site test lint clean
 
 install:
 	python3 -m venv $(VENV)
@@ -12,6 +12,9 @@ data:
 
 report:
 	$(PYTHON) -m mybestsim.report
+
+site:
+	$(PYTHON) -m mybestsim.site
 
 test:
 	$(PYTHON) -m pytest

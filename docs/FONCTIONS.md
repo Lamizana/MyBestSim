@@ -52,6 +52,9 @@ quand un total paraît faux.
 | `metrics.py` | `price_histogram(df)` | `list` | 16 tranches, somme 5 056 |
 | `metrics.py` | `price_per_gb_by_volume(df)` | `list` | 6 paliers, somme 4 403 |
 | `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + 11 KPI + `series` |
+| `site.py` | `format_fr(valeur, decimales)` | `str` | `5 056`, `14,49` |
+| `site.py` | `render(metrics)` | `str` | page HTML complète |
+| `site.py` | `main()` | `int` | écrit `site/index.html` |
 
 ## `mybestsim/config.py`
 
@@ -437,6 +440,41 @@ Structure :
   leur forme de dictionnaire ou de liste.
 - Aucune valeur numpy : tout est converti en types Python pour `json.dumps`.
 
+## `mybestsim/site.py`
+
+### `format_fr(valeur, decimales=0) -> str`
+
+Filtre Jinja qui formate les nombres à la française.
+
+```python
+format_fr(5056)      # '5 056'
+format_fr(14.49, 2)  # '14,49'
+```
+
+### `load_metrics(path=METRICS_OUTPUT) -> dict`
+
+Lit `data/processed/metrics.json`. Aucun calcul : la page ne fait que rendre.
+
+### `build_histogram_svg(tranches) -> str` / `build_volume_svg(serie) -> str`
+
+Produisent les deux graphiques en **SVG inline**, à partir des séries de
+`metrics.json`.
+
+- Aucune bibliothèque de graphique, aucune requête réseau.
+- Chaque barre porte un `<title>` : survol lisible, et texte accessible.
+- `viewBox` fixe + `width: 100%` en CSS : le graphique s'adapte au mobile.
+
+### `render(metrics) -> str`
+
+Rend `templates/index.html.j2` avec Jinja2, en injectant les KPI, les séries,
+les fournisseurs et les 50 destinations. Les données sont incluses dans la page
+(`<script type="application/json">`), donc aucune requête au chargement.
+
+### `main() -> int`
+
+Point d'entrée de `python -m mybestsim.site` : lit le JSON, rend, écrit
+`site/index.html`. Échoue avec un message clair si `metrics.json` est absent.
+
 ## Conventions
 
 | Sujet | Choix |
@@ -451,7 +489,7 @@ Structure :
 
 ## À venir
 
-- `site.py` — rend la page HTML depuis `metrics.json`.
+Rien : les trois commandes (`merge`, `report`, `site`) sont en place.
 
 ## Tests
 
@@ -459,11 +497,13 @@ Structure :
 make test        # ou : python -m pytest
 ```
 
-40 tests, répartis en trois fichiers :
+47 tests, répartis en quatre fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
 - `tests/test_metrics.py` — les 11 KPI, les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
-  `metrics.json` et le refus de `NaN`.
+  `metrics.json` et le refus de `NaN` ;
+- `tests/test_site.py` — présence des chiffres, six cartes KPI, deux graphiques,
+  50 destinations, page autonome et rendu déterministe.
