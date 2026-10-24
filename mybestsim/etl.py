@@ -49,6 +49,13 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     """
     df = raw.copy()
 
+    obligatoires = [colonne for colonne in EXPECTED_COLUMNS if colonne != "data_gb"]
+    vides = {colonne: int(df[colonne].eq("").sum()) for colonne in obligatoires}
+    vides = {colonne: nombre for colonne, nombre in vides.items() if nombre}
+    if vides:
+        details = ", ".join(f"{colonne} ({nombre})" for colonne, nombre in vides.items())
+        raise ValueError(f"Valeurs vides dans : {details}")
+
     doublons = df.loc[df["sku"].duplicated(), "sku"]
     if not doublons.empty:
         raise ValueError("SKU dupliqué : " + ", ".join(doublons))

@@ -107,17 +107,18 @@ clean = clean_data(raw)  # (5056, 15)
 
 Ordre des opérations :
 
-1. `sku` unique ;
-2. `currency` = `EUR` ;
-3. `network` ∈ {`4G`, `5G`} ;
-4. `validity_days` converti en entier strictement positif ;
-5. `price` numérique et strictement positif ;
-6. `top_up` ∈ {`oui`, `non`}, converti en booléen ;
-7. `is_unlimited` = `data_display == "Illimité"` ;
-8. cohérence : `data_gb` vide **si et seulement si** `is_unlimited` ;
-9. `is_region` = code dans {`EU`, `AS`, `NA`, `WW`} ;
-10. préfixage des codes de zone en `ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW` ;
-11. `price_per_gb` = `price / data_gb` (vide si illimité).
+1. aucune valeur vide dans les colonnes obligatoires (`data_gb` excepté) ;
+2. `sku` unique ;
+3. `currency` = `EUR` ;
+4. `network` ∈ {`4G`, `5G`} ;
+5. `validity_days` converti en entier strictement positif ;
+6. `price` numérique et strictement positif ;
+7. `top_up` ∈ {`oui`, `non`}, converti en booléen ;
+8. `is_unlimited` = `data_display == "Illimité"` ;
+9. cohérence : `data_gb` vide **si et seulement si** `is_unlimited` ;
+10. `is_region` = code dans {`EU`, `AS`, `NA`, `WW`} ;
+11. préfixage des codes de zone en `ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW` ;
+12. `price_per_gb` = `price / data_gb` (vide si illimité).
 
 Toute violation lève un `ValueError` citant les SKU ou les valeurs fautives.
 Aucune correction silencieuse.
@@ -300,10 +301,10 @@ provider_distribution(clean)[-1]
 make test        # ou : python -m pytest
 ```
 
-24 tests, répartis en trois fichiers :
+27 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
-- `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
+- `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
 - `tests/test_metrics.py` — les six KPI et les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant).

@@ -43,6 +43,25 @@ class CleanDataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             clean_data(bad)
 
+    def test_refuse_provider_vide(self):
+        bad = self.raw.copy()
+        bad.loc[0, "provider"] = ""
+        with self.assertRaises(ValueError) as contexte:
+            clean_data(bad)
+        self.assertIn("provider", str(contexte.exception))
+
+    def test_refuse_country_code_vide(self):
+        bad = self.raw.copy()
+        bad.loc[0, "country_code"] = ""
+        with self.assertRaises(ValueError):
+            clean_data(bad)
+
+    def test_refuse_data_display_vide(self):
+        bad = self.raw.copy()
+        bad.loc[0, "data_display"] = ""
+        with self.assertRaises(ValueError):
+            clean_data(bad)
+
     def test_refuse_prix_non_positif(self):
         bad = self.raw.copy()
         bad.loc[0, "price"] = "0"

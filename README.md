@@ -54,7 +54,7 @@ pip install -e ".[dev]"
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
 | `make report` | `python -m mybestsim.report` | lit le CSV propre et affiche les KPI |
-| `make test` | `python -m pytest` | exécute les 24 tests |
+| `make test` | `python -m pytest` | exécute les 27 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
@@ -101,6 +101,7 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 
 | Règle | Vérifié par |
 |---|---|
+| aucune colonne obligatoire vide (`data_gb` excepté si illimité) | `clean_data` |
 | `sku` unique | `clean_data` |
 | `currency` = `EUR` | `clean_data` |
 | `network` ∈ {`4G`, `5G`} | `clean_data` |
@@ -154,7 +155,7 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-24 tests couvrent les invariants des données réelles (5 056 lignes, 653
+27 tests couvrent les invariants des données réelles (5 056 lignes, 653
 illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les six KPI, le
 round-trip de la table propre et le rejet des cas invalides (SKU dupliqué, prix
 non positif, illimité incohérent, durée illisible ou non positive, colonnes
