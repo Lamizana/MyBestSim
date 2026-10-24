@@ -3,9 +3,9 @@
 Documentation des fonctions présentes dans `mybestsim/`. Les valeurs indiquées
 sont celles obtenues sur les 18 fichiers fournisseurs (5 056 offres).
 
-Répartition : `mybestsim/config.py` (constantes), `mybestsim/ingest.py`
-(lecture), `mybestsim/clean.py` (nettoyage), `mybestsim/export.py` (écriture),
-`mybestsim/metrics.py` (KPI), `mybestsim/__main__.py` (orchestration).
+Répartition : `config.py` (constantes), `etl.py` (lecture, nettoyage, écriture),
+`merge.py` (production des tables), `report.py` (KPI), `metrics.py` (calculs),
+`__main__.py` (enchaînement).
 
 Voir aussi le [`README.md`](../README.md) pour l'installation, l'exécution et
 le contrat de données.
@@ -13,7 +13,10 @@ le contrat de données.
 ## Vue d'ensemble
 
 ```text
-18 CSV ──load_data()──> brut (5 056 × 12) ──clean_data()──> propre (5 056 × 15) ──metrics.*──> KPI
+merge    : 18 CSV ──load_raw()──> brut (5 056 × 12) ──clean_data()──> propre (5 056 × 15)
+                                                                          │ write_csv()
+                                                                          ▼
+report   :                        data/processed/clean_products.csv ──load_clean()──> metrics.* ──> KPI
 ```
 
 Règle commune : les fonctions de `metrics.py` ne lisent aucun fichier et
@@ -25,16 +28,21 @@ quand un total paraît faux.
 
 | Module | Fonction | Retour | Valeur attendue |
 |---|---|---|---|
-| `mybestsim/export.py` | `write_csv(df, path)` | — | écrit le CSV en UTF-8 |
-| `mybestsim/ingest.py` | `load_data(data_dir)` | `DataFrame` | 5 056 × 12 |
-| `mybestsim/clean.py` | `clean_data(raw)` | `DataFrame` | 5 056 × 15 |
-| `mybestsim/__main__.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
-| `mybestsim/metrics.py` | `total_cards(df)` | `int` | 5 056 |
-| `mybestsim/metrics.py` | `cards_above_price(df, seuil=100.0)` | `int` | 56 |
-| `mybestsim/metrics.py` | `price_range(df)` | `dict` | 5,36 – 154,63 |
-| `mybestsim/metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
-| `mybestsim/metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
-| `mybestsim/metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
+| `etl.py` | `load_raw(data_dir)` | `DataFrame` | 5 056 × 12 |
+| `etl.py` | `load_clean(path)` | `DataFrame` | 5 056 × 15 |
+| `etl.py` | `clean_data(raw)` | `DataFrame` | 5 056 × 15 |
+| `etl.py` | `write_csv(df, path)` | — | écrit le CSV en UTF-8 |
+| `merge.py` | `run()` | `DataFrame` | écrit les deux tables |
+| `merge.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
+| `report.py` | `run(clean)` | — | affiche les KPI |
+| `report.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
+| `__main__.py` | `main()` | `int` | enchaîne merge puis report |
+| `metrics.py` | `total_cards(df)` | `int` | 5 056 |
+| `metrics.py` | `cards_above_price(df, seuil=100.0)` | `int` | 56 |
+| `metrics.py` | `price_range(df)` | `dict` | 5,36 – 154,63 |
+| `metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
+| `metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
+| `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
 
 ## `mybestsim/config.py`
 
@@ -51,31 +59,14 @@ Chemins et constantes du contrat, sans aucune logique :
 | `REGION_CODES` | `{EU, AS, NA, WW}` |
 | `ZONE_PREFIX` | `"ZONE_"` |
 
-Aucun module n'importe `main` : la dépendance va toujours de `main` vers
-`pipeline`, `metrics` et `config`.
+## `mybestsim/etl.py`
 
-## `mybestsim/export.py`
-
-### `write_csv(df: pd.DataFrame, path: Path) -> None`
-
-Écrit un DataFrame en CSV : UTF-8, en-tête inclus, sans colonne d'index.
-
-```python
-write_csv(clean, CLEAN_OUTPUT)
-```
-
-- Crée le dossier parent si nécessaire (`mkdir(parents=True, exist_ok=True)`).
-- `index=False` est indispensable : sans lui, pandas ajoute une colonne d'index
-  sans nom et le fichier passe de 15 à 16 colonnes.
-
-## `mybestsim/ingest.py`
-
-### `load_data(data_dir: Path) -> pd.DataFrame`
+### `load_raw(data_dir: Path) -> pd.DataFrame`
 
 Lit les 18 CSV du dossier, contrôle les en-têtes, empile les tables.
 
 ```python
-raw = load_data(DATA_DIR)  # (5056, 12)
+raw = load_raw(DATA_DIR)  # (5056, 12)
 ```
 
 - Fichiers triés par nom : l'ordre de sortie est reproductible.
@@ -88,7 +79,22 @@ raw = load_data(DATA_DIR)  # (5056, 12)
 - Erreurs : `ValueError` si le dossier est vide ou si un fichier a un autre
   schéma ; `OSError` si un fichier est inaccessible.
 
-## `mybestsim/clean.py`
+### `load_clean(path: Path) -> pd.DataFrame`
+
+Relit la table nettoyée produite par `merge`, en restituant les types.
+
+```python
+clean = load_clean(CLEAN_OUTPUT)  # (5056, 15)
+```
+
+- Lecture en texte (`dtype=str`, `keep_default_na=False`) : `NA` reste `"NA"`
+  et `data_gb` vide reste `""`.
+- `validity_days` → entier ; `price`, `data_gb`, `price_per_gb` → flottants
+  (`""` devient `NaN`) ; `top_up`, `is_unlimited`, `is_region` → booléens via
+  `{"True": True, "False": False}`.
+- C'est cette fonction qui permet à `report` de ne jamais relire les 18 CSV.
+- Un test de round-trip (écrire, relire) vérifie colonnes, types, absence de
+  `NaN` sur `country_code` et somme des illimitées.
 
 ### `clean_data(raw: pd.DataFrame) -> pd.DataFrame`
 
@@ -116,11 +122,32 @@ Ordre des opérations :
 Toute violation lève un `ValueError` citant les SKU ou les valeurs fautives.
 Aucune correction silencieuse.
 
-## `mybestsim/__main__.py`
+### `write_csv(df: pd.DataFrame, path: Path) -> None`
+
+Écrit un DataFrame en CSV : UTF-8, en-tête inclus, sans colonne d'index.
+
+```python
+write_csv(clean, CLEAN_OUTPUT)
+```
+
+- Crée le dossier parent si nécessaire (`mkdir(parents=True, exist_ok=True)`).
+- `index=False` est indispensable : sans lui, pandas ajoute une colonne d'index
+  sans nom et le fichier passe de 15 à 16 colonnes.
+
+## `mybestsim/merge.py`
+
+### `run() -> pd.DataFrame`
+
+`load_raw` → `clean_data` → `write_csv` des deux tables. Renvoie la table
+nettoyée.
+
+```python
+clean = merge.run()
+```
 
 ### `main() -> int`
 
-Orchestration : `load_data` → `clean_data` → écriture des deux CSV. Affiche le
+Point d'entrée de `python -m mybestsim.merge` : exécute `run()` et affiche le
 nombre de lignes et les chemins écrits.
 
 - `0` en cas de succès, `1` en cas d'échec.
@@ -128,6 +155,33 @@ nombre de lignes et les chemins écrits.
   moitié produit.
 - `UnicodeDecodeError` est intercepté **avant** `ValueError` (il en hérite),
   puis `OSError`, puis `ValueError`, pour un message adapté à chaque cause.
+
+## `mybestsim/report.py`
+
+### `run(clean) -> None`
+
+Affiche les KPI calculés sur la table nettoyée : total, produits > 100 €,
+fourchette, moyenne de Go, prix moyen et médian, répartition par fournisseur.
+
+```python
+report.run(clean)
+```
+
+### `main() -> int`
+
+Point d'entrée de `python -m mybestsim.report` : lit `data/processed/
+clean_products.csv` via `load_clean`, puis appelle `run()`.
+
+- Si le fichier est absent, message explicite : « lance d'abord
+  `python -m mybestsim.merge` ».
+- Ne relit jamais les 18 CSV sources.
+
+## `mybestsim/__main__.py`
+
+### `main() -> int`
+
+Point d'entrée de `python -m mybestsim` : appelle `merge.main()`, puis
+`report.main()` si le premier a réussi. S'arrête au premier échec.
 
 ## `mybestsim/metrics.py`
 
@@ -226,7 +280,7 @@ provider_distribution(clean)[-1]
 
 | Sujet | Choix |
 |---|---|
-| Noms de fonctions et de modules | anglais (`load_data`, `clean_data`, `mean_data_gb`) |
+| Noms de fonctions et de modules | anglais (`load_raw`, `clean_data`, `mean_data_gb`) |
 | Variables locales et docstrings | français (`fichiers`, `colonnes`, `valeurs`) |
 | Types de retour | Python natifs (`int`, `float`, `dict`) pour rester sérialisables |
 | Arrondi | à la sortie seulement, jamais avant un seuil ou une comparaison |
@@ -236,10 +290,9 @@ provider_distribution(clean)[-1]
 
 ## À venir
 
-Fonction prévue, non encore écrite :
-
 - `compute_metrics(df)` — assemble les KPI dans le dictionnaire écrit en
-  `data/metrics.json`.
+  `data/metrics.json` ;
+- `site.py` — rend la page HTML depuis `metrics.json`.
 
 ## Tests
 
@@ -247,10 +300,10 @@ Fonction prévue, non encore écrite :
 make test        # ou : python -m pytest
 ```
 
-23 tests, répartis en trois fichiers :
+24 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
-  d'un en-tête différent ;
+  d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
 - `tests/test_metrics.py` — les six KPI et les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant).

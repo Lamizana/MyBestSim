@@ -1,15 +1,14 @@
 import unittest
 
 from mybestsim import metrics
-from mybestsim.clean import clean_data
 from mybestsim.config import DATA_DIR
-from mybestsim.ingest import load_data
+from mybestsim.etl import clean_data, load_raw
 
 
 class MetricsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.clean = clean_data(load_data(DATA_DIR))
+        cls.clean = clean_data(load_raw(DATA_DIR))
 
     def test_total_cards(self):
         self.assertEqual(metrics.total_cards(self.clean), 5056)

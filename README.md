@@ -11,15 +11,15 @@ data & automatisation).
 ```text
 .
 ├── pyproject.toml          # dépendances, ruff, pytest
-├── Makefile                # install / data / test / lint / clean
+├── Makefile                # install / data / report / test / lint / clean
 ├── main.py                 # raccourci vers python -m mybestsim
 ├── mybestsim/
 │   ├── config.py           # chemins et constantes du contrat
-│   ├── ingest.py           # lecture des CSV
-│   ├── clean.py            # typage, validation, colonnes dérivées
+│   ├── etl.py              # lecture, nettoyage, écriture
 │   ├── metrics.py          # KPI
-│   ├── export.py           # écriture CSV
-│   └── __main__.py         # orchestration
+│   ├── merge.py            # produit data/processed/
+│   ├── report.py           # affiche les KPI depuis le CSV propre
+│   └── __main__.py         # enchaîne merge puis report
 ├── data/
 │   ├── raw/                # les 18 CSV fournisseurs, jamais modifiés
 │   └── processed/          # sorties régénérées (ignorées par git)
@@ -52,21 +52,26 @@ pip install -e ".[dev]"
 | Commande | Équivalent | Effet |
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
-| `make data` | `python -m mybestsim` | lit `data/raw/`, écrit `data/processed/`, affiche les KPI |
-| `make test` | `python -m pytest` | exécute les 23 tests |
+| `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
+| `make report` | `python -m mybestsim.report` | lit le CSV propre et affiche les KPI |
+| `make test` | `python -m pytest` | exécute les 24 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
-`python main.py` fonctionne aussi : c'est un raccourci de quatre lignes vers
-`python -m mybestsim`.
+`python -m mybestsim` enchaîne `merge` puis `report`. `python main.py` fait la
+même chose : c'est un raccourci de quatre lignes.
+
+`report` ne relit jamais les 18 CSV : il lit `data/processed/clean_products.csv`
+et échoue avec un message clair si `merge` n'a pas encore tourné.
 
 ## Pipeline
 
 | Étape | Module | Rôle |
 |---|---|---|
-| 1 | `mybestsim.ingest.load_data` | lit les 18 CSV, contrôle les en-têtes, empile |
-| 2 | `mybestsim.clean.clean_data` | type les colonnes, valide le contrat, ajoute les colonnes dérivées |
-| 3 | `mybestsim.export.write_csv` | écrit les sorties |
+| 1 | `mybestsim.etl.load_raw` | lit les 18 CSV, contrôle les en-têtes, empile |
+| 2 | `mybestsim.etl.clean_data` | type les colonnes, valide le contrat, ajoute les colonnes dérivées |
+| 3 | `mybestsim.etl.write_csv` | écrit les sorties |
+| 4 | `mybestsim.etl.load_clean` | relit la table propre pour le reporting |
 
 ## Fichiers produits
 
@@ -149,10 +154,11 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-23 tests couvrent les invariants des données réelles (5 056 lignes, 653
-illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les six KPI et le
-rejet des cas invalides (SKU dupliqué, prix non positif, illimité incohérent,
-durée illisible ou non positive, colonnes différentes, dossier vide).
+24 tests couvrent les invariants des données réelles (5 056 lignes, 653
+illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les six KPI, le
+round-trip de la table propre et le rejet des cas invalides (SKU dupliqué, prix
+non positif, illimité incohérent, durée illisible ou non positive, colonnes
+différentes, dossier vide).
 
 La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` à chaque push.
 

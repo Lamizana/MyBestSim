@@ -1,6 +1,44 @@
+from pathlib import Path
+
 import pandas as pd
 
-from mybestsim.config import REGION_CODES, ZONE_PREFIX
+from mybestsim.config import EXPECTED_COLUMNS, REGION_CODES, ZONE_PREFIX
+
+
+def load_raw(data_dir: Path) -> pd.DataFrame:
+    """Lit les CSV du dossier, contrôle les en-têtes et empile les tables."""
+    fichiers = sorted(data_dir.glob("*.csv"))
+    if not fichiers:
+        raise ValueError(f"Aucun CSV trouvé dans {data_dir}")
+
+    tableaux = []
+
+    for fichier in fichiers:
+        df = pd.read_csv(fichier, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+
+        if list(df.columns) != EXPECTED_COLUMNS:
+            raise ValueError(
+                f"Colonnes différentes dans {fichier.name}\n"
+                f"  attendu : {EXPECTED_COLUMNS}\n"
+                f"  trouvé  : {list(df.columns)}"
+            )
+
+        tableaux.append(df)
+
+    return pd.concat(tableaux, ignore_index=True)
+
+
+def load_clean(path: Path) -> pd.DataFrame:
+    """Relit la table nettoyée en préservant les types et les valeurs vides."""
+    df = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
+
+    df["validity_days"] = df["validity_days"].astype(int)
+    for colonne in ("price", "data_gb", "price_per_gb"):
+        df[colonne] = pd.to_numeric(df[colonne], errors="coerce")
+    for colonne in ("top_up", "is_unlimited", "is_region"):
+        df[colonne] = df[colonne].map({"True": True, "False": False})
+
+    return df
 
 
 def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
@@ -49,14 +87,23 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     # finie sans volume sortirait silencieusement de la moyenne de Go.
     incoherents = df["data_gb"].isna() != df["is_unlimited"]
     if incoherents.any():
-        raise ValueError("Incohérence illimité : " + ", ".join(df.loc[incoherents, "sku"]))
+        raise ValueError(
+            "Incohérence illimité : " + ", ".join(df.loc[incoherents, "sku"])
+        )
 
     # Les codes de zone (EU, AS, NA, WW) sont préfixés dans la table nettoyée.
     # "NA" est interprété comme une valeur manquante par pandas à la relecture,
     # ce qui ferait disparaître 192 lignes de tout groupby. Voir README.md.
     df["is_region"] = df["country_code"].isin(REGION_CODES)
-    df.loc[df["is_region"], "country_code"] = ZONE_PREFIX + df.loc[df["is_region"], "country_code"]
+    df.loc[df["is_region"], "country_code"] = (
+        ZONE_PREFIX + df.loc[df["is_region"], "country_code"]
+    )
 
     df["price_per_gb"] = df["price"] / df["data_gb"]
 
     return df
+
+
+def write_csv(df: pd.DataFrame, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(path, index=False, encoding="utf-8")

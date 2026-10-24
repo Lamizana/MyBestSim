@@ -1,14 +1,13 @@
 import unittest
 
-from mybestsim.clean import clean_data
 from mybestsim.config import DATA_DIR
-from mybestsim.ingest import load_data
+from mybestsim.etl import clean_data, load_raw
 
 
 class CleanDataTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.raw = load_data(DATA_DIR)
+        cls.raw = load_raw(DATA_DIR)
         cls.clean = clean_data(cls.raw)
 
     def test_shape(self):
