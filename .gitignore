@@ -10,8 +10,15 @@ venv/
 # Données dérivées et artefacts de build
 *.duckdb
 *.duckdb.wal
+*.egg-info/
 site/
 build/
+dashboard/data/processed/
+dashboard/site/
+dashboard/_legacy/
+
+# Notes personnelles
+dashboard/docs/NOTES.md
 
 # Environnement
 .env
