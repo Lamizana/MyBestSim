@@ -16,7 +16,7 @@ le contrat de données.
 merge    : 18 CSV ──load_raw()──> brut (5 056 × 12) ──clean_data()──> propre (5 056 × 15)
                                                                           │ write_csv()
                                                                           ▼
-report   :                        data/processed/clean_products.csv ──load_clean()──> metrics.* ──> KPI
+report   :                        data/processed/clean_products.csv ──load_clean()──> metrics.* ──> metrics.json
 ```
 
 Règle commune : les fonctions de `metrics.py` ne lisent aucun fichier et
@@ -32,6 +32,7 @@ quand un total paraît faux.
 | `etl.py` | `load_clean(path)` | `DataFrame` | 5 056 × 15 |
 | `etl.py` | `clean_data(raw)` | `DataFrame` | 5 056 × 15 |
 | `etl.py` | `write_csv(df, path)` | — | écrit le CSV en UTF-8 |
+| `etl.py` | `write_json(data, path)` | — | écrit le JSON (refuse `NaN`) |
 | `merge.py` | `run()` | `DataFrame` | écrit les deux tables |
 | `merge.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
 | `report.py` | `run(clean)` | — | affiche les KPI |
@@ -43,6 +44,7 @@ quand un total paraît faux.
 | `metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
 | `metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
 | `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
+| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les six KPI |
 
 ## `mybestsim/config.py`
 
@@ -135,6 +137,20 @@ write_csv(clean, CLEAN_OUTPUT)
 - `index=False` est indispensable : sans lui, pandas ajoute une colonne d'index
   sans nom et le fichier passe de 15 à 16 colonnes.
 
+### `write_json(data: dict, path: Path) -> None`
+
+Écrit un dictionnaire en JSON lisible et **strict**.
+
+```python
+write_json(compute_metrics(clean), METRICS_OUTPUT)
+```
+
+- `indent=2` et `ensure_ascii=False` : fichier diff-able, accents lisibles.
+- `allow_nan=False` : `json.dumps` accepterait `NaN` par défaut, ce qui produit
+  un JSON invalide pour les parseurs stricts. Ici, une valeur manquante lève
+  une erreur au lieu de corrompre le fichier.
+- Pas d'horodatage : deux exécutions produisent le même octet pour octet.
+
 ## `mybestsim/merge.py`
 
 ### `run() -> pd.DataFrame`
@@ -163,6 +179,7 @@ nombre de lignes et les chemins écrits.
 
 Affiche les KPI calculés sur la table nettoyée : total, produits > 100 €,
 fourchette, moyenne de Go, prix moyen et médian, répartition par fournisseur.
+Écrit ensuite `data/processed/metrics.json`.
 
 ```python
 report.run(clean)
@@ -277,6 +294,36 @@ provider_distribution(clean)[-1]
 - Invariant de réconciliation : la somme des `cartes` doit valoir 5 056 et la
   somme des `part_pct` 100 % (à l'arrondi près).
 
+### `compute_metrics(clean) -> dict`
+
+Assemble les KPI et leurs définitions dans un dictionnaire sérialisable.
+
+```python
+compute_metrics(clean)["kpi"]["total_cartes"]["valeur"]  # 5056
+```
+
+Structure :
+
+```json
+{
+  "meta": { "lignes": 5056, "fournisseurs": 18, "devise": "EUR" },
+  "kpi": {
+    "total_cartes": { "valeur": 5056, "definition": "...", "perimetre": "..." },
+    "prix_superieur_100": { "valeur": 56, "...": "..." },
+    "fourchette_prix": { "valeur": { "min": 5.36, "max": 154.63 }, "...": "..." },
+    "data_gb_moyenne": { "valeur": 14.49, "...": "..." },
+    "prix_moyen": { "valeur": { "moyenne": 29.3, "mediane": 20.7 }, "...": "..." },
+    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." }
+  }
+}
+```
+
+- Chaque KPI porte `definition` et `perimetre` : la page n'a pas à réinventer le
+  dénominateur, et le lecteur voit la règle à côté du chiffre.
+- Les valeurs composées (fourchette, moyenne + médiane, répartition) gardent
+  leur forme de dictionnaire ou de liste.
+- Aucune valeur numpy : tout est converti en types Python pour `json.dumps`.
+
 ## Conventions
 
 | Sujet | Choix |
@@ -291,8 +338,6 @@ provider_distribution(clean)[-1]
 
 ## À venir
 
-- `compute_metrics(df)` — assemble les KPI dans le dictionnaire écrit en
-  `data/metrics.json` ;
 - `site.py` — rend la page HTML depuis `metrics.json`.
 
 ## Tests
@@ -301,10 +346,11 @@ provider_distribution(clean)[-1]
 make test        # ou : python -m pytest
 ```
 
-27 tests, répartis en trois fichiers :
+31 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
-- `tests/test_metrics.py` — les six KPI et les invariants de la répartition
-  (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant).
+- `tests/test_metrics.py` — les six KPI, les invariants de la répartition
+  (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
+  `metrics.json` et le refus de `NaN`.

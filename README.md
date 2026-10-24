@@ -53,8 +53,8 @@ pip install -e ".[dev]"
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
-| `make report` | `python -m mybestsim.report` | lit le CSV propre et affiche les KPI |
-| `make test` | `python -m pytest` | exécute les 27 tests |
+| `make report` | `python -m mybestsim.report` | lit le CSV propre, affiche les KPI et écrit `metrics.json` |
+| `make test` | `python -m pytest` | exécute les 31 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
@@ -79,6 +79,7 @@ et échoue avec un message clair si `merge` n'a pas encore tourné.
 |---|---|
 | `data/processed/all_products.csv` | fusion brute : 5 056 lignes, 12 colonnes, valeurs texte inchangées |
 | `data/processed/clean_products.csv` | fusion typée : 5 056 lignes, 15 colonnes |
+| `data/processed/metrics.json` | les six KPI, chacun avec sa définition et son périmètre |
 
 `data/raw/` est la matière première et n'est jamais modifiée : toute règle de
 nettoyage peut être rejouée sans retélécharger les fichiers.
@@ -155,11 +156,12 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-27 tests couvrent les invariants des données réelles (5 056 lignes, 653
-illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les six KPI, le
-round-trip de la table propre et le rejet des cas invalides (SKU dupliqué, prix
-non positif, illimité incohérent, durée illisible ou non positive, colonnes
-différentes, dossier vide).
+31 tests couvrent les invariants des données réelles (5 056 lignes, 653
+illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les six KPI, la
+structure de `metrics.json`, le round-trip de la table propre et le rejet des
+cas invalides (valeurs vides, SKU dupliqué, prix non positif, illimité
+incohérent, durée illisible ou non positive, colonnes différentes, dossier
+vide).
 
 La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` à chaque push.
 

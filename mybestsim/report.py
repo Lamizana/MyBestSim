@@ -1,8 +1,8 @@
 import sys
 
 from mybestsim import metrics
-from mybestsim.config import CLEAN_OUTPUT
-from mybestsim.etl import load_clean
+from mybestsim.config import CLEAN_OUTPUT, METRICS_OUTPUT
+from mybestsim.etl import load_clean, write_json
 
 
 def run(clean) -> None:
@@ -22,6 +22,9 @@ def run(clean) -> None:
     print("- Distribution par fournisseur :")
     for ligne in metrics.provider_distribution(clean):
         print(f"  - {ligne['provider']} : {ligne['cartes']} cartes")
+
+    write_json(metrics.compute_metrics(clean), METRICS_OUTPUT)
+    print(f"KPI écrits dans {METRICS_OUTPUT}")
 
 
 def main() -> int:
