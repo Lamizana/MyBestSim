@@ -44,7 +44,13 @@ quand un total paraît faux.
 | `metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
 | `metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
 | `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
-| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les six KPI |
+| `metrics.py` | `unlimited_share(df)` | `dict` | 12,9 % (653 / 5 056) |
+| `metrics.py` | `price_per_gb_stats(df)` | `dict` | médiane 2,55 sur 4 403 offres |
+| `metrics.py` | `offers_profile(df)` | `dict` | 5G 34,7 %, rechargeable 54,2 % |
+| `metrics.py` | `validity_distribution(df)` | `list` | 7 / 15 / 30 jours |
+| `metrics.py` | `provider_stats(df)` | `list` | 18 fournisseurs enrichis |
+| `metrics.py` | `cheapest_by_destination(df)` | `list` | 50 pays × 6 paliers |
+| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les 12 KPI |
 
 ## `mybestsim/config.py`
 
@@ -294,6 +300,74 @@ provider_distribution(clean)[-1]
 - Invariant de réconciliation : la somme des `cartes` doit valoir 5 056 et la
   somme des `part_pct` 100 % (à l'arrondi près).
 
+### `unlimited_share(df) -> dict`
+
+Part des offres dont le volume est illimité.
+
+```python
+unlimited_share(clean)  # {'part_pct': 12.9, 'nb': 653, 'total': 5056}
+```
+
+### `price_per_gb_stats(df) -> dict`
+
+Distribution du prix au Go sur les offres à volume fini.
+
+```python
+price_per_gb_stats(clean)
+# {'mediane': 2.55, 'q1': 1.67, 'q3': 3.82, 'min': 0.91, 'max': 11.86, 'nb_offres': 4403}
+```
+
+- `dropna()` écarte les 653 illimitées : sans volume, pas de prix au Go.
+- L'écart va de 0,91 € (Yesim, Philippines 50 Go) à 11,86 € (Yatelo, Europe
+  1 Go 30 jours), soit un facteur 13.
+
+### `offers_profile(df) -> dict`
+
+Part des offres 5G et rechargeables.
+
+```python
+offers_profile(clean)  # {'part_5g_pct': 34.7, 'part_top_up_pct': 54.2}
+```
+
+### `validity_distribution(df) -> list`
+
+Répartition des offres par durée de validité, triée par durée croissante.
+
+```python
+validity_distribution(clean)
+# [{'jours': 7, 'offres': 1679, 'part_pct': 33.2}, ...]
+```
+
+### `provider_stats(df) -> list`
+
+Statistiques par fournisseur, triées par nombre d'offres.
+
+```python
+provider_stats(clean)[0]
+# {'provider': 'Airalo', 'cartes': 722, 'part_pct': 14.3, 'prix_moyen': 27.05,
+#  'prix_go_median': 2.76, 'part_5g_pct': 30.2, 'part_illimite_pct': 12.6,
+#  'pays': 50}
+```
+
+- `pays` compte les destinations nationales couvertes (zones exclues).
+- `prix_go_median` exclut les illimitées par construction (`NaN` ignoré).
+
+### `cheapest_by_destination(df, validity_days=15) -> list`
+
+Offre la moins chère par pays et par palier de volume, à durée fixe.
+
+```python
+cheapest_by_destination(clean)[0]
+# {'country_code': 'AE', 'country_name': 'Émirats arabes unis',
+#  'offres': [{'data_display': '1 Go', 'data_gb': 1.0, 'provider': 'GigSky',
+#              'price': 5.52, 'prix_max': 9.9, 'nb_offres': 18}, ...]}
+```
+
+- Zones exclues : comparer « Europe » à « Espagne » n'a pas de sens.
+- Durée fixe (15 jours par défaut) : on ne compare pas un 7 jours à un 30 jours.
+- Départage à prix égal : prix au Go, puis nom du fournisseur.
+- `prix_max` donne la borne haute du même palier, donc l'écart réel.
+
 ### `compute_metrics(clean) -> dict`
 
 Assemble les KPI et leurs définitions dans un dictionnaire sérialisable.
@@ -313,7 +387,13 @@ Structure :
     "fourchette_prix": { "valeur": { "min": 5.36, "max": 154.63 }, "...": "..." },
     "data_gb_moyenne": { "valeur": 14.49, "...": "..." },
     "prix_moyen": { "valeur": { "moyenne": 29.3, "mediane": 20.7 }, "...": "..." },
-    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." }
+    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." },
+    "part_illimite": { "valeur": { "part_pct": 12.9, "nb": 653, "total": 5056 }, "...": "..." },
+    "prix_au_go": { "valeur": { "mediane": 2.55, "q1": 1.67, "q3": 3.82, "min": 0.91, "max": 11.86, "nb_offres": 4403 }, "...": "..." },
+    "profil_offres": { "valeur": { "part_5g_pct": 34.7, "part_top_up_pct": 54.2 }, "...": "..." },
+    "durees": { "valeur": [ { "jours": 7, "offres": 1679, "part_pct": 33.2 } ], "...": "..." },
+    "fournisseurs_detail": { "valeur": [ { "provider": "Airalo", "prix_go_median": 2.76 } ], "...": "..." },
+    "meilleure_offre_par_destination": { "valeur": [ { "country_code": "ES", "offres": [] } ], "...": "..." }
   }
 }
 ```
@@ -346,11 +426,11 @@ Structure :
 make test        # ou : python -m pytest
 ```
 
-31 tests, répartis en trois fichiers :
+39 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
-- `tests/test_metrics.py` — les six KPI, les invariants de la répartition
+- `tests/test_metrics.py` — les 12 KPI, les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
   `metrics.json` et le refus de `NaN`.

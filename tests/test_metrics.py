@@ -61,6 +61,12 @@ class MetricsTest(unittest.TestCase):
                 "data_gb_moyenne",
                 "prix_moyen",
                 "fournisseurs",
+                "part_illimite",
+                "prix_au_go",
+                "profil_offres",
+                "durees",
+                "fournisseurs_detail",
+                "meilleure_offre_par_destination",
             },
         )
         self.assertEqual(
@@ -104,6 +110,65 @@ class MetricsTest(unittest.TestCase):
             chemin = Path(dossier) / "metrics.json"
             with self.assertRaises(ValueError):
                 write_json({"valeur": float("nan")}, chemin)
+
+    def test_unlimited_share(self):
+        self.assertEqual(
+            metrics.unlimited_share(self.clean),
+            {"part_pct": 12.9, "nb": 653, "total": 5056},
+        )
+
+    def test_price_per_gb_stats(self):
+        stats = metrics.price_per_gb_stats(self.clean)
+        self.assertEqual(stats["mediane"], 2.55)
+        self.assertEqual(stats["min"], 0.91)
+        self.assertEqual(stats["max"], 11.86)
+        self.assertEqual(stats["nb_offres"], 4403)
+
+    def test_offers_profile(self):
+        self.assertEqual(
+            metrics.offers_profile(self.clean),
+            {"part_5g_pct": 34.7, "part_top_up_pct": 54.2},
+        )
+
+    def test_validity_distribution(self):
+        self.assertEqual(
+            metrics.validity_distribution(self.clean),
+            [
+                {"jours": 7, "offres": 1679, "part_pct": 33.2},
+                {"jours": 15, "offres": 1667, "part_pct": 33.0},
+                {"jours": 30, "offres": 1710, "part_pct": 33.8},
+            ],
+        )
+
+    def test_provider_stats(self):
+        stats = metrics.provider_stats(self.clean)
+        self.assertEqual(len(stats), 18)
+        self.assertEqual(stats[0]["provider"], "Airalo")
+        self.assertEqual(stats[0]["cartes"], 722)
+        self.assertEqual(stats[-1]["provider"], "4S eSIM")
+        self.assertEqual(sum(ligne["cartes"] for ligne in stats), 5056)
+
+    def test_cheapest_by_destination(self):
+        destinations = metrics.cheapest_by_destination(self.clean)
+        self.assertEqual(len(destinations), 50)
+        espagne = next(d for d in destinations if d["country_code"] == "ES")
+        self.assertEqual(len(espagne["offres"]), 6)
+        self.assertEqual(
+            [offre["data_gb"] for offre in espagne["offres"]],
+            [1.0, 3.0, 5.0, 10.0, 20.0, 50.0],
+        )
+        for offre in espagne["offres"]:
+            self.assertLessEqual(offre["price"], offre["prix_max"])
+
+    def test_cheapest_by_destination_deterministe(self):
+        self.assertEqual(
+            metrics.cheapest_by_destination(self.clean),
+            metrics.cheapest_by_destination(self.clean),
+        )
+
+    def test_cheapest_by_destination_exclut_les_zones(self):
+        codes = {d["country_code"] for d in metrics.cheapest_by_destination(self.clean)}
+        self.assertFalse(codes & {"EU", "AS", "NA", "WW"})
 
 
 if __name__ == "__main__":
