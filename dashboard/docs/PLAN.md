@@ -23,7 +23,7 @@
 | `data_gb` vide | 653 lignes = « Illimité » | Point de définition central |
 | Prix | 5,36 € → 154,63 € ; moyenne 29,30 ; médiane 20,70 | 56 produits > 100 € |
 | `data_gb` | {1, 3, 5, 10, 20, 50} | Valeurs discrètes |
-| `validity_days` | {7, 15, 30} | Répartition ≈ 1/3 chacun |
+| `validity_days` | {7, 15, 30} | Entier, conservé dans la table nettoyée |
 | `network` | 4G 3 302 / 5G 1 754 | 34,7 % de 5G |
 | `top_up` | oui 2 738 / non 2 318 | 54,2 % rechargeables |
 | SKU dupliqués | 0 | Dédup = garde-fou, pas un travail |
@@ -77,6 +77,10 @@
 
 ### 4.2 Arborescence cible
 
+> Structure effectivement implémentée : voir [`README.md`](../README.md).
+> L'arborescence ci-dessous est la cible initiale du plan ; le paquet
+> `mybestsim/` a remplacé `src/` pour rester lançable sans installation.
+
 ```text
 MyBestSim/dashboard/
 ├── data/raw/2026-10-22/        # 18 CSV intacts
@@ -103,7 +107,7 @@ MyBestSim/dashboard/
 
 12 champs : `sku`, `provider`, `product_name`, `country_code`, `country_name`, `data_gb`, `data_display`, `validity_days`, `price`, `currency`, `network`, `top_up`.
 
-Règles : `sku` unique et non nul ; `price` > 0 ; `currency` = EUR ; `network` ∈ {4G, 5G} ; `top_up` ∈ {oui, non} ; `validity_days` ∈ {7, 15, 30} ; `data_gb` nul **si et seulement si** `data_display` = « Illimité ». Toute violation est listée, jamais corrigée en silence.
+Règles : `sku` unique ; `price` > 0 ; `currency` = EUR ; `network` ∈ {4G, 5G} ; `top_up` ∈ {oui, non} ; `validity_days` entier > 0 ; `data_gb` nul **si et seulement si** `data_display` = « Illimité ». Toute violation est listée, jamais corrigée en silence.
 
 ### 4.4 Stratégie de test (3 niveaux)
 
