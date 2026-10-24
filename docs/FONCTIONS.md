@@ -184,7 +184,9 @@ nombre de lignes et les chemins écrits.
 
 Affiche les KPI calculés sur la table nettoyée : total, produits > 100 €,
 fourchette, moyenne de Go, prix moyen et médian, répartition par fournisseur.
-Écrit ensuite `data/processed/metrics.json`.
+Puis les cinq bonus : part d'illimité, prix au Go, écart sur un même bundle
+(trois exemples), prix moyen par fournisseur et trois meilleures offres par
+destination. Écrit enfin `data/processed/metrics.json`.
 
 ```python
 report.run(clean)
