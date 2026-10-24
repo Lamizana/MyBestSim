@@ -51,7 +51,7 @@ class MetricsTest(unittest.TestCase):
 
     def test_compute_metrics_structure(self):
         rapport = metrics.compute_metrics(self.clean)
-        self.assertEqual(set(rapport), {"meta", "kpi"})
+        self.assertEqual(set(rapport), {"meta", "kpi", "series"})
         self.assertEqual(
             set(rapport["kpi"]),
             {
@@ -122,6 +122,23 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(stats["min"], 0.91)
         self.assertEqual(stats["max"], 11.86)
         self.assertEqual(stats["nb_offres"], 4403)
+
+    def test_price_histogram(self):
+        histogramme = metrics.price_histogram(self.clean)
+        self.assertEqual(len(histogramme), 16)
+        self.assertEqual(sum(tranche["offres"] for tranche in histogramme), 5056)
+        self.assertEqual(histogramme[0], {"min": 0, "max": 10, "offres": 887})
+        self.assertEqual(histogramme[-1], {"min": 150, "max": 160, "offres": 3})
+
+    def test_price_per_gb_by_volume(self):
+        serie = metrics.price_per_gb_by_volume(self.clean)
+        self.assertEqual(len(serie), 6)
+        self.assertEqual(serie[0]["data_gb"], 1.0)
+        self.assertEqual(serie[0]["prix_go_median"], 6.71)
+        self.assertEqual(serie[-1]["data_gb"], 50.0)
+        self.assertEqual(sum(point["offres"] for point in serie), 4403)
+        prix_go = [point["prix_go_median"] for point in serie]
+        self.assertEqual(prix_go, sorted(prix_go, reverse=True))
 
     def test_bundle_spread(self):
         ecart = metrics.bundle_spread(self.clean)

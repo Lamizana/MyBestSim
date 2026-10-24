@@ -195,6 +195,40 @@ def cheapest_by_destination(df: pd.DataFrame, validity_days: int = 15) -> list:
     ]
 
 
+def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int = 160) -> list:
+    """Répartition des prix par tranche, pour l'histogramme de la page."""
+    bornes = list(range(0, maximum + largeur, largeur))
+    tranches = pd.cut(df["price"], bins=bornes, right=False)
+    comptes = tranches.value_counts(sort=False).sort_index()
+    return [
+        {
+            "min": int(intervalle.left),
+            "max": int(intervalle.right),
+            "offres": int(nombre),
+        }
+        for intervalle, nombre in comptes.items()
+    ]
+
+
+def price_per_gb_by_volume(df: pd.DataFrame) -> list:
+    """Prix au Go médian par palier de volume, pour la remise volume."""
+    finies = df.loc[~df["is_unlimited"]]
+    stats = finies.groupby("data_gb").agg(
+        prix_go_median=("price_per_gb", "median"),
+        prix_moyen=("price", "mean"),
+        offres=("sku", "size"),
+    )
+    return [
+        {
+            "data_gb": float(volume),
+            "prix_go_median": round(float(ligne.prix_go_median), 2),
+            "prix_moyen": round(float(ligne.prix_moyen), 2),
+            "offres": int(ligne.offres),
+        }
+        for volume, ligne in stats.iterrows()
+    ]
+
+
 def compute_metrics(clean: pd.DataFrame) -> dict:
     """Assemble les KPI et leurs définitions dans un dictionnaire sérialisable."""
     total = total_cards(clean)
@@ -207,6 +241,10 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
     ecart = bundle_spread(clean)
     stats = provider_stats(clean)
     destinations = cheapest_by_destination(clean)
+    series = {
+        "histogramme_prix": price_histogram(clean),
+        "prix_au_go_par_volume": price_per_gb_by_volume(clean),
+    }
 
     return {
         "meta": {
@@ -271,4 +309,5 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
                 "perimetre": f"{len(destinations)} pays, zones exclues",
             },
         },
+        "series": series,
     }

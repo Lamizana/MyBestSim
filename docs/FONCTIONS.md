@@ -49,7 +49,9 @@ quand un total paraît faux.
 | `metrics.py` | `bundle_spread(df)` | `dict` | 1 033 bundles, écart médian 13,4 % |
 | `metrics.py` | `provider_stats(df)` | `list` | 18 fournisseurs enrichis |
 | `metrics.py` | `cheapest_by_destination(df)` | `list` | 50 pays × 6 paliers |
-| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + les 11 KPI |
+| `metrics.py` | `price_histogram(df)` | `list` | 16 tranches, somme 5 056 |
+| `metrics.py` | `price_per_gb_by_volume(df)` | `list` | 6 paliers, somme 4 403 |
+| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + 11 KPI + `series` |
 
 ## `mybestsim/config.py`
 
@@ -371,6 +373,31 @@ cheapest_by_destination(clean)[0]
 - Départage à prix égal : prix au Go, puis nom du fournisseur.
 - `prix_max` donne la borne haute du même palier, donc l'écart réel.
 
+### `price_histogram(df, largeur=10, maximum=160) -> list`
+
+Répartition des prix par tranche, pour l'histogramme de la page.
+
+```python
+price_histogram(clean)[:2]
+# [{'min': 0, 'max': 10, 'offres': 887}, {'min': 10, 'max': 20, 'offres': 1605}]
+```
+
+- 16 tranches de 10 €, de 0 à 160 €, **y compris les vides** : l'axe du
+  graphique reste stable même si une tranche se vide.
+- La somme des `offres` vaut 5 056.
+
+### `price_per_gb_by_volume(df) -> list`
+
+Prix au Go médian par palier de volume, pour montrer la remise volume.
+
+```python
+price_per_gb_by_volume(clean)
+# [{'data_gb': 1.0, 'prix_go_median': 6.71, 'prix_moyen': 7.08, 'offres': 728}, ...]
+```
+
+- Illimitées exclues : 4 403 offres au total.
+- La série est décroissante : 6,71 €/Go à 1 Go, 1,18 €/Go à 50 Go.
+
 ### `compute_metrics(clean) -> dict`
 
 Assemble les KPI et leurs définitions dans un dictionnaire sérialisable.
@@ -396,6 +423,10 @@ Structure :
     "ecart_bundles": { "valeur": { "nb_bundles": 1033, "ecart_median_pct": 13.4 }, "...": "..." },
     "fournisseurs_detail": { "valeur": [ { "provider": "Airalo", "prix_go_median": 2.76 } ], "...": "..." },
     "meilleure_offre_par_destination": { "valeur": [ { "country_code": "ES", "offres": [] } ], "...": "..." }
+  },
+  "series": {
+    "histogramme_prix": [ { "min": 0, "max": 10, "offres": 887 } ],
+    "prix_au_go_par_volume": [ { "data_gb": 1.0, "prix_go_median": 6.71 } ]
   }
 }
 ```
@@ -428,7 +459,7 @@ Structure :
 make test        # ou : python -m pytest
 ```
 
-38 tests, répartis en trois fichiers :
+40 tests, répartis en trois fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
