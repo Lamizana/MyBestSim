@@ -1,6 +1,6 @@
 # Fonctions du pipeline
 
-Documentation des fonctions présentes dans `dashboard/`. Les valeurs indiquées
+Documentation des fonctions présentes dans `mybestsim/`. Les valeurs indiquées
 sont celles obtenues sur les 18 fichiers fournisseurs (5 056 offres).
 
 Répartition : `mybestsim/config.py` (constantes), `mybestsim/ingest.py`
@@ -42,10 +42,11 @@ Chemins et constantes du contrat, sans aucune logique :
 
 | Constante | Contenu |
 |---|---|
-| `DASHBOARD` | dossier `dashboard/`, calculé depuis `__file__` |
-| `DATA_DIR` | les 18 CSV fournisseurs |
-| `RAW_OUTPUT` | `data/all_products.csv` |
-| `CLEAN_OUTPUT` | `data/clean_products.csv` |
+| `PROJECT_ROOT` | racine du dépôt, calculée depuis `__file__` |
+| `DATA_DIR` | `data/raw/`, les 18 CSV fournisseurs |
+| `PROCESSED_DIR` | `data/processed/` |
+| `RAW_OUTPUT` | `data/processed/all_products.csv` |
+| `CLEAN_OUTPUT` | `data/processed/clean_products.csv` |
 | `EXPECTED_COLUMNS` | les 12 colonnes attendues, dans l'ordre |
 | `REGION_CODES` | `{EU, AS, NA, WW}` |
 | `ZONE_PREFIX` | `"ZONE_"` |
@@ -243,7 +244,6 @@ Fonction prévue, non encore écrite :
 ## Tests
 
 ```bash
-cd dashboard
 make test        # ou : python -m pytest
 ```
 

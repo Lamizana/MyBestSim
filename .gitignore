@@ -13,12 +13,12 @@ venv/
 *.egg-info/
 site/
 build/
-dashboard/data/processed/
-dashboard/site/
-dashboard/_legacy/
+data/processed/
+site/
+_legacy/
 
 # Notes personnelles
-dashboard/docs/NOTES.md
+docs/NOTES.md
 
 # Environnement
 .env

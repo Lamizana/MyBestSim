@@ -79,7 +79,8 @@
 
 > Structure effectivement implémentée : voir [`README.md`](../README.md).
 > L'arborescence ci-dessous est la cible initiale du plan ; le paquet
-> `mybestsim/` a remplacé `src/` pour rester lançable sans installation.
+> `mybestsim/` a remplacé `src/` pour rester lançable sans installation, et
+> le projet est désormais à la racine du dépôt.
 
 ```text
 MyBestSim/dashboard/
