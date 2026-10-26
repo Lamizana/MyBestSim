@@ -104,7 +104,10 @@ def halteres(offres: list) -> alt.Chart:
             sort=None,
             title=None,
             axis=alt.Axis(
-                labelFontSize=12, labelColor=TEXTE, ticks=False, domain=False
+                labelFontSize=12,
+                labelColor=TEXTE,
+                ticks=False,
+                domain=False,
             ),
         ),
         x=alt.X(
