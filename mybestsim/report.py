@@ -26,48 +26,6 @@ def run(clean) -> None:
     for ligne in kpi["fournisseurs"]["valeur"]:
         print(f"  - {ligne['provider']} : {ligne['cartes']} cartes")
 
-    illimite = kpi["part_illimite"]["valeur"]
-    go = kpi["prix_au_go"]["valeur"]
-    ecart = kpi["ecart_bundles"]["valeur"]
-    detail = kpi["fournisseurs_detail"]["valeur"]
-    destinations = kpi["meilleure_offre_par_destination"]["valeur"]
-
-    moins_cher = min(detail, key=lambda ligne: ligne["prix_moyen"])
-    plus_cher = max(detail, key=lambda ligne: ligne["prix_moyen"])
-
-    print("- KPI bonus :")
-    print(
-        f"  - Part d'illimité : {illimite['part_pct']} % "
-        f"({illimite['nb']} / {illimite['total']})"
-    )
-    print(
-        f"  - Prix au Go : médiane {go['mediane']} € "
-        f"(q1 {go['q1']}, q3 {go['q3']}), de {go['min']} à {go['max']} € "
-        f"({go['nb_offres']} offres)"
-    )
-    print(
-        f"  - Écart sur un même bundle : {ecart['nb_bundles']} bundles, "
-        f"médiane {ecart['ecart_median_pct']} %, max {ecart['ecart_max_pct']} %"
-    )
-    for exemple in ecart["exemples"]:
-        print(
-            f"    - {exemple['destination']}, {exemple['data_display']} "
-            f"{exemple['validity_days']} j : {exemple['prix_min']} € → "
-            f"{exemple['prix_max']} € (+{exemple['ecart_pct']} %)"
-        )
-    print(
-        f"  - Prix moyen par fournisseur : {moins_cher['prix_moyen']} € "
-        f"({moins_cher['provider']}) → {plus_cher['prix_moyen']} € "
-        f"({plus_cher['provider']})"
-    )
-    print(f"  - Meilleure offre par destination (15 j) : {len(destinations)} pays")
-    for destination in destinations[:3]:
-        offre = destination["offres"][0]
-        print(
-            f"    - {destination['country_name']} : {offre['provider']} "
-            f"{offre['data_display']} — {offre['price']} €"
-        )
-
     write_json(rapport, METRICS_OUTPUT)
     print(f"KPI écrits dans {METRICS_OUTPUT}")
 

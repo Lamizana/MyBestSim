@@ -1,4 +1,3 @@
-import json
 import unittest
 
 from mybestsim import site
@@ -17,17 +16,8 @@ class SiteTest(unittest.TestCase):
     def test_six_cartes_kpi(self):
         self.assertEqual(self.html.count('class="carte-kpi"'), 6)
 
-    def test_deux_graphiques_svg(self):
-        self.assertEqual(self.html.count("<svg "), 2)
-
-    def test_cinquante_destinations(self):
-        debut = self.html.index('<script id="donnees-destinations"')
-        fin = self.html.index("</script>", debut)
-        contenu = self.html[debut:fin].split(">", 1)[1]
-        destinations = json.loads(contenu)
-        self.assertEqual(len(destinations), 50)
-        offres = [offre for pays in destinations for offre in pays["offres"]]
-        self.assertTrue(all(offre["price"] <= offre["prix_max"] for offre in offres))
+    def test_un_graphique_svg(self):
+        self.assertEqual(self.html.count("<svg "), 1)
 
     def test_page_autonome(self):
         self.assertNotIn("<script src=", self.html)

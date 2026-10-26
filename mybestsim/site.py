@@ -74,44 +74,6 @@ def build_histogram_svg(tranches: list) -> str:
     return "".join(elements)
 
 
-def build_volume_svg(serie: list) -> str:
-    largeur, hauteur = 680, 240
-    gauche, bas, haut = 44, 30, 24
-    largeur_plot = largeur - gauche - 10
-    hauteur_plot = hauteur - bas - haut
-    maximum = max(point["prix_go_median"] for point in serie) or 1
-    largeur_barre = largeur_plot / len(serie)
-
-    elements = [
-        f'<svg viewBox="0 0 {largeur} {hauteur}" role="img" '
-        'aria-label="Prix au Go médian par palier de volume">'
-    ]
-
-    for index, point in enumerate(serie):
-        hauteur_barre = point["prix_go_median"] / maximum * hauteur_plot
-        x = gauche + index * largeur_barre
-        y = haut + hauteur_plot - hauteur_barre
-        elements.append(
-            f'<rect x="{x + 8:.1f}" y="{y:.1f}" width="{largeur_barre - 16:.1f}" '
-            f'height="{hauteur_barre:.1f}" fill="#ffcc00">'
-            f'<title>{point["data_gb"]:g} Go : '
-            f'{format_fr(point["prix_go_median"], 2)} €/Go</title></rect>'
-        )
-        elements.append(
-            f'<text x="{x + largeur_barre / 2:.1f}" y="{y - 6:.1f}" text-anchor="middle" '
-            f'font-size="11" fill="#1d2939">{format_fr(point["prix_go_median"], 2)}</text>'
-        )
-        elements.append(
-            f'<text x="{x + largeur_barre / 2:.1f}" y="{hauteur - 8}" text-anchor="middle" '
-            f'font-size="11" fill="#667085">{point["data_gb"]:g} Go</text>'
-        )
-
-    elements.append(
-        f'<line x1="{gauche}" y1="{haut + hauteur_plot}" '
-        f'x2="{gauche + largeur_plot}" y2="{haut + hauteur_plot}" stroke="#e4e7ec"/>'
-    )
-    elements.append("</svg>")
-    return "".join(elements)
 
 
 def render(metrics: dict) -> str:
@@ -131,8 +93,6 @@ def render(metrics: dict) -> str:
         fournisseurs=fournisseurs,
         max_cartes=max(ligne["cartes"] for ligne in fournisseurs),
         histogramme=build_histogram_svg(metrics["series"]["histogramme_prix"]),
-        volume=build_volume_svg(metrics["series"]["prix_au_go_par_volume"]),
-        destinations=metrics["kpi"]["meilleure_offre_par_destination"]["valeur"],
     )
 
 

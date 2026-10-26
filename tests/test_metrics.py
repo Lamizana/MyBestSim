@@ -61,11 +61,6 @@ class MetricsTest(unittest.TestCase):
                 "data_gb_moyenne",
                 "prix_moyen",
                 "fournisseurs",
-                "part_illimite",
-                "prix_au_go",
-                "ecart_bundles",
-                "fournisseurs_detail",
-                "meilleure_offre_par_destination",
             },
         )
         self.assertEqual(
@@ -82,6 +77,7 @@ class MetricsTest(unittest.TestCase):
             {"min": 5.36, "max": 154.63},
         )
         self.assertEqual(kpi["data_gb_moyenne"]["valeur"], 14.49)
+        self.assertEqual(kpi["data_gb_moyenne"]["nb_offres"], 4403)
         self.assertEqual(
             kpi["prix_moyen"]["valeur"],
             {"moyenne": 29.3, "mediane": 20.7},
@@ -110,77 +106,12 @@ class MetricsTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 write_json({"valeur": float("nan")}, chemin)
 
-    def test_unlimited_share(self):
-        self.assertEqual(
-            metrics.unlimited_share(self.clean),
-            {"part_pct": 12.9, "nb": 653, "total": 5056},
-        )
-
-    def test_price_per_gb_stats(self):
-        stats = metrics.price_per_gb_stats(self.clean)
-        self.assertEqual(stats["mediane"], 2.55)
-        self.assertEqual(stats["min"], 0.91)
-        self.assertEqual(stats["max"], 11.86)
-        self.assertEqual(stats["nb_offres"], 4403)
-
     def test_price_histogram(self):
         histogramme = metrics.price_histogram(self.clean)
         self.assertEqual(len(histogramme), 16)
         self.assertEqual(sum(tranche["offres"] for tranche in histogramme), 5056)
         self.assertEqual(histogramme[0], {"min": 0, "max": 10, "offres": 887})
         self.assertEqual(histogramme[-1], {"min": 150, "max": 160, "offres": 3})
-
-    def test_price_per_gb_by_volume(self):
-        serie = metrics.price_per_gb_by_volume(self.clean)
-        self.assertEqual(len(serie), 6)
-        self.assertEqual(serie[0]["data_gb"], 1.0)
-        self.assertEqual(serie[0]["prix_go_median"], 6.71)
-        self.assertEqual(serie[-1]["data_gb"], 50.0)
-        self.assertEqual(sum(point["offres"] for point in serie), 4403)
-        prix_go = [point["prix_go_median"] for point in serie]
-        self.assertEqual(prix_go, sorted(prix_go, reverse=True))
-
-    def test_bundle_spread(self):
-        ecart = metrics.bundle_spread(self.clean)
-        self.assertEqual(ecart["nb_bundles"], 1033)
-        self.assertEqual(ecart["ecart_median_pct"], 13.4)
-        self.assertEqual(ecart["ecart_max_pct"], 64.3)
-        self.assertEqual(ecart["part_superieur_20_pct"], 5.7)
-        self.assertEqual(len(ecart["exemples"]), 3)
-        for exemple in ecart["exemples"]:
-            self.assertLess(exemple["prix_min"], exemple["prix_max"])
-        ecarts = [exemple["ecart_pct"] for exemple in ecart["exemples"]]
-        self.assertEqual(ecarts, sorted(ecarts, reverse=True))
-
-    def test_provider_stats(self):
-        stats = metrics.provider_stats(self.clean)
-        self.assertEqual(len(stats), 18)
-        self.assertEqual(stats[0]["provider"], "Airalo")
-        self.assertEqual(stats[0]["cartes"], 722)
-        self.assertEqual(stats[-1]["provider"], "4S eSIM")
-        self.assertEqual(sum(ligne["cartes"] for ligne in stats), 5056)
-
-    def test_cheapest_by_destination(self):
-        destinations = metrics.cheapest_by_destination(self.clean)
-        self.assertEqual(len(destinations), 50)
-        espagne = next(d for d in destinations if d["country_code"] == "ES")
-        self.assertEqual(len(espagne["offres"]), 6)
-        self.assertEqual(
-            [offre["data_gb"] for offre in espagne["offres"]],
-            [1.0, 3.0, 5.0, 10.0, 20.0, 50.0],
-        )
-        for offre in espagne["offres"]:
-            self.assertLessEqual(offre["price"], offre["prix_max"])
-
-    def test_cheapest_by_destination_deterministe(self):
-        self.assertEqual(
-            metrics.cheapest_by_destination(self.clean),
-            metrics.cheapest_by_destination(self.clean),
-        )
-
-    def test_cheapest_by_destination_exclut_les_zones(self):
-        codes = {d["country_code"] for d in metrics.cheapest_by_destination(self.clean)}
-        self.assertFalse(codes & {"EU", "AS", "NA", "WW"})
 
 
 if __name__ == "__main__":

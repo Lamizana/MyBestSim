@@ -44,14 +44,8 @@ quand un total paraît faux.
 | `metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
 | `metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
 | `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
-| `metrics.py` | `unlimited_share(df)` | `dict` | 12,9 % (653 / 5 056) |
-| `metrics.py` | `price_per_gb_stats(df)` | `dict` | médiane 2,55 sur 4 403 offres |
-| `metrics.py` | `bundle_spread(df)` | `dict` | 1 033 bundles, écart médian 13,4 % |
-| `metrics.py` | `provider_stats(df)` | `list` | 18 fournisseurs enrichis |
-| `metrics.py` | `cheapest_by_destination(df)` | `list` | 50 pays × 6 paliers |
 | `metrics.py` | `price_histogram(df)` | `list` | 16 tranches, somme 5 056 |
-| `metrics.py` | `price_per_gb_by_volume(df)` | `list` | 6 paliers, somme 4 403 |
-| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + 11 KPI + `series` |
+| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + 6 KPI + `series` |
 | `site.py` | `format_fr(valeur, decimales)` | `str` | `5 056`, `14,49` |
 | `site.py` | `render(metrics)` | `str` | page HTML complète |
 | `site.py` | `main()` | `int` | écrit `site/index.html` |
@@ -101,7 +95,7 @@ clean = load_clean(CLEAN_OUTPUT)  # (5056, 15)
 
 - Lecture en texte (`dtype=str`, `keep_default_na=False`) : `NA` reste `"NA"`
   et `data_gb` vide reste `""`.
-- `validity_days` → entier ; `price`, `data_gb`, `price_per_gb` → flottants
+- `validity_days` → entier ; `price`, `data_gb` → flottants
   (`""` devient `NaN`) ; `top_up`, `is_unlimited`, `is_region` → booléens via
   `{"True": True, "False": False}`.
 - C'est cette fonction qui permet à `report` de ne jamais relire les 18 CSV.
@@ -114,7 +108,7 @@ Type les colonnes, valide le contrat, ajoute les colonnes dérivées. Ne modifie
 pas `raw` (travail sur une copie).
 
 ```python
-clean = clean_data(raw)  # (5056, 15)
+clean = clean_data(raw)  # (5056, 14)
 ```
 
 Ordre des opérations :
@@ -129,8 +123,7 @@ Ordre des opérations :
 8. `is_unlimited` = `data_display == "Illimité"` ;
 9. cohérence : `data_gb` vide **si et seulement si** `is_unlimited` ;
 10. `is_region` = code dans {`EU`, `AS`, `NA`, `WW`} ;
-11. préfixage des codes de zone en `ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW` ;
-12. `price_per_gb` = `price / data_gb` (vide si illimité).
+11. préfixage des codes de zone en `ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW`.
 
 Toute violation lève un `ValueError` citant les SKU ou les valeurs fautives.
 Aucune correction silencieuse.
@@ -189,9 +182,7 @@ nombre de lignes et les chemins écrits.
 
 Affiche les KPI calculés sur la table nettoyée : total, produits > 100 €,
 fourchette, moyenne de Go, prix moyen et médian, répartition par fournisseur.
-Puis les cinq bonus : part d'illimité, prix au Go, écart sur un même bundle
-(trois exemples), prix moyen par fournisseur et trois meilleures offres par
-destination. Écrit enfin `data/processed/metrics.json`.
+Écrit enfin `data/processed/metrics.json`.
 
 ```python
 report.run(clean)
@@ -306,76 +297,6 @@ provider_distribution(clean)[-1]
 - Invariant de réconciliation : la somme des `cartes` doit valoir 5 056 et la
   somme des `part_pct` 100 % (à l'arrondi près).
 
-### `unlimited_share(df) -> dict`
-
-Part des offres dont le volume est illimité.
-
-```python
-unlimited_share(clean)  # {'part_pct': 12.9, 'nb': 653, 'total': 5056}
-```
-
-### `price_per_gb_stats(df) -> dict`
-
-Distribution du prix au Go sur les offres à volume fini.
-
-```python
-price_per_gb_stats(clean)
-# {'mediane': 2.55, 'q1': 1.67, 'q3': 3.82, 'min': 0.91, 'max': 11.86, 'nb_offres': 4403}
-```
-
-- `dropna()` écarte les 653 illimitées : sans volume, pas de prix au Go.
-- L'écart va de 0,91 € (Yesim, Philippines 50 Go) à 11,86 € (Yatelo, Europe
-  1 Go 30 jours), soit un facteur 13.
-
-### `bundle_spread(df, min_fournisseurs=2) -> dict`
-
-Écart de prix entre fournisseurs pour un même bundle (destination, volume,
-durée).
-
-```python
-bundle_spread(clean)
-# {'nb_bundles': 1033, 'ecart_median_pct': 13.4, 'ecart_max_pct': 64.3,
-#  'part_superieur_20_pct': 5.7, 'exemples': [...]}
-```
-
-- Les offres zonales sont incluses : comparer « Europe 10 Go 15 jours » entre
-  fournisseurs est légitime. C'est différent de `cheapest_by_destination`, qui
-  exclut les zones parce qu'on y compare des pays.
-- Un bundle n'est retenu que s'il est proposé par au moins 2 fournisseurs.
-- `exemples` donne les trois plus gros écarts, triés de façon déterministe.
-- Interprétation : la moitié des bundles comparables varient de plus de 13,4 %
-  selon le fournisseur, et 5,7 % dépassent 20 %.
-
-### `provider_stats(df) -> list`
-
-Statistiques par fournisseur, triées par nombre d'offres.
-
-```python
-provider_stats(clean)[0]
-# {'provider': 'Airalo', 'cartes': 722, 'part_pct': 14.3, 'prix_moyen': 27.05,
-#  'prix_go_median': 2.76, 'part_5g_pct': 30.2, 'part_illimite_pct': 12.6,
-#  'pays': 50}
-```
-
-- `pays` compte les destinations nationales couvertes (zones exclues).
-- `prix_go_median` exclut les illimitées par construction (`NaN` ignoré).
-
-### `cheapest_by_destination(df, validity_days=15) -> list`
-
-Offre la moins chère par pays et par palier de volume, à durée fixe.
-
-```python
-cheapest_by_destination(clean)[0]
-# {'country_code': 'AE', 'country_name': 'Émirats arabes unis',
-#  'offres': [{'data_display': '1 Go', 'data_gb': 1.0, 'provider': 'GigSky',
-#              'price': 5.52, 'prix_max': 9.9, 'nb_offres': 18}, ...]}
-```
-
-- Zones exclues : comparer « Europe » à « Espagne » n'a pas de sens.
-- Durée fixe (15 jours par défaut) : on ne compare pas un 7 jours à un 30 jours.
-- Départage à prix égal : prix au Go, puis nom du fournisseur.
-- `prix_max` donne la borne haute du même palier, donc l'écart réel.
-
 ### `price_histogram(df, largeur=10, maximum=160) -> list`
 
 Répartition des prix par tranche, pour l'histogramme de la page.
@@ -388,18 +309,6 @@ price_histogram(clean)[:2]
 - 16 tranches de 10 €, de 0 à 160 €, **y compris les vides** : l'axe du
   graphique reste stable même si une tranche se vide.
 - La somme des `offres` vaut 5 056.
-
-### `price_per_gb_by_volume(df) -> list`
-
-Prix au Go médian par palier de volume, pour montrer la remise volume.
-
-```python
-price_per_gb_by_volume(clean)
-# [{'data_gb': 1.0, 'prix_go_median': 6.71, 'prix_moyen': 7.08, 'offres': 728}, ...]
-```
-
-- Illimitées exclues : 4 403 offres au total.
-- La série est décroissante : 6,71 €/Go à 1 Go, 1,18 €/Go à 50 Go.
 
 ### `compute_metrics(clean) -> dict`
 
@@ -418,18 +327,12 @@ Structure :
     "total_cartes": { "valeur": 5056, "definition": "...", "perimetre": "..." },
     "prix_superieur_100": { "valeur": 56, "...": "..." },
     "fourchette_prix": { "valeur": { "min": 5.36, "max": 154.63 }, "...": "..." },
-    "data_gb_moyenne": { "valeur": 14.49, "...": "..." },
+    "data_gb_moyenne": { "valeur": 14.49, "nb_offres": 4403, "...": "..." },
     "prix_moyen": { "valeur": { "moyenne": 29.3, "mediane": 20.7 }, "...": "..." },
-    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." },
-    "part_illimite": { "valeur": { "part_pct": 12.9, "nb": 653, "total": 5056 }, "...": "..." },
-    "prix_au_go": { "valeur": { "mediane": 2.55, "q1": 1.67, "q3": 3.82, "min": 0.91, "max": 11.86, "nb_offres": 4403 }, "...": "..." },
-    "ecart_bundles": { "valeur": { "nb_bundles": 1033, "ecart_median_pct": 13.4 }, "...": "..." },
-    "fournisseurs_detail": { "valeur": [ { "provider": "Airalo", "prix_go_median": 2.76 } ], "...": "..." },
-    "meilleure_offre_par_destination": { "valeur": [ { "country_code": "ES", "offres": [] } ], "...": "..." }
+    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." }
   },
   "series": {
-    "histogramme_prix": [ { "min": 0, "max": 10, "offres": 887 } ],
-    "prix_au_go_par_volume": [ { "data_gb": 1.0, "prix_go_median": 6.71 } ]
+    "histogramme_prix": [ { "min": 0, "max": 10, "offres": 887 } ]
   }
 }
 ```
@@ -455,9 +358,9 @@ format_fr(14.49, 2)  # '14,49'
 
 Lit `data/processed/metrics.json`. Aucun calcul : la page ne fait que rendre.
 
-### `build_histogram_svg(tranches) -> str` / `build_volume_svg(serie) -> str`
+### `build_histogram_svg(tranches) -> str`
 
-Produisent les deux graphiques en **SVG inline**, à partir des séries de
+Produit l'histogramme des prix en **SVG inline**, à partir de la série de
 `metrics.json`.
 
 - Aucune bibliothèque de graphique, aucune requête réseau.
@@ -466,9 +369,8 @@ Produisent les deux graphiques en **SVG inline**, à partir des séries de
 
 ### `render(metrics) -> str`
 
-Rend `templates/index.html.j2` avec Jinja2, en injectant les KPI, les séries,
-les fournisseurs et les 50 destinations. Les données sont incluses dans la page
-(`<script type="application/json">`), donc aucune requête au chargement.
+Rend `templates/index.html.j2` avec Jinja2, en injectant les KPI, la série de
+prix et les fournisseurs.
 
 ### `main() -> int`
 
@@ -497,13 +399,13 @@ Rien : les trois commandes (`merge`, `report`, `site`) sont en place.
 make test        # ou : python -m pytest
 ```
 
-47 tests, répartis en quatre fichiers :
+37 tests, répartis en quatre fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, round-trip de la table propre ;
 - `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
-- `tests/test_metrics.py` — les 11 KPI, les invariants de la répartition
+- `tests/test_metrics.py` — les 6 KPI, les invariants de la répartition
   (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
   `metrics.json` et le refus de `NaN` ;
-- `tests/test_site.py` — présence des chiffres, six cartes KPI, deux graphiques,
-  50 destinations, page autonome et rendu déterministe.
+- `tests/test_site.py` — présence des chiffres, six cartes KPI, un graphique,
+  page autonome et rendu déterministe.

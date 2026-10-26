@@ -11,7 +11,7 @@ class CleanDataTest(unittest.TestCase):
         cls.clean = clean_data(cls.raw)
 
     def test_shape(self):
-        self.assertEqual(self.clean.shape, (5056, 15))
+        self.assertEqual(self.clean.shape, (5056, 14))
 
     def test_duree_entier(self):
         self.assertEqual(str(self.clean["validity_days"].dtype), "int64")
@@ -30,12 +30,6 @@ class CleanDataTest(unittest.TestCase):
 
     def test_moyenne_data_gb(self):
         self.assertAlmostEqual(self.clean["data_gb"].mean(), 14.49, places=2)
-
-    def test_prix_au_go_absent_seulement_si_illimite(self):
-        self.assertEqual(
-            int(self.clean["price_per_gb"].isna().sum()),
-            int(self.clean["is_unlimited"].sum()),
-        )
 
     def test_refuse_sku_duplique(self):
         bad = self.raw.copy()
