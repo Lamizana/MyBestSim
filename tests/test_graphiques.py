@@ -14,12 +14,17 @@ class GraphiquesTest(unittest.TestCase):
     def test_barres_fournisseurs(self):
         spec = graphiques.fournisseurs(self.metrics).to_dict()
         self.assertEqual(len(spec["layer"]), 2)
-        self.assertEqual(spec["height"], 440)
+        self.assertEqual(spec["height"], 420)
 
     def test_histogramme(self):
         spec = graphiques.prix(self.metrics).to_dict()
-        self.assertEqual(len(spec["layer"]), 3)
-        self.assertEqual(spec["height"], 280)
+        self.assertEqual(len(spec["layer"]), 2)
+        self.assertEqual(spec["height"], 420)
+        encodage = spec["layer"][0]["encoding"]
+        self.assertEqual(encodage["x"]["type"], "nominal")
+        self.assertEqual(encodage["x"]["field"], "libelle")
+        self.assertEqual(encodage["x"]["scale"]["paddingInner"], 0.04)
+        self.assertEqual(encodage["x"]["axis"]["labelOverlap"], "greedy")
 
     def test_police_commune(self):
         spec = graphiques.prix(self.metrics).to_dict()
