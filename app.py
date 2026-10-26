@@ -208,7 +208,7 @@ def _podium(offres: list) -> None:
     couleurs = {"1er": "yellow", "2e": "gray", "3e": "orange"}
     for colonne, rang, offre in zip(st.columns(3), rangs, offres[:3], strict=False):
         with colonne, st.container(border=True):
-            st.caption(f":{couleurs[rang]}-background[**{rang}**]")
+            st.badge(rang, color=couleurs[rang])
             st.markdown(f"**{offre['destination']}**")
             st.markdown(f"### {format_fr(offre['prix'], 2)} €")
             st.caption(offre["provider"])
