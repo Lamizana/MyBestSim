@@ -99,8 +99,8 @@ maximum et le nombre d'offres comparées.
 3. **Distribution des prix** — histogramme par tranche de 10 €, tranches à
    partir de 100 € en rouge.
 4. **Meilleures offres par destination** — sélection du volume et de la durée,
-   podium des trois destinations les moins chères, graphique en haltères trié
-   par économie possible, onglets Pays / Régions, recherche, tableau triable.
+   podium des trois destinations les moins chères, onglets Pays / Régions,
+   recherche, tableau triable.
 
 ## Contrat de données
 

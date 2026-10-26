@@ -217,7 +217,7 @@ def _podium(offres: list) -> None:
 def afficher_offres(metrics: dict) -> None:
     offres = metrics["series"]["meilleures_offres"]
 
-    st.subheader("Meilleures offres par destination")
+    st.subheader(":blue[Meilleures offres par destination]")
     st.caption(
         "Prix le plus bas par destination et écart avec l'offre la plus chère, "
         "pour un forfait donné. Le tableau est triable."
@@ -270,7 +270,6 @@ def afficher_offres(metrics: dict) -> None:
             st.info("Aucune offre pour ce forfait.")
         else:
             _podium(selection)
-            st.altair_chart(graphiques.halteres(selection), width="stretch", theme=None)
             tableau = (
                 [offre for offre in pays if recherche in offre["destination"].lower()]
                 if recherche
@@ -283,7 +282,6 @@ def afficher_offres(metrics: dict) -> None:
             st.info("Aucune offre régionale pour ce forfait.")
         else:
             _podium(zones)
-            st.altair_chart(graphiques.halteres(zones), width="stretch", theme=None)
             _tableau_offres(zones)
 
 

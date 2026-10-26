@@ -88,7 +88,6 @@ commune : fond transparent, police Poppins, axes discrets.
 |---|---|
 | `fournisseurs(metrics)` | barres horizontales triées, valeur en bout de barre |
 | `prix(metrics)` | histogramme par tranche, tranches ≥ 100 € en rouge, valeurs annotées |
-| `halteres(offres)` | segment du prix minimum au prix maximum par destination, trié par économie |
 
 ## `app.py`
 
