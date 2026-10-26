@@ -20,6 +20,7 @@ LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
 VOLUMES = ["1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"]
 
 
+# ---------------------------------------------------------------------
 def format_fr(valeur, decimales: int = 0) -> str:
     """Formate un nombre à la française : 5056 -> « 5 056 », 14.49 -> « 14,49 »."""
     texte = f"{valeur:,.{decimales}f}"
@@ -182,8 +183,16 @@ def _tableau_offres(offres: list) -> None:
         }
     )
 
+    style = donnees.style.apply(
+        lambda colonne: [
+            "background-color: #f7f8fa" if index % 2 else ""
+            for index in range(len(colonne))
+        ],
+        axis=0,
+    )
+
     st.dataframe(
-        donnees,
+        style,
         hide_index=True,
         width="stretch",
         column_config={
