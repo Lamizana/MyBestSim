@@ -15,8 +15,10 @@ from mybestsim.format import format_fr
 from mybestsim.metrics import compute_metrics
 
 LOGO = Path(__file__).resolve().parent / "assets" / "logo.png"
+LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
 
 
+# ---------------------------------------------------------------------
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
 def charger_metriques() -> dict:
     """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par processus."""
@@ -25,22 +27,39 @@ def charger_metriques() -> dict:
 
 def afficher_entete(metrics: dict) -> None:
     meta = metrics["meta"]
-    st.caption("Dashboard du catalogue eSIM - test de recrutement")
-    st.title(
-        f"{format_fr(meta['lignes'])} offres comparées, "
-        f"{meta['fournisseurs']} fournisseurs"
-    )
-    st.markdown(
-        "Consolidation des 18 fichiers fournisseurs, nettoyage, contrôle et "
-        "calcul des indicateurs de prix. Tous les chiffres proviennent du même "
-        "calcul, mis en cache au démarrage."
-    )
-    with st.container(horizontal=True):
-        st.badge(f"{format_fr(meta['lignes'])} offres", color="blue")
-        st.badge(f"{meta['fournisseurs']} fournisseurs", color="gray")
-        st.badge(f"Devise : {meta['devise']}", color="gray")
+    nb_fichiers = len(list(DATA_DIR.glob("*.csv")))
+
+    # Alignment vertical au centre pour équilibrer la carte de droite avec le texte
+    gauche, droite = st.columns([2.5, 1], gap="large", vertical_alignment="center")
+
+    with gauche:
+        st.caption("Dashboard comparatif fournisseurs **eSIM** - *Test de recrutement*")
+
+        # st.title("**:blue[MyBest]:red[Sim]**")
+
+        st.title(
+            f"{format_fr(meta['lignes'])} :blue[offres comparées], "
+            f"{meta['fournisseurs']} :red[fournisseurs]"
+        )
+        st.markdown(
+            "Comparer les prix, les volumes de données et la couverture des "
+            "opérateurs du catalogue importé.  \n"
+            "Les indicateurs portent sur les offres valides ; les offres "
+            "illimitées sont exclues de la moyenne de data."
+        )
+        st.caption(
+            "Six indicateurs clés, puis le détail par fournisseur et par tranche de prix."
+        )
+
+    with droite:
+        with st.container(border=True):
+            st.markdown("**:blue[RÉSUMÉ DES MÉTRIQUES]**")
+            st.badge(f"Volume : **{format_fr(meta['lignes'])}** offres", color="blue")
+            st.badge(f"Sources : **{nb_fichiers}** fichiers", color="yellow")
+            st.badge(f"Devise : **{meta['devise']}**", color="green")
 
 
+# ---------------------------------------------------------------------
 def afficher_kpi(metrics: dict) -> None:
     kpi = metrics["kpi"]
     fourchette = kpi["fourchette_prix"]["valeur"]
@@ -96,73 +115,7 @@ def afficher_kpi(metrics: dict) -> None:
     )
 
 
-def afficher_kpi_natif(metrics: dict) -> None:
-    kpi = metrics["kpi"]
-    fourchette = kpi["fourchette_prix"]["valeur"]
-    data = kpi["data_gb_moyenne"]
-    prix = kpi["prix_moyen"]["valeur"]
-    illimitees = metrics["meta"]["lignes"] - data["nb_offres"]
-
-    st.subheader("Les chiffres clés")
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        # border=True crée la carte arrondie
-        with st.container(border=True):
-            st.badge("Total", color="blue")
-            st.metric(
-                "Nombre total de cartes",
-                format_fr(kpi["total_cartes"]["valeur"]),
-                delta=f"dont {format_fr(illimitees)} illimitées",
-                delta_color="off",
-            )
-
-    with col2:
-        with st.container(border=True):
-            st.badge("Alerte > 100 €", color="red")
-            st.metric(
-                "Cartes au-delà de 100 €",
-                format_fr(kpi["prix_superieur_100"]["valeur"]),
-            )
-
-    with col3:
-        with st.container(border=True):
-            st.badge("Étendue", color="gray")
-            st.metric(
-                "Fourchette de prix",
-                f"{format_fr(fourchette['min'], 2)} – {format_fr(fourchette['max'], 2)} €",
-            )
-
-    col4, col5, col6 = st.columns(3)
-
-    with col4:
-        with st.container(border=True):
-            st.badge("Volume", color="blue")
-            st.metric(
-                "Moyenne de data",
-                f"{format_fr(data['valeur'], 2)} Go",
-            )
-
-    with col5:
-        with st.container(border=True):
-            st.badge("Moyenne", color="yellow")
-            st.metric(
-                "Prix moyen",
-                f"{format_fr(prix['moyenne'], 2)} €",
-                delta=f"Médiane : {format_fr(prix['mediane'], 2)} €",
-                delta_color="off",
-            )
-
-    with col6:
-        with st.container(border=True):
-            st.badge("Partenaires", color="gray")
-            st.metric(
-                "Fournisseurs",
-                format_fr(metrics["meta"]["fournisseurs"]),
-            )
-
-
+# ---------------------------------------------------------------------
 def afficher_fournisseurs(metrics: dict) -> None:
     with st.container(border=True):
         st.subheader("Répartition par fournisseur")
@@ -170,6 +123,7 @@ def afficher_fournisseurs(metrics: dict) -> None:
         st.altair_chart(graphiques.fournisseurs(metrics), width="stretch", theme=None)
 
 
+# ---------------------------------------------------------------------
 def afficher_prix(metrics: dict) -> None:
     with st.container(border=True):
         st.subheader("Distribution des prix")
@@ -180,9 +134,10 @@ def afficher_prix(metrics: dict) -> None:
         st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
+# ---------------------------------------------------------------------
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
-    with st.expander("Méthodologie et définitions", expanded=True):
+    with st.expander("Méthodologie et définitions", expanded=False):
         st.markdown(
             f"- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 "
             "fichiers fournisseurs, aucune ligne rejetée.\n"
@@ -195,16 +150,17 @@ def afficher_methodologie(metrics: dict) -> None:
         )
 
 
+# ---------------------------------------------------------------------
 def main() -> None:
     st.set_page_config(
         page_title="MyBestSim - Dashboard eSIM",
         page_icon="assets/logo.png",
         layout="wide",
-        initial_sidebar_state="collapsed",
+        initial_sidebar_state="auto",
     )
 
-    if LOGO.exists():
-        st.logo(str(LOGO), size="large")
+    if LOGO_MARQUE.exists():
+        st.logo(str(LOGO_MARQUE), size="large")
 
     try:
         metrics = charger_metriques()
@@ -217,7 +173,6 @@ def main() -> None:
         afficher_entete(metrics)
         st.divider()
         afficher_kpi(metrics)
-        afficher_kpi_natif(metrics)
         st.divider()
         gauche, droite = st.columns(2, gap="medium")
         with gauche:

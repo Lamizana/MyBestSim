@@ -82,33 +82,33 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
         "kpi": {
             "total_cartes": {
                 "valeur": total,
-                "definition": "offres valides après nettoyage",
+                "definition": "Cartes valides après nettoyage",
                 "perimetre": f"{total} lignes",
             },
             "prix_superieur_100": {
                 "valeur": cards_above_price(clean),
-                "definition": "offres dont le prix dépasse strictement 100 EUR",
+                "definition": "Offres dont le prix dépasse strictement 100 EUR",
                 "perimetre": f"{total} offres",
             },
             "fourchette_prix": {
                 "valeur": prix,
-                "definition": "prix minimum et maximum du catalogue",
+                "definition": "Prix minimum et maximum du catalogue",
                 "perimetre": f"{total} offres",
             },
             "data_gb_moyenne": {
                 "valeur": data["valeur"],
                 "nb_offres": data["nb_offres"],
-                "definition": "moyenne des data_gb des offres à volume fini",
+                "definition": "Moyenne des données de volume en Go",
                 "perimetre": f"{data['nb_offres']} offres finies, illimitées exclues",
             },
             "prix_moyen": {
                 "valeur": prix_stats,
-                "definition": "prix moyen et médian du catalogue",
+                "definition": "Prix moyen et médian du catalogue",
                 "perimetre": f"{total} offres",
             },
             "fournisseurs": {
                 "valeur": fournisseurs,
-                "definition": "nombre d'offres par fournisseur, trié décroissant",
+                "definition": "Nombre d'offres par fournisseur",
                 "perimetre": f"{len(fournisseurs)} fournisseurs",
             },
         },
@@ -116,4 +116,3 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
             "histogramme_prix": price_histogram(clean),
         },
     }
-
