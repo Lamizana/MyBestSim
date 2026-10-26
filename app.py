@@ -196,8 +196,11 @@ def _tableau_offres(offres: list) -> None:
         width="stretch",
         column_config={
             "Prix": st.column_config.NumberColumn(format="%.2f €"),
-            "Prix max": st.column_config.NumberColumn(format="%.2f €"),
-            "Offres": st.column_config.NumberColumn(format="%d"),
+            "Prix max": st.column_config.NumberColumn(
+                format="%.2f €", alignment="right"
+            ),
+            "Écart": st.column_config.TextColumn(alignment="right"),
+            "Offres": st.column_config.NumberColumn(format="%d", alignment="right"),
         },
     )
 
