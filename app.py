@@ -81,7 +81,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[0].metric(
         "Nombre total de cartes eSIM",
         format_fr(kpi["total_cartes"]["valeur"]),
-        delta=f"dont :yellow[{format_fr(illimitees)}] illimitées",
+        delta=f"dont :green[**{format_fr(illimitees)}**] illimitées",
         delta_color="off",
         help=kpi["total_cartes"]["definition"],
         border=True,
@@ -89,7 +89,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[1].metric(
         "Cartes au-delà de 100 €",
         format_fr(kpi["prix_superieur_100"]["valeur"]),
-        delta=f"soit {format_fr(part_cent, 1)} % du catalogue",
+        delta=f"soit :green[**{format_fr(part_cent, 1)}**] % du catalogue",
         delta_color="off",
         help=kpi["prix_superieur_100"]["definition"],
         border=True,
@@ -97,7 +97,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[2].metric(
         "Fourchette de prix",
         f"{format_fr(fourchette['min'], 2)} – {format_fr(fourchette['max'], 2)} €",
-        delta=f"amplitude de {format_fr(amplitude, 2)} €",
+        delta=f"*amplitude de :yellow[**{format_fr(amplitude, 2)}**] €*",
         delta_color="off",
         help=kpi["fourchette_prix"]["definition"],
         border=True,
@@ -196,9 +196,7 @@ def _tableau_offres(offres: list) -> None:
 def _podium(offres: list) -> None:
     """Trois destinations les moins chères, en cartes natives."""
     rangs = ["1er", "2e", "3e"]
-    for colonne, rang, offre in zip(
-        st.columns(3), rangs, offres[:3], strict=False
-    ):
+    for colonne, rang, offre in zip(st.columns(3), rangs, offres[:3], strict=False):
         with colonne, st.container(border=True):
             st.caption(rang)
             st.markdown(f"**{offre['destination']}**")
@@ -262,9 +260,7 @@ def afficher_offres(metrics: dict) -> None:
             st.info("Aucune offre pour ce forfait.")
         else:
             _podium(selection)
-            st.altair_chart(
-                graphiques.halteres(selection), width="stretch", theme=None
-            )
+            st.altair_chart(graphiques.halteres(selection), width="stretch", theme=None)
             tableau = (
                 [offre for offre in pays if recherche in offre["destination"].lower()]
                 if recherche
@@ -277,9 +273,7 @@ def afficher_offres(metrics: dict) -> None:
             st.info("Aucune offre régionale pour ce forfait.")
         else:
             _podium(zones)
-            st.altair_chart(
-                graphiques.halteres(zones), width="stretch", theme=None
-            )
+            st.altair_chart(graphiques.halteres(zones), width="stretch", theme=None)
             _tableau_offres(zones)
 
 
