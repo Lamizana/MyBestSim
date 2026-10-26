@@ -1,40 +1,50 @@
 # MyBestSim — dashboard eSIM
 
-Consolide les 18 CSV fournisseurs en une table unique, la nettoie et calcule les
-KPI du catalogue eSIM.
+Consolide les 18 CSV fournisseurs du catalogue eSIM, valide la donnée et
+calcule les indicateurs de prix, de volume et de couverture. Le tout est
+affiché dans une application Streamlit.
 
 Projet réalisé dans le cadre du test de recrutement MyBestSim (partie 1 :
 data & automatisation).
+
+- **Application** : à compléter après déploiement sur Streamlit Cloud
+- **Code** : [github.com/Lamizana/MyBestSim](https://github.com/Lamizana/MyBestSim)
 
 ## Arborescence
 
 ```text
 .
-├── pyproject.toml          # dépendances, ruff, pytest
-├── Makefile                # install / data / report / test / lint / clean
+├── app.py                  # application Streamlit (affichage seul)
 ├── main.py                 # raccourci vers python -m mybestsim
+├── Makefile                # install / data / report / run / test / lint / clean
+├── pyproject.toml          # dépendances, ruff, pytest
+├── requirements.txt        # dépendances lues par Streamlit Cloud
+├── .streamlit/config.toml  # thème MyBestSim (couleurs, police, arrondis)
+├── assets/
+│   ├── logo.png            # favicon
+│   └── logo_wordmark.png   # logo + nom, affiché par st.logo
 ├── mybestsim/
-│   ├── config.py           # chemins et constantes du contrat
-│   ├── etl.py              # lecture, nettoyage, écriture
-│   ├── metrics.py          # KPI
+│   ├── config.py           # chemins et colonnes attendues
+│   ├── etl.py              # lecture, validation, typage
+│   ├── metrics.py          # six KPI + série des meilleures offres
+│   ├── graphiques.py       # spécifications Altair
+│   ├── format.py           # nombres à la française
 │   ├── merge.py            # produit data/processed/
-│   ├── report.py           # affiche les KPI depuis le CSV propre
-│   ├── site.py             # rend la page depuis metrics.json
+│   ├── report.py           # affiche les KPI en console
 │   └── __main__.py         # enchaîne merge puis report
-├── templates/
-│   └── index.html.j2       # gabarit de la page
-├── data/
-│   ├── raw/                # les 18 CSV fournisseurs, jamais modifiés
-│   └── processed/          # sorties régénérées (ignorées par git)
-├── tests/                  # ingestion, nettoyage, KPI
-├── docs/                   # fonctions, plan, énoncé du test
-├── site/                   # page générée (ignorée par git)
-└── .github/workflows/ci.yml
+├── data/raw/               # 18 CSV fournisseurs, jamais modifiés
+├── data/processed/         # sorties régénérées (ignorées par git)
+├── tests/                  # 47 tests
+└── docs/
+    ├── FONCTIONS.md        # détail des fonctions
+    ├── enonce-test.pdf     # sujet du test
+    └── archive/            # plans de travail successifs
 ```
 
 ## Prérequis
 
-Python ≥ 3.11. Deux dépendances d'exécution : pandas et Jinja2.
+Python ≥ 3.11. L'application tourne sur Streamlit ; les données sont lues avec
+pandas. Aucune base de données, aucun serveur.
 
 ## Installation
 
@@ -54,28 +64,28 @@ pip install -e ".[dev]"
 
 | Commande | Équivalent | Effet |
 |---|---|---|
-| `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement et installe le paquet |
+| `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
-| `make report` | `python -m mybestsim.report` | lit le CSV propre, affiche les KPI et écrit `metrics.json` |
-| `make site` | `python -m mybestsim.site` | rend `site/index.html` depuis `metrics.json` |
-| `make test` | `python -m pytest` | exécute les 37 tests |
-| `make lint` | `ruff check .` | vérifie le style et les erreurs |
-| `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
+| `make report` | `python -m mybestsim.report` | affiche les KPI en console |
+| `make run` | `python -m streamlit run app.py` | lance l'application |
+| `make test` | `python -m pytest` | exécute les 47 tests |
+| `make lint` | `ruff check .` | vérifie le style |
+| `make clean` | `rm -rf data/processed …` | supprime les sorties |
 
-`python -m mybestsim` enchaîne `merge` puis `report`. `python main.py` fait la
-même chose : c'est un raccourci de quatre lignes.
+`python -m mybestsim` enchaîne `merge` puis `report`.
 
-`report` ne relit jamais les 18 CSV : il lit `data/processed/clean_products.csv`
-et échoue avec un message clair si `merge` n'a pas encore tourné.
+## Deux chemins, une seule source
 
-## Pipeline
+- **L'application** recalcule tout en mémoire, au démarrage, depuis
+  `data/raw/` : `load_raw` → `clean_data` → `compute_metrics`. Le résultat est
+  mis en cache par `@st.cache_data`.
+- **La ligne de commande** écrit `data/processed/` pour inspection :
+  `all_products.csv`, `clean_products.csv`. L'application ne lit jamais ces
+  fichiers.
 
-| Étape | Module | Rôle |
-|---|---|---|
-| 1 | `mybestsim.etl.load_raw` | lit les 18 CSV, contrôle les en-têtes, empile |
-| 2 | `mybestsim.etl.clean_data` | type les colonnes, valide le contrat, ajoute les colonnes dérivées |
-| 3 | `mybestsim.etl.write_csv` | écrit les sorties |
-| 4 | `mybestsim.etl.load_clean` | relit la table propre pour le reporting |
+Conséquence : un clone du dépôt suffit à lancer l'application, sans étape de
+build. Et toute modification de `etl.py` nécessite un redémarrage du serveur,
+le cache ne portant que sur le code de la fonction décorée.
 
 ## KPI
 
@@ -90,26 +100,20 @@ Les six indicateurs demandés :
 | Prix moyen | 29,30 € (médiane 20,70 €) |
 | Répartition par fournisseur | 18 fournisseurs, Airalo 722 → 4S eSIM 92 |
 
-## Fichiers produits
+S'y ajoute une série pour la section « Meilleures offres par destination » :
+**1 113 combinaisons** destination × volume × durée (54 destinations, 7 volumes,
+3 durées), avec pour chacune le fournisseur le moins cher, son prix, le prix
+maximum et le nombre d'offres comparées.
 
-| Fichier | Contenu |
-|---|---|
-| `data/processed/all_products.csv` | fusion brute : 5 056 lignes, 12 colonnes, valeurs texte inchangées |
-| `data/processed/clean_products.csv` | fusion typée : 5 056 lignes, 14 colonnes |
-| `data/processed/metrics.json` | les 6 KPI et l'histogramme des prix |
+## Écran
 
-`data/raw/` est la matière première et n'est jamais modifiée : toute règle de
-nettoyage peut être rejouée sans retélécharger les fichiers.
-
-## Page
-
-`make site` écrit `site/index.html` : une page **autonome** (CSS et données
-inclus dans le fichier, aucune requête réseau) qui reprend la palette MyBestSim
-— bleu `#007bff`, jaune `#ffcc00`, rouge `#de1414`, police Poppins avec repli
-système.
-
-Elle contient les six KPI demandés, la répartition par fournisseur,
-l'histogramme des prix et la méthodologie.
+1. **Chiffres clés** — six cartes, chacune avec une ligne de contexte.
+2. **Répartition par fournisseur** — barres horizontales triées.
+3. **Distribution des prix** — histogramme par tranche de 10 €, tranches à
+   partir de 100 € en rouge.
+4. **Meilleures offres par destination** — sélection du volume et de la durée,
+   podium des trois destinations les moins chères, graphique en haltères trié
+   par économie possible, onglets Pays / Régions, recherche, tableau triable.
 
 ## Contrat de données
 
@@ -136,73 +140,49 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 | `price` numérique et strictement positif | `clean_data` |
 | `validity_days` entier strictement positif | `clean_data` |
 | `data_gb` vide **si et seulement si** `is_unlimited` | `clean_data` |
-| en-têtes égaux aux 12 colonnes attendues (`EXPECTED_COLUMNS`) | `load_data` |
+| en-têtes égaux aux 12 colonnes attendues | `load_raw` |
 
 Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête avec
 un code de sortie non nul.
 
-## Décision : codes de zone préfixés
+## Décisions
 
-Les 18 CSV utilisent quatre pseudo-codes pour les offres régionales : `EU`
-(Europe), `AS` (Asie), `NA` (Amérique du Nord), `WW` (Monde). Trois d'entre eux
-sont aussi des codes ISO 3166-1 valides (UE, Samoa américaines, Namibie), et
-surtout **`NA` est une valeur manquante reconnue par pandas**.
-
-Concrètement, relire le fichier propre avec `pd.read_csv(...)` par défaut
-transformait les 192 lignes « Amérique du Nord » en `NaN`, et elles
-disparaissaient de tout `groupby` sans aucune erreur.
-
-Dans `clean_products.csv`, ces quatre codes sont donc préfixés :
-
-| Source | Table nettoyée |
-|---|---|
-| `EU` | `ZONE_EU` |
-| `AS` | `ZONE_AS` |
-| `NA` | `ZONE_NA` |
-| `WW` | `ZONE_WW` |
-
-Les 50 codes pays restent inchangés. `all_products.csv` conserve les codes
-d'origine, pour la traçabilité avec les fichiers fournisseurs.
-
-## Règles de lecture
-
-Pour consommer les fichiers sans perdre de données :
-
-```python
-pd.read_csv(path, dtype=str, keep_default_na=False)          # tout en texte
-pd.read_csv(path, dtype={"country_code": str}, keep_default_na=False)
-```
-
-Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
-`data_gb` vide → `NaN`, prix en flottant).
+- **Illimité ≠ 0 Go.** La moyenne de data porte sur les 4 403 offres à volume
+  fini ; les 653 offres illimitées sont exclues et signalées à part.
+- **Seuil de 100 €** appliqué strictement (`price > 100`).
+- **Pays vs régions.** 50 pays et 4 zones (Europe, Asie, Amérique du Nord,
+  Monde). Les zones ont leur propre onglet et ne sont jamais mélangées aux pays.
+- **Codes de zone préfixés** (`ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW`) :
+  `NA` serait interprété comme une valeur manquante par pandas à la relecture.
+- **Devise unique.** Tout est en euros ; une autre devise fait échouer le
+  pipeline.
 
 ## Tests
 
 ```bash
-make test          # ou : python -m pytest
+make test
 ```
 
-37 tests couvrent les invariants des données réelles (5 056 lignes, 653
-illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 6 KPI, la
-structure de `metrics.json`, le round-trip de la table propre et le rejet des
-cas invalides (valeurs vides, SKU dupliqué, prix non positif, illimité
-incohérent, durée illisible ou non positive, colonnes différentes, dossier
-vide).
+47 tests couvrent les invariants des données réelles (5 056 lignes, 653
+illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, la série des
+meilleures offres (1 113 combinaisons, minimum et départage), la structure des
+graphiques, le rendu de l'application et le rejet des cas invalides.
 
-La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` à chaque push.
-
-## Documentation
-
-- [`docs/FONCTIONS.md`](docs/FONCTIONS.md) — détail de chaque fonction :
-  signature, rôle, exemple, valeur attendue et pièges.
-- [`docs/PLAN.md`](docs/PLAN.md) — plan d'exécution du test et décisions.
-- [`docs/PLAN-STREAMLIT.md`](docs/PLAN-STREAMLIT.md) — plan de bascule de la page statique vers Streamlit.
-- [`docs/enonce-test.pdf`](docs/enonce-test.pdf) — énoncé du test.
+La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` sur Python 3.12 à
+chaque push.
 
 ## Limites connues
 
+- Jeu de données synthétique fourni pour le test : les relations observées
+  décrivent ce catalogue, pas le marché réel.
 - Aucune déduplication : les 620 doublons apparents `(provider, product_name)`
   sont de vraies variantes de prix, de réseau ou de recharge.
 - Aucune suppression de valeur extrême : le produit à 154,63 € est réel.
-- La moyenne de Go porte sur les 4 403 offres à data finie (14,49 Go) ; les
-  653 offres illimitées sont un indicateur distinct et ne valent pas 0 Go.
+- Le prix au Go n'est pas exposé : à volume constant il n'apporte rien, et il
+  n'a pas de sens pour les offres illimitées.
+
+## Documentation
+
+- [`docs/FONCTIONS.md`](docs/FONCTIONS.md) — rôles et signatures des fonctions.
+- [`docs/archive/`](docs/archive/) — plans de travail successifs (exécution,
+  apprentissage, migration Streamlit).

@@ -1,411 +1,166 @@
 # Fonctions du pipeline
 
-Documentation des fonctions présentes dans `mybestsim/`. Les valeurs indiquées
-sont celles obtenues sur les 18 fichiers fournisseurs (5 056 offres).
-
-Répartition : `config.py` (constantes), `etl.py` (lecture, nettoyage, écriture),
-`merge.py` (production des tables), `report.py` (KPI), `metrics.py` (calculs),
-`__main__.py` (enchaînement).
-
-Voir aussi le [`README.md`](../README.md) pour l'installation, l'exécution et
-le contrat de données.
+Ce document décrit les modules, leurs responsabilités et les signatures
+publiques. Il suit le flux de données : lire, valider, calculer, afficher.
 
 ## Vue d'ensemble
 
 ```text
-merge    : 18 CSV ──load_raw()──> brut (5 056 × 12) ──clean_data()──> propre (5 056 × 15)
-                                                                          │ write_csv()
-                                                                          ▼
-report   :                        data/processed/clean_products.csv ──load_clean()──> metrics.* ──> metrics.json
+data/raw/*.csv
+   │  load_raw
+   ▼
+DataFrame brut (12 colonnes texte)
+   │  clean_data  (validation bloquante + colonnes dérivées)
+   ▼
+DataFrame propre (14 colonnes typées)
+   │  compute_metrics
+   ▼
+dict { meta, kpi, series }
+   │
+   ├── app.py            → application Streamlit
+   └── report.py         → affichage console
 ```
 
-Règle commune : les fonctions de `metrics.py` ne lisent aucun fichier et
-n'écrivent rien. Elles reçoivent la table nettoyée et renvoient une valeur.
-C'est ce qui permet de les tester une par une, et de vérifier un chiffre isolé
-quand un total paraît faux.
-
-## Récapitulatif
-
-| Module | Fonction | Retour | Valeur attendue |
-|---|---|---|---|
-| `etl.py` | `load_raw(data_dir)` | `DataFrame` | 5 056 × 12 |
-| `etl.py` | `load_clean(path)` | `DataFrame` | 5 056 × 15 |
-| `etl.py` | `clean_data(raw)` | `DataFrame` | 5 056 × 15 |
-| `etl.py` | `write_csv(df, path)` | — | écrit le CSV en UTF-8 |
-| `etl.py` | `write_json(data, path)` | — | écrit le JSON (refuse `NaN`) |
-| `merge.py` | `run()` | `DataFrame` | écrit les deux tables |
-| `merge.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
-| `report.py` | `run(clean)` | — | affiche les KPI |
-| `report.py` | `main()` | `int` | 0 (succès) / 1 (échec) |
-| `__main__.py` | `main()` | `int` | enchaîne merge puis report |
-| `metrics.py` | `total_cards(df)` | `int` | 5 056 |
-| `metrics.py` | `cards_above_price(df, seuil=100.0)` | `int` | 56 |
-| `metrics.py` | `price_range(df)` | `dict` | 5,36 – 154,63 |
-| `metrics.py` | `mean_data_gb(df)` | `dict` | 14,49 sur 4 403 offres |
-| `metrics.py` | `mean_price(df)` | `dict` | 29,30 moyen / 20,70 médian |
-| `metrics.py` | `provider_distribution(df)` | `list` | 18 fournisseurs, somme 5 056 |
-| `metrics.py` | `price_histogram(df)` | `list` | 16 tranches, somme 5 056 |
-| `metrics.py` | `compute_metrics(clean)` | `dict` | `meta` + 6 KPI + `series` |
-| `site.py` | `format_fr(valeur, decimales)` | `str` | `5 056`, `14,49` |
-| `site.py` | `render(metrics)` | `str` | page HTML complète |
-| `site.py` | `main()` | `int` | écrit `site/index.html` |
+Deux commandes écrivent sur disque : `merge` (CSV intermédiaires) et
+`report` (console). L'application, elle, ne lit que `data/raw/` et recalcule
+tout en mémoire.
 
 ## `mybestsim/config.py`
 
-Chemins et constantes du contrat, sans aucune logique :
+Chemins du projet et contrat d'entrée.
 
-| Constante | Contenu |
+| Nom | Rôle |
 |---|---|
-| `PROJECT_ROOT` | racine du dépôt, calculée depuis `__file__` |
-| `DATA_DIR` | `data/raw/`, les 18 CSV fournisseurs |
+| `PROJECT_ROOT` | racine du dépôt |
+| `DATA_DIR` | `data/raw/` |
 | `PROCESSED_DIR` | `data/processed/` |
-| `RAW_OUTPUT` | `data/processed/all_products.csv` |
-| `CLEAN_OUTPUT` | `data/processed/clean_products.csv` |
+| `RAW_OUTPUT`, `CLEAN_OUTPUT` | sorties de `merge` |
 | `EXPECTED_COLUMNS` | les 12 colonnes attendues, dans l'ordre |
-| `REGION_CODES` | `{EU, AS, NA, WW}` |
-| `ZONE_PREFIX` | `"ZONE_"` |
+| `REGION_CODES` | `EU`, `AS`, `NA`, `WW` |
+| `ZONE_PREFIX` | `ZONE_` |
 
 ## `mybestsim/etl.py`
 
 ### `load_raw(data_dir: Path) -> pd.DataFrame`
 
-Lit les 18 CSV du dossier, contrôle les en-têtes, empile les tables.
-
-```python
-raw = load_raw(DATA_DIR)  # (5056, 12)
-```
-
-- Fichiers triés par nom : l'ordre de sortie est reproductible.
-- Lecture en texte brut (`dtype=str`, `keep_default_na=False`) : `NA`
-  (Amérique du Nord) reste `"NA"` et `data_gb` vide reste `""`. Sans ces
-  options, pandas transforme le code `NA` en `NaN` et perd 192 lignes.
-- `encoding="utf-8-sig"` tolère un éventuel BOM.
-- Contrôle : chaque en-tête doit être **égal** à `EXPECTED_COLUMNS`, pas
-  seulement identique aux autres fichiers.
-- Erreurs : `ValueError` si le dossier est vide ou si un fichier a un autre
-  schéma ; `OSError` si un fichier est inaccessible.
-
-### `load_clean(path: Path) -> pd.DataFrame`
-
-Relit la table nettoyée produite par `merge`, en restituant les types.
-
-```python
-clean = load_clean(CLEAN_OUTPUT)  # (5056, 15)
-```
-
-- Lecture en texte (`dtype=str`, `keep_default_na=False`) : `NA` reste `"NA"`
-  et `data_gb` vide reste `""`.
-- `validity_days` → entier ; `price`, `data_gb` → flottants
-  (`""` devient `NaN`) ; `top_up`, `is_unlimited`, `is_region` → booléens via
-  `{"True": True, "False": False}`.
-- C'est cette fonction qui permet à `report` de ne jamais relire les 18 CSV.
-- Un test de round-trip (écrire, relire) vérifie colonnes, types, absence de
-  `NaN` sur `country_code` et somme des illimitées.
+Lit tous les CSV du dossier, vérifie que les en-têtes sont identiques à
+`EXPECTED_COLUMNS`, puis empile les tables. Échoue si le dossier est vide ou
+si un fichier a un schéma différent.
 
 ### `clean_data(raw: pd.DataFrame) -> pd.DataFrame`
 
-Type les colonnes, valide le contrat, ajoute les colonnes dérivées. Ne modifie
-pas `raw` (travail sur une copie).
+Type, valide et enrichit. Ne modifie pas `raw`. Les contrôles sont bloquants :
+valeur obligatoire vide, SKU dupliqué, devise autre que EUR, réseau inconnu,
+durée non entière ou non positive, prix illisible ou non positif, `data_gb`
+vide sans « Illimité » (et inversement). Ajoute `is_unlimited` et `is_region`,
+préfixe les codes de zone en `ZONE_*`.
 
-```python
-clean = clean_data(raw)  # (5056, 14)
-```
+### `load_clean(path: Path) -> pd.DataFrame`
 
-Ordre des opérations :
+Relit `data/processed/clean_products.csv` en préservant les types. Utilisé par
+`report` pour ne pas relire les 18 CSV.
 
-1. aucune valeur vide dans les colonnes obligatoires (`data_gb` excepté) ;
-2. `sku` unique ;
-3. `currency` = `EUR` ;
-4. `network` ∈ {`4G`, `5G`} ;
-5. `validity_days` converti en entier strictement positif ;
-6. `price` numérique et strictement positif ;
-7. `top_up` ∈ {`oui`, `non`}, converti en booléen ;
-8. `is_unlimited` = `data_display == "Illimité"` ;
-9. cohérence : `data_gb` vide **si et seulement si** `is_unlimited` ;
-10. `is_region` = code dans {`EU`, `AS`, `NA`, `WW`} ;
-11. préfixage des codes de zone en `ZONE_EU`, `ZONE_AS`, `ZONE_NA`, `ZONE_WW`.
+### `write_csv(df, path)`
 
-Toute violation lève un `ValueError` citant les SKU ou les valeurs fautives.
-Aucune correction silencieuse.
-
-### `write_csv(df: pd.DataFrame, path: Path) -> None`
-
-Écrit un DataFrame en CSV : UTF-8, en-tête inclus, sans colonne d'index.
-
-```python
-write_csv(clean, CLEAN_OUTPUT)
-```
-
-- Crée le dossier parent si nécessaire (`mkdir(parents=True, exist_ok=True)`).
-- `index=False` est indispensable : sans lui, pandas ajoute une colonne d'index
-  sans nom et le fichier passe de 15 à 16 colonnes.
-
-### `write_json(data: dict, path: Path) -> None`
-
-Écrit un dictionnaire en JSON lisible et **strict**.
-
-```python
-write_json(compute_metrics(clean), METRICS_OUTPUT)
-```
-
-- `indent=2` et `ensure_ascii=False` : fichier diff-able, accents lisibles.
-- `allow_nan=False` : `json.dumps` accepterait `NaN` par défaut, ce qui produit
-  un JSON invalide pour les parseurs stricts. Ici, une valeur manquante lève
-  une erreur au lieu de corrompre le fichier.
-- Pas d'horodatage : deux exécutions produisent le même octet pour octet.
+Écrit un CSV UTF-8, en-tête inclus, sans index.
 
 ## `mybestsim/merge.py`
 
-### `run() -> pd.DataFrame`
-
-`load_raw` → `clean_data` → `write_csv` des deux tables. Renvoie la table
-nettoyée.
-
-```python
-clean = merge.run()
-```
-
-### `main() -> int`
-
-Point d'entrée de `python -m mybestsim.merge` : exécute `run()` et affiche le
-nombre de lignes et les chemins écrits.
-
-- `0` en cas de succès, `1` en cas d'échec.
-- Les écritures n'ont lieu qu'après un nettoyage réussi : pas de fichier à
-  moitié produit.
-- `UnicodeDecodeError` est intercepté **avant** `ValueError` (il en hérite),
-  puis `OSError`, puis `ValueError`, pour un message adapté à chaque cause.
-
-## `mybestsim/report.py`
-
-### `run(clean) -> None`
-
-Affiche les KPI calculés sur la table nettoyée : total, produits > 100 €,
-fourchette, moyenne de Go, prix moyen et médian, répartition par fournisseur.
-Écrit enfin `data/processed/metrics.json`.
-
-```python
-report.run(clean)
-```
-
-### `main() -> int`
-
-Point d'entrée de `python -m mybestsim.report` : lit `data/processed/
-clean_products.csv` via `load_clean`, puis appelle `run()`.
-
-- Si le fichier est absent, message explicite : « lance d'abord
-  `python -m mybestsim.merge` ».
-- Ne relit jamais les 18 CSV sources.
-
-## `mybestsim/__main__.py`
-
-### `main() -> int`
-
-Point d'entrée de `python -m mybestsim` : appelle `merge.main()`, puis
-`report.main()` si le premier a réussi. S'arrête au premier échec.
+`run()` enchaîne `load_raw`, `clean_data` et l'écriture des deux tables.
+`main()` expose la commande `python -m mybestsim.merge`.
 
 ## `mybestsim/metrics.py`
 
-### `total_cards(df) -> int`
+### KPI
 
-Nombre total d'offres. Une ligne = un produit eSIM.
+| Fonction | Retour |
+|---|---|
+| `total_cards(df)` | nombre de lignes |
+| `cards_above_price(df, seuil=100.0)` | offres dont le prix dépasse strictement le seuil |
+| `price_range(df)` | `{"min", "max"}` |
+| `mean_data_gb(df)` | `{"valeur", "nb_offres"}`, illimitées exclues |
+| `mean_price(df)` | `{"moyenne", "mediane"}` |
+| `provider_distribution(df)` | liste `{provider, cartes, part_pct}` triée |
 
-```python
-total_cards(clean)  # 5056
-```
+### Séries
 
-Sert de référence à tous les autres KPI : si ce nombre est faux, tout le reste
-l'est.
+**`price_histogram(df, largeur=10, maximum=160) -> list`** — 16 tranches de
+10 €, y compris les vides, somme = 5 056.
 
-### `cards_above_price(df, seuil=100.0) -> int`
+**`meilleures_offres(df) -> list`** — pour chaque destination, volume et durée,
+l'offre la moins chère. Une entrée contient `code`, `destination`, `zone`,
+`volume`, `data_gb`, `validity_days`, `provider`, `prix`, `prix_max`, `offres`.
+Départage déterministe : prix, puis nom du fournisseur. Les zones sont
+conservées et signalées par `zone=True`. 1 113 combinaisons réelles.
 
-Nombre d'offres dont le prix dépasse **strictement** `seuil`.
+**`compute_metrics(clean) -> dict`** — assemble `meta`, `kpi` (six indicateurs
+avec `definition` et `perimetre`) et `series` (`histogramme_prix`,
+`meilleures_offres`).
 
-```python
-cards_above_price(clean)  # 56
-cards_above_price(clean, 50.0)  # même fonction avec un autre seuil
-```
+## `mybestsim/graphiques.py`
 
-- `>` et non `>=` : aucun prix ne vaut exactement 100 € aujourd'hui, mais la
-  règle est écrite plutôt que dépendante des données.
-- `int(...)` autour de `sum()` : `sum()` renvoie un entier numpy, que
-  `json.dump` ne sait pas sérialiser.
-- Ne jamais arrondir les prix avant la comparaison : `100,49` arrondi à l'euro
-  deviendrait `100` et sortirait des 56.
+Spécifications Altair, sans Streamlit ni HTML. `_finaliser` applique la charte
+commune : fond transparent, police Poppins, axes discrets.
 
-### `price_range(df) -> dict`
+| Fonction | Rendu |
+|---|---|
+| `fournisseurs(metrics)` | barres horizontales triées, valeur en bout de barre |
+| `prix(metrics)` | histogramme par tranche, tranches ≥ 100 € en rouge, valeurs annotées |
+| `halteres(offres)` | segment du prix minimum au prix maximum par destination, trié par économie |
 
-Bornes réelles des prix du catalogue.
+## `mybestsim/format.py`
 
-```python
-price_range(clean)  # {'min': 5.36, 'max': 154.63}
-```
+`format_fr(valeur, decimales=0)` — nombres à la française : `5 056`, `14,49`.
 
-- Minimum et maximum réels, pas des percentiles : le KPI demandé est l'étendue.
-- `float(...)` : même raison que `int(...)`, les types numpy ne passent pas en
-  JSON.
+## `mybestsim/report.py`
 
-### `mean_data_gb(df) -> dict`
+`run(clean)` affiche les six KPI en console. `main()` expose
+`python -m mybestsim.report` et échoue avec un message clair si la table
+propre est absente.
 
-Moyenne des `data_gb` sur les offres à volume fini, avec le dénominateur.
+## `mybestsim/__main__.py`
 
-```python
-mean_data_gb(clean)  # {'valeur': 14.49, 'nb_offres': 4403}
-```
+Enchaîne `merge` puis `report`. C'est la commande `python -m mybestsim`.
 
-- `~df["is_unlimited"]` sélectionne les offres finies ; les 653 illimitées sont
-  exclues, jamais comptées comme 0 Go (`fillna(0).mean()` donnerait 12,62 Go,
-  chiffre faux).
-- `float(...)` et `round(..., 2)` pour un JSON lisible ; l'arrondi n'existe
-  qu'à la sortie.
-- `count()` compte les valeurs non manquantes : c'est le dénominateur réel de
-  la moyenne.
+## `app.py`
 
-### `mean_price(df) -> dict`
+Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
-Prix moyen et médian du catalogue, en euros.
-
-```python
-mean_price(clean)  # {'moyenne': 29.3, 'mediane': 20.7}
-```
-
-- Aucune exclusion : les 5 056 offres ont un prix valide, contrairement à la
-  moyenne de Go qui porte sur 4 403 offres.
-- Les deux indicateurs sont affichés ensemble : les prix vont de 5,36 à
-  154,63 €, donc la moyenne est tirée vers le haut et la médiane (20,70 €)
-  décrit mieux l'offre « du milieu ».
-
-### `provider_distribution(df) -> list`
-
-Nombre d'offres par fournisseur, trié décroissant, avec la part en pourcentage.
-
-```python
-provider_distribution(clean)[0]
-# {'provider': 'Airalo', 'cartes': 722, 'part_pct': 14.3}
-provider_distribution(clean)[-1]
-# {'provider': '4S eSIM', 'cartes': 92, 'part_pct': 1.8}
-```
-
-- `groupby("provider").size()` compte par fournisseur, trié par nom ;
-  `sort_values(ascending=False, kind="stable")` classe par nombre décroissant
-  en conservant l'ordre alphabétique pour les ex æquo. Le résultat est donc
-  reproductible, contrairement à l'ordre interne de `value_counts`.
-- `part_pct` est calculé ici, une fois, pour que le gabarit ou le graphique
-  n'ait pas à refaire la division.
-- Le retour est une liste de dictionnaires, donc directement sérialisable en
-  JSON : `metrics.py` ne dépend d'aucune bibliothèque de visualisation.
-- Invariant de réconciliation : la somme des `cartes` doit valoir 5 056 et la
-  somme des `part_pct` 100 % (à l'arrondi près).
-
-### `price_histogram(df, largeur=10, maximum=160) -> list`
-
-Répartition des prix par tranche, pour l'histogramme de la page.
-
-```python
-price_histogram(clean)[:2]
-# [{'min': 0, 'max': 10, 'offres': 887}, {'min': 10, 'max': 20, 'offres': 1605}]
-```
-
-- 16 tranches de 10 €, de 0 à 160 €, **y compris les vides** : l'axe du
-  graphique reste stable même si une tranche se vide.
-- La somme des `offres` vaut 5 056.
-
-### `compute_metrics(clean) -> dict`
-
-Assemble les KPI et leurs définitions dans un dictionnaire sérialisable.
-
-```python
-compute_metrics(clean)["kpi"]["total_cartes"]["valeur"]  # 5056
-```
-
-Structure :
-
-```json
-{
-  "meta": { "lignes": 5056, "fournisseurs": 18, "devise": "EUR" },
-  "kpi": {
-    "total_cartes": { "valeur": 5056, "definition": "...", "perimetre": "..." },
-    "prix_superieur_100": { "valeur": 56, "...": "..." },
-    "fourchette_prix": { "valeur": { "min": 5.36, "max": 154.63 }, "...": "..." },
-    "data_gb_moyenne": { "valeur": 14.49, "nb_offres": 4403, "...": "..." },
-    "prix_moyen": { "valeur": { "moyenne": 29.3, "mediane": 20.7 }, "...": "..." },
-    "fournisseurs": { "valeur": [ { "provider": "Airalo", "cartes": 722, "part_pct": 14.3 } ], "...": "..." }
-  },
-  "series": {
-    "histogramme_prix": [ { "min": 0, "max": 10, "offres": 887 } ]
-  }
-}
-```
-
-- Chaque KPI porte `definition` et `perimetre` : la page n'a pas à réinventer le
-  dénominateur, et le lecteur voit la règle à côté du chiffre.
-- Les valeurs composées (fourchette, moyenne + médiane, répartition) gardent
-  leur forme de dictionnaire ou de liste.
-- Aucune valeur numpy : tout est converti en types Python pour `json.dumps`.
-
-## `mybestsim/site.py`
-
-### `format_fr(valeur, decimales=0) -> str`
-
-Filtre Jinja qui formate les nombres à la française.
-
-```python
-format_fr(5056)      # '5 056'
-format_fr(14.49, 2)  # '14,49'
-```
-
-### `load_metrics(path=METRICS_OUTPUT) -> dict`
-
-Lit `data/processed/metrics.json`. Aucun calcul : la page ne fait que rendre.
-
-### `build_histogram_svg(tranches) -> str`
-
-Produit l'histogramme des prix en **SVG inline**, à partir de la série de
-`metrics.json`.
-
-- Aucune bibliothèque de graphique, aucune requête réseau.
-- Chaque barre porte un `<title>` : survol lisible, et texte accessible.
-- `viewBox` fixe + `width: 100%` en CSS : le graphique s'adapte au mobile.
-
-### `render(metrics) -> str`
-
-Rend `templates/index.html.j2` avec Jinja2, en injectant les KPI, la série de
-prix et les fournisseurs.
-
-### `main() -> int`
-
-Point d'entrée de `python -m mybestsim.site` : lit le JSON, rend, écrit
-`site/index.html`. Échoue avec un message clair si `metrics.json` est absent.
+| Fonction | Rôle |
+|---|---|
+| `charger_metriques()` | `load_raw` → `clean_data` → `compute_metrics`, mise en cache |
+| `afficher_entete(metrics)` | titre, contexte, carte de périmètre |
+| `afficher_kpi(metrics)` | six cartes, chacune avec une ligne de contexte |
+| `afficher_fournisseurs(metrics)` | carte + barres |
+| `afficher_prix(metrics)` | carte + histogramme |
+| `_podium(offres)` | trois destinations les moins chères |
+| `_tableau_offres(offres)` | tableau triable ; message si la sélection est vide |
+| `afficher_offres(metrics)` | volume, durée, onglets Pays/Régions, recherche |
+| `afficher_methodologie(metrics)` | définitions et limites |
+| `main()` | assemble la page |
 
 ## Conventions
 
 | Sujet | Choix |
 |---|---|
-| Noms de fonctions et de modules | anglais (`load_raw`, `clean_data`, `mean_data_gb`) |
-| Variables locales et docstrings | français (`fichiers`, `colonnes`, `valeurs`) |
-| Types de retour | Python natifs (`int`, `float`, `dict`) pour rester sérialisables |
-| Arrondi | à la sortie seulement, jamais avant un seuil ou une comparaison |
-| Illimité | booléen `is_unlimited` + `data_gb` manquant, jamais `0` |
-| Déterminisme | pas d'horodatage, fichiers triés, sorties comparables par `md5sum` |
-| Style de retour | calcul directement dans le `return` ; variable intermédiaire seulement si la valeur sert deux fois |
-
-## À venir
-
-Rien : les trois commandes (`merge`, `report`, `site`) sont en place.
+| Noms de fonctions et de modules | anglais |
+| Variables locales et docstrings | français |
+| Types de retour | Python natifs, sérialisables |
+| Arrondi | à la sortie seulement |
+| Illimité | `is_unlimited` + `data_gb` manquant, jamais `0` |
+| Déterminisme | pas d'horodatage, tris stables |
+| Streamlit | aucun calcul dans `app.py` |
 
 ## Tests
 
-```bash
-make test        # ou : python -m pytest
-```
-
-37 tests, répartis en quatre fichiers :
+47 tests, quatre fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
-  d'un en-tête différent, round-trip de la table propre ;
-- `tests/test_clean.py` — invariants du nettoyage, valeurs vides et cas de rejet ;
-- `tests/test_metrics.py` — les 6 KPI, les invariants de la répartition
-  (somme des cartes = 5 056, parts ≈ 100 %, tri décroissant), la structure de
-  `metrics.json` et le refus de `NaN` ;
-- `tests/test_site.py` — présence des chiffres, six cartes KPI, un graphique,
-  page autonome et rendu déterministe.
+  d'un en-tête différent, aller-retour de la table propre ;
+- `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
+- `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
+  de `compute_metrics` ;
+- `tests/test_graphiques.py` — structure des trois graphiques Altair ;
+- `tests/test_app.py` — rendu, six métriques, méthodologie, recherche vide.
+
+La CI exécute `ruff` et `pytest` sur Python 3.12 à chaque push.
