@@ -5,6 +5,8 @@ secondaryBackgroundColor = "#f7f8fa"
 textColor = "#1d2939"
 borderColor = "#e4e7ec"
 linkColor = "#007bff"
+blueColor = "#007bff"
+blueTextColor = "#0062cc"
 baseRadius = "small"
 baseFontSize = 16
 font = "Poppins:https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
