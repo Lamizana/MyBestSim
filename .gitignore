@@ -8,12 +8,8 @@ venv/
 .ruff_cache/
 
 # Données dérivées et artefacts de build
-*.duckdb
-*.duckdb.wal
 *.egg-info/
-build/
 data/processed/
-_legacy/
 
 # Notes personnelles
 docs/NOTES.md

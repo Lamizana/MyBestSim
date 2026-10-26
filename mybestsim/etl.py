@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -113,12 +112,3 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
 def write_csv(df: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, index=False, encoding="utf-8")
-
-
-def write_json(data: dict, path: Path) -> None:
-    """Écrit un dictionnaire en JSON lisible et strict (refuse NaN)."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
-        encoding="utf-8",
-    )

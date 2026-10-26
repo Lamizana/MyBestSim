@@ -1,11 +1,8 @@
-import json
-import tempfile
 import unittest
-from pathlib import Path
 
 from mybestsim import metrics
 from mybestsim.config import DATA_DIR
-from mybestsim.etl import clean_data, load_raw, write_json
+from mybestsim.etl import clean_data, load_raw
 
 
 class MetricsTest(unittest.TestCase):
@@ -86,25 +83,6 @@ class MetricsTest(unittest.TestCase):
             sum(ligne["cartes"] for ligne in kpi["fournisseurs"]["valeur"]),
             5056,
         )
-
-    def test_write_json_round_trip(self):
-        rapport = metrics.compute_metrics(self.clean)
-
-        with tempfile.TemporaryDirectory() as dossier:
-            chemin = Path(dossier) / "metrics.json"
-            write_json(rapport, chemin)
-            premier = chemin.read_bytes()
-            write_json(rapport, chemin)
-            second = chemin.read_bytes()
-
-        self.assertEqual(premier, second)
-        self.assertEqual(json.loads(premier), rapport)
-
-    def test_write_json_refuse_nan(self):
-        with tempfile.TemporaryDirectory() as dossier:
-            chemin = Path(dossier) / "metrics.json"
-            with self.assertRaises(ValueError):
-                write_json({"valeur": float("nan")}, chemin)
 
     def test_price_histogram(self):
         histogramme = metrics.price_histogram(self.clean)

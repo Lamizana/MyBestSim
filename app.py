@@ -38,7 +38,6 @@ def afficher_entete(metrics: dict) -> None:
     with gauche:
         st.caption("Dashboard comparatif fournisseurs **eSIM** - *Test de recrutement*")
 
-        # st.title("**:blue[MyBest]:red[Sim]**")
 
         st.title(
             f"{format_fr(meta['lignes'])} :blue[offres comparées], "
@@ -75,13 +74,12 @@ def afficher_kpi(metrics: dict) -> None:
     tete = kpi["fournisseurs"]["valeur"][0]
 
     st.subheader(":blue[Les chiffres clés]")
-    # st.markdown(f"## :blue[Les chiffres clés]")
 
     premiere = st.columns(3)
     premiere[0].metric(
         "Nombre total de cartes eSIM",
         format_fr(kpi["total_cartes"]["valeur"]),
-        delta=f"dont :green[**{format_fr(illimitees)}**] illimitées",
+        delta=f"*dont :yellow[**{format_fr(illimitees)}**] illimitées*",
         delta_color="off",
         help=kpi["total_cartes"]["definition"],
         border=True,
@@ -89,7 +87,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[1].metric(
         "Cartes au-delà de 100 €",
         format_fr(kpi["prix_superieur_100"]["valeur"]),
-        delta=f"soit :green[**{format_fr(part_cent, 1)}**] % du catalogue",
+        delta=f"*soit :yellow[**{format_fr(part_cent, 1)}**] % du catalogue*",
         delta_color="off",
         help=kpi["prix_superieur_100"]["definition"],
         border=True,
@@ -107,7 +105,7 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[0].metric(
         "Moyenne de data",
         f"{format_fr(data['valeur'], 2)} Go",
-        delta=f"sur {format_fr(data['nb_offres'])} offres finies",
+        delta=f"*sur :yellow[**{format_fr(data['nb_offres'])}**] offres finies*",
         delta_color="off",
         help=f"{data['definition']} : {data['perimetre']}",
         border=True,
@@ -116,7 +114,7 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[1].metric(
         "Prix moyen",
         f"{format_fr(prix['moyenne'], 2)} €",
-        delta=f"Médiane : {format_fr(prix['mediane'], 2)} €",
+        delta=f"*Médiane : {format_fr(prix['mediane'], 2)} €*",
         delta_color="off",  # Affiche le texte en gris sans flèche verte/rouge
         help=kpi["prix_moyen"]["definition"],
         border=True,
@@ -124,7 +122,7 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[2].metric(
         "Fournisseurs",
         format_fr(metrics["meta"]["fournisseurs"]),
-        delta=f"{tete['provider']} en tête ({format_fr(tete['cartes'])})",
+        delta=f"*{tete['provider']} en tête ({format_fr(tete['cartes'])})*",
         delta_color="off",
         help=kpi["fournisseurs"]["definition"],
         border=True,
@@ -134,8 +132,6 @@ def afficher_kpi(metrics: dict) -> None:
 # ---------------------------------------------------------------------
 def afficher_fournisseurs(metrics: dict) -> None:
     with st.container(border=True):
-        # st.markdown(f"## :blue[Répartition par fournisseur]")
-
         st.subheader(":blue[Répartition par fournisseur]")
         st.caption("Nombre d'offres par fournisseur, trié décroissant.")
         st.altair_chart(graphiques.fournisseurs(metrics), width="stretch", theme=None)
@@ -144,7 +140,6 @@ def afficher_fournisseurs(metrics: dict) -> None:
 # ---------------------------------------------------------------------
 def afficher_prix(metrics: dict) -> None:
     with st.container(border=True):
-        # st.markdown(f"## :blue[Distribution des prix]")
 
         st.subheader(":blue[Distribution des prix]")
         st.caption(
