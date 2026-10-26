@@ -38,7 +38,6 @@ def afficher_entete(metrics: dict) -> None:
     with gauche:
         st.caption("Dashboard comparatif fournisseurs **eSIM** - *Test de recrutement*")
 
-
         st.title(
             f"{format_fr(meta['lignes'])} :blue[offres comparées], "
             f"{meta['fournisseurs']} :red[fournisseurs]"
@@ -114,7 +113,7 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[1].metric(
         "Prix moyen",
         f"{format_fr(prix['moyenne'], 2)} €",
-        delta=f"*Médiane : {format_fr(prix['mediane'], 2)} €*",
+        delta=f"*Prix médian : :yellow[**{format_fr(prix['mediane'], 2)}**] €*",
         delta_color="off",  # Affiche le texte en gris sans flèche verte/rouge
         help=kpi["prix_moyen"]["definition"],
         border=True,
@@ -122,7 +121,10 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[2].metric(
         "Fournisseurs",
         format_fr(metrics["meta"]["fournisseurs"]),
-        delta=f"*{tete['provider']} en tête ({format_fr(tete['cartes'])})*",
+        delta=(
+            f"*:yellow[**{tete['provider']}**] en tête : "
+            f":yellow[**{format_fr(tete['cartes'])}**] offres*"
+        ),
         delta_color="off",
         help=kpi["fournisseurs"]["definition"],
         border=True,
@@ -149,7 +151,6 @@ def afficher_prix(metrics: dict) -> None:
         st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
-# ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 def _tableau_offres(offres: list) -> None:
     """Affiche le tableau triable des meilleures offres."""
