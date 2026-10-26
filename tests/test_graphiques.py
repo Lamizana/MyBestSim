@@ -26,6 +26,12 @@ class GraphiquesTest(unittest.TestCase):
         self.assertEqual(encodage["x"]["scale"]["paddingInner"], 0.04)
         self.assertEqual(encodage["x"]["axis"]["labelOverlap"], "greedy")
 
+    def test_halteres(self):
+        offres = self.metrics["series"]["meilleures_offres"][:10]
+        spec = graphiques.halteres(offres).to_dict()
+        self.assertEqual(len(spec["layer"]), 4)
+        self.assertEqual(spec["height"], 380)
+
     def test_police_commune(self):
         spec = graphiques.prix(self.metrics).to_dict()
         self.assertEqual(spec["config"]["font"], "Poppins, sans-serif")

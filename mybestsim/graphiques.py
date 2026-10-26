@@ -84,6 +84,56 @@ def fournisseurs(metrics: dict) -> alt.Chart:
 
 
 # ---------------------------------------------------------------------
+def halteres(offres: list) -> alt.Chart:
+    """Graphique en haltères : prix le moins cher et le plus cher par pays.
+
+    La longueur du segment représente l'économie possible en choisissant le
+    bon fournisseur ; la position donne le niveau de prix.
+    """
+    donnees = pd.DataFrame(offres)
+    donnees["economie"] = donnees["prix_max"] - donnees["prix"]
+    donnees = donnees.sort_values("economie", ascending=False, kind="stable")
+    donnees["gain"] = [
+        f"+{valeur:.2f} €".replace(".", ",") for valeur in donnees["economie"]
+    ]
+    maximum = float(donnees["prix_max"].max()) * 1.18
+
+    base = alt.Chart(donnees).encode(
+        y=alt.Y(
+            "destination:N",
+            sort=None,
+            title=None,
+            axis=alt.Axis(
+                labelFontSize=12, labelColor=TEXTE, ticks=False, domain=False
+            ),
+        ),
+        x=alt.X(
+            "prix:Q",
+            title="Prix (€)",
+            scale=alt.Scale(domain=[0, maximum]),
+            axis=alt.Axis(tickCount=5, gridColor="#eef0f3"),
+        ),
+    )
+    segments = base.mark_rule(color=BORD, strokeWidth=3).encode(x2="prix_max:Q")
+    minimum = base.mark_circle(size=90, color=BLEU).encode(
+        tooltip=[
+            alt.Tooltip("destination:N", title="Destination"),
+            alt.Tooltip("provider:N", title="Fournisseur le moins cher"),
+            alt.Tooltip("prix:Q", title="Prix min", format=".2f"),
+            alt.Tooltip("prix_max:Q", title="Prix max", format=".2f"),
+            alt.Tooltip("offres:Q", title="Offres comparées"),
+        ]
+    )
+    maximum_prix = base.mark_circle(size=70, color=ROUGE).encode(x="prix_max:Q")
+    gains = base.mark_text(align="left", dx=8, color=MUTED, fontSize=11).encode(
+        x="prix_max:Q", text="gain:N"
+    )
+    hauteur = max(200, 38 * len(donnees))
+    return _finaliser(
+        (segments + minimum + maximum_prix + gains).properties(height=hauteur)
+    )
+
+
 def prix(metrics: dict) -> alt.Chart:
     """Histogramme des prix par tranche de 10 €, avec seuil à 100 €."""
     donnees = pd.DataFrame(metrics["series"]["histogramme_prix"])

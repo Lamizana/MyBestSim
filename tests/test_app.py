@@ -36,6 +36,12 @@ class AppTestSuite(unittest.TestCase):
         texte = "\n".join(element.value for element in self.page.markdown)
         self.assertIn("illimitées sont exclues", texte)
 
+    def test_recherche_sans_resultat(self):
+        page = AppTest.from_file(str(APP), default_timeout=30).run()
+        page.text_input[0].set_value("zzz")
+        page.run()
+        self.assertFalse(page.exception)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -114,5 +114,44 @@ class MetricsTest(unittest.TestCase):
         self.assertEqual(histogramme[-1], {"min": 150, "max": 160, "offres": 3})
 
 
+class MeilleuresOffresTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.clean = clean_data(load_raw(DATA_DIR))
+        cls.offres = metrics.meilleures_offres(cls.clean)
+
+    def test_nombre_de_combinaisons(self):
+        self.assertEqual(len(self.offres), 1113)
+
+    def test_pays_et_zones(self):
+        self.assertEqual(len({o["code"] for o in self.offres if not o["zone"]}), 50)
+        self.assertEqual(len({o["code"] for o in self.offres if o["zone"]}), 4)
+
+    def test_volumes_et_durees(self):
+        self.assertEqual(
+            {o["volume"] for o in self.offres},
+            {"1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"},
+        )
+        self.assertEqual({o["validity_days"] for o in self.offres}, {7, 15, 30})
+
+    def test_prix_coherents(self):
+        for offre in self.offres:
+            self.assertLessEqual(offre["prix"], offre["prix_max"])
+            self.assertGreaterEqual(offre["offres"], 1)
+
+    def test_espagne_dix_go_quinze_jours(self):
+        offre = next(
+            o
+            for o in self.offres
+            if o["code"] == "ES" and o["volume"] == "10 Go" and o["validity_days"] == 15
+        )
+        self.assertEqual(offre["provider"], "Ubigi")
+        self.assertEqual(offre["prix"], 18.52)
+        self.assertEqual(offre["offres"], 4)
+
+    def test_deterministe(self):
+        self.assertEqual(metrics.meilleures_offres(self.clean), self.offres)
+
+
 if __name__ == "__main__":
     unittest.main()

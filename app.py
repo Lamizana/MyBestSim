@@ -6,6 +6,7 @@ Tout l'affichage passe par des composants Streamlit natifs, sans CSS ni HTML.
 
 from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 
 from mybestsim import graphiques
@@ -16,6 +17,8 @@ from mybestsim.metrics import compute_metrics
 
 LOGO = Path(__file__).resolve().parent / "assets" / "logo.png"
 LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
+
+VOLUMES = ["1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"]
 
 
 # ---------------------------------------------------------------------
@@ -48,7 +51,8 @@ def afficher_entete(metrics: dict) -> None:
             "illimitées sont exclues de la moyenne de data."
         )
         st.caption(
-            "Six indicateurs clés, puis le détail par fournisseur et par tranche de prix."
+            "Six indicateurs clés, le détail par fournisseur et par tranche de "
+            "prix, puis les meilleures offres par destination."
         )
 
     with droite:
@@ -151,9 +155,137 @@ def afficher_prix(metrics: dict) -> None:
 
 
 # ---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+def _tableau_offres(offres: list) -> None:
+    """Affiche le tableau triable des meilleures offres."""
+    if not offres:
+        st.info("Aucune offre ne correspond à cette recherche.")
+        return
+
+    donnees = pd.DataFrame(
+        offres,
+        columns=["destination", "provider", "prix", "prix_max", "offres"],
+    )
+    donnees["ecart"] = [
+        f"+{(ligne.prix_max - ligne.prix) / ligne.prix * 100:.1f} %"
+        for ligne in donnees.itertuples()
+    ]
+    donnees = donnees.rename(
+        columns={
+            "destination": "Destination",
+            "provider": "Fournisseur",
+            "prix": "Prix",
+            "prix_max": "Prix max",
+            "ecart": "Écart",
+            "offres": "Offres",
+        }
+    )
+
+    st.dataframe(
+        donnees,
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "Prix": st.column_config.NumberColumn(format="%.2f €"),
+            "Prix max": st.column_config.NumberColumn(format="%.2f €"),
+            "Offres": st.column_config.NumberColumn(format="%d"),
+        },
+    )
+
+
+def _podium(offres: list) -> None:
+    """Trois destinations les moins chères, en cartes natives."""
+    rangs = ["1er", "2e", "3e"]
+    for colonne, rang, offre in zip(
+        st.columns(3), rangs, offres[:3], strict=False
+    ):
+        with colonne, st.container(border=True):
+            st.caption(rang)
+            st.markdown(f"**{offre['destination']}**")
+            st.markdown(f"### {format_fr(offre['prix'], 2)} €")
+            st.caption(offre["provider"])
+
+
+def afficher_offres(metrics: dict) -> None:
+    offres = metrics["series"]["meilleures_offres"]
+
+    st.subheader("Meilleures offres par destination")
+    st.caption(
+        "Prix le plus bas par destination et écart avec l'offre la plus chère, "
+        "pour un forfait donné. Le tableau est triable."
+    )
+
+    gauche, droite = st.columns(2)
+    volume = gauche.selectbox("Volume", VOLUMES, index=3)
+    duree = (
+        droite.segmented_control(
+            "Durée",
+            options=[7, 15, 30],
+            default=15,
+            format_func=lambda jours: f"{jours} jours",
+        )
+        or 15
+    )
+
+    filtre = [
+        offre
+        for offre in offres
+        if offre["volume"] == volume and offre["validity_days"] == duree
+    ]
+    pays = sorted(
+        (offre for offre in filtre if not offre["zone"]),
+        key=lambda offre: (offre["prix"], offre["destination"]),
+    )
+    zones = sorted(
+        (offre for offre in filtre if offre["zone"]),
+        key=lambda offre: (offre["prix"], offre["destination"]),
+    )
+
+    onglet_pays, onglet_regions = st.tabs(["Pays", "Régions"])
+
+    with onglet_pays:
+        recherche = (
+            st.text_input("Rechercher un pays", placeholder="Espagne, Japon…")
+            .strip()
+            .lower()
+        )
+
+        selection = list(pays[:10])
+        if recherche:
+            for offre in pays:
+                if recherche in offre["destination"].lower():
+                    if offre not in selection:
+                        selection.append(offre)
+                    break
+
+        if not selection:
+            st.info("Aucune offre pour ce forfait.")
+        else:
+            _podium(selection)
+            st.altair_chart(
+                graphiques.halteres(selection), width="stretch", theme=None
+            )
+            tableau = (
+                [offre for offre in pays if recherche in offre["destination"].lower()]
+                if recherche
+                else pays
+            )
+            _tableau_offres(tableau)
+
+    with onglet_regions:
+        if not zones:
+            st.info("Aucune offre régionale pour ce forfait.")
+        else:
+            _podium(zones)
+            st.altair_chart(
+                graphiques.halteres(zones), width="stretch", theme=None
+            )
+            _tableau_offres(zones)
+
+
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
-    with st.expander("Méthodologie et définitions", expanded=False):
+    with st.expander(":blue[**Méthodologie et définitions**]", expanded=False):
         st.markdown(
             f"- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 "
             "fichiers fournisseurs, aucune ligne rejetée.\n"
@@ -196,9 +328,11 @@ def main() -> None:
         with droite:
             afficher_prix(metrics)
         st.divider()
+        afficher_offres(metrics)
+        st.divider()
         afficher_methodologie(metrics)
         st.caption(
-            "Réalisé dans le cadre du test de recrutement MyBestSim — "
+            "Réalisé dans le cadre du test de recrutement MyBestSim - "
             "[code source](https://github.com/Lamizana/MyBestSim)."
         )
 

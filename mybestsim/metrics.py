@@ -65,6 +65,49 @@ def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int = 160) -> 
     ]
 
 
+def meilleures_offres(df: pd.DataFrame) -> list:
+    """Offre la moins chère par destination, volume et durée.
+
+    Les zones (Europe, Asie, Amérique du Nord, Monde) sont conservées et
+    signalées par ``zone`` : elles ne doivent pas être mélangées aux pays dans
+    une même comparaison.
+    """
+    cles = [
+        "country_code",
+        "country_name",
+        "is_region",
+        "data_display",
+        "validity_days",
+    ]
+    trie = df.sort_values(cles + ["price", "provider"], kind="stable")
+    meilleures = trie.groupby(cles, as_index=False, dropna=False).first()
+    bornes = df.groupby(cles, as_index=False, dropna=False).agg(
+        prix_max=("price", "max"),
+        offres=("sku", "size"),
+    )
+    fusion = meilleures.merge(bornes, on=cles)
+    fusion = fusion.sort_values(
+        ["is_region", "country_name", "validity_days", "data_display"],
+        kind="stable",
+    )
+
+    return [
+        {
+            "code": ligne.country_code,
+            "destination": ligne.country_name,
+            "zone": bool(ligne.is_region),
+            "volume": ligne.data_display,
+            "data_gb": None if pd.isna(ligne.data_gb) else float(ligne.data_gb),
+            "validity_days": int(ligne.validity_days),
+            "provider": ligne.provider,
+            "prix": round(float(ligne.price), 2),
+            "prix_max": round(float(ligne.prix_max), 2),
+            "offres": int(ligne.offres),
+        }
+        for ligne in fusion.itertuples()
+    ]
+
+
 def compute_metrics(clean: pd.DataFrame) -> dict:
     """Assemble les KPI demandés et leurs définitions dans un dictionnaire sérialisable."""
     total = total_cards(clean)
@@ -114,5 +157,6 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
         },
         "series": {
             "histogramme_prix": price_histogram(clean),
+            "meilleures_offres": meilleures_offres(clean),
         },
     }
