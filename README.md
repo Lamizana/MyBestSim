@@ -26,10 +26,8 @@ data & automatisation).
 │   ├── config.py           # chemins et colonnes attendues
 │   ├── etl.py              # lecture, validation, typage
 │   ├── metrics.py          # six KPI + série des meilleures offres
-│   ├── graphiques.py       # spécifications Altair
-│   └── merge.py            # produit data/processed/
+│   └── graphiques.py       # spécifications Altair
 ├── data/raw/               # 18 CSV fournisseurs, jamais modifiés
-├── data/processed/         # sorties régénérées (ignorées par git)
 ├── tests/                  # 44 tests
 └── docs/
     ├── FONCTIONS.md        # détail des fonctions
@@ -61,24 +59,20 @@ pip install -e ".[dev]"
 | Commande | Équivalent | Effet |
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement |
-| `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
 | `make run` | `python -m streamlit run app.py` | lance l'application |
 | `make test` | `python -m pytest` | exécute les 44 tests |
 | `make lint` | `ruff check .` | vérifie le style |
-| `make clean` | `rm -rf data/processed …` | supprime les sorties |
+| `make clean` | `rm -rf …` | supprime les caches |
 
-## Deux chemins, une seule source
+## Un seul chemin
 
-- **L'application** recalcule tout en mémoire, au démarrage, depuis
-  `data/raw/` : `load_raw` → `clean_data` → `compute_metrics`. Le résultat est
-  mis en cache par `@st.cache_data`.
-- **La ligne de commande** écrit `data/processed/` pour inspection :
-  `all_products.csv`, `clean_products.csv`. L'application ne lit jamais ces
-  fichiers.
+L'application recalcule tout en mémoire, au démarrage, depuis `data/raw/` :
+`load_raw` → `clean_data` → `compute_metrics`. Aucun artefact intermédiaire,
+aucune étape de build. Le résultat est mis en cache par `@st.cache_data`.
 
-Conséquence : un clone du dépôt suffit à lancer l'application, sans étape de
-build. Et toute modification de `etl.py` nécessite un redémarrage du serveur,
-le cache ne portant que sur le code de la fonction décorée.
+Conséquence : un clone du dépôt suffit à lancer l'application. Et toute
+modification de `etl.py` nécessite un redémarrage du serveur, le cache ne
+portant que sur le code de la fonction décorée.
 
 ## KPI
 

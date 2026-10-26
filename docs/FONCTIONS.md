@@ -20,8 +20,8 @@ dict { meta, kpi, series }
    └── app.py            → application Streamlit
 ```
 
-Une commande écrit sur disque : `merge` (CSV intermédiaires). L'application,
-elle, ne lit que `data/raw/` et recalcule tout en mémoire.
+Aucun fichier intermédiaire : l'application lit `data/raw/` et recalcule tout
+en mémoire.
 
 ## `mybestsim/config.py`
 
@@ -31,8 +31,6 @@ Chemins du projet et contrat d'entrée.
 |---|---|
 | `PROJECT_ROOT` | racine du dépôt |
 | `DATA_DIR` | `data/raw/` |
-| `PROCESSED_DIR` | `data/processed/` |
-| `RAW_OUTPUT`, `CLEAN_OUTPUT` | sorties de `merge` |
 | `EXPECTED_COLUMNS` | les 12 colonnes attendues, dans l'ordre |
 | `REGION_CODES` | `EU`, `AS`, `NA`, `WW` |
 | `ZONE_PREFIX` | `ZONE_` |
@@ -52,15 +50,6 @@ valeur obligatoire vide, SKU dupliqué, devise autre que EUR, réseau inconnu,
 durée non entière ou non positive, prix illisible ou non positif, `data_gb`
 vide sans « Illimité » (et inversement). Ajoute `is_unlimited` et `is_region`,
 préfixe les codes de zone en `ZONE_*`.
-
-### `write_csv(df, path)`
-
-Écrit un CSV UTF-8, en-tête inclus, sans index.
-
-## `mybestsim/merge.py`
-
-`run()` enchaîne `load_raw`, `clean_data` et l'écriture des deux tables.
-`main()` expose la commande `python -m mybestsim.merge`.
 
 ## `mybestsim/metrics.py`
 

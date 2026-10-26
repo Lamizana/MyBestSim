@@ -9,7 +9,6 @@ venv/
 
 # Données dérivées et artefacts de build
 *.egg-info/
-data/processed/
 
 # Notes personnelles
 docs/NOTES.md

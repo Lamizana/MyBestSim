@@ -94,8 +94,3 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     )
 
     return df
-
-
-def write_csv(df: pd.DataFrame, path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(path, index=False, encoding="utf-8")
