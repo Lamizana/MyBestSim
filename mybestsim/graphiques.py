@@ -148,11 +148,7 @@ def prix(metrics: dict) -> alt.Chart:
         color=TEXTE,
     ).encode(
         y=alt.Y("offres:Q"),
-        text=alt.condition(
-            (alt.datum.offres > 50) | (alt.datum.min >= SEUIL_PRIX),
-            alt.Text("offres:Q"),
-            alt.value(""),
-        ),
+        text=alt.Text("offres:Q"),
     )
 
     return _finaliser((barres + valeurs).properties(height=420))
