@@ -28,19 +28,6 @@ def load_raw(data_dir: Path) -> pd.DataFrame:
     return pd.concat(tableaux, ignore_index=True)
 
 
-def load_clean(path: Path) -> pd.DataFrame:
-    """Relit la table nettoyée en préservant les types et les valeurs vides."""
-    df = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8")
-
-    df["validity_days"] = df["validity_days"].astype(int)
-    for colonne in ("price", "data_gb"):
-        df[colonne] = pd.to_numeric(df[colonne], errors="coerce")
-    for colonne in ("top_up", "is_unlimited", "is_region"):
-        df[colonne] = df[colonne].map({"True": True, "False": False})
-
-    return df
-
-
 def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     """Type les colonnes et ajoute les colonnes dérivées.
 

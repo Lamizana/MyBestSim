@@ -17,13 +17,11 @@ DataFrame propre (14 colonnes typées)
    ▼
 dict { meta, kpi, series }
    │
-   ├── app.py            → application Streamlit
-   └── report.py         → affichage console
+   └── app.py            → application Streamlit
 ```
 
-Deux commandes écrivent sur disque : `merge` (CSV intermédiaires) et
-`report` (console). L'application, elle, ne lit que `data/raw/` et recalcule
-tout en mémoire.
+Une commande écrit sur disque : `merge` (CSV intermédiaires). L'application,
+elle, ne lit que `data/raw/` et recalcule tout en mémoire.
 
 ## `mybestsim/config.py`
 
@@ -54,11 +52,6 @@ valeur obligatoire vide, SKU dupliqué, devise autre que EUR, réseau inconnu,
 durée non entière ou non positive, prix illisible ou non positif, `data_gb`
 vide sans « Illimité » (et inversement). Ajoute `is_unlimited` et `is_region`,
 préfixe les codes de zone en `ZONE_*`.
-
-### `load_clean(path: Path) -> pd.DataFrame`
-
-Relit `data/processed/clean_products.csv` en préservant les types. Utilisé par
-`report` pour ne pas relire les 18 CSV.
 
 ### `write_csv(df, path)`
 
@@ -112,16 +105,6 @@ commune : fond transparent, police Poppins, axes discrets.
 
 `format_fr(valeur, decimales=0)` — nombres à la française : `5 056`, `14,49`.
 
-## `mybestsim/report.py`
-
-`run(clean)` affiche les six KPI en console. `main()` expose
-`python -m mybestsim.report` et échoue avec un message clair si la table
-propre est absente.
-
-## `mybestsim/__main__.py`
-
-Enchaîne `merge` puis `report`. C'est la commande `python -m mybestsim`.
-
 ## `app.py`
 
 Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
@@ -153,11 +136,12 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-47 tests, quatre fichiers :
+46 tests, six fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
-  d'un en-tête différent, aller-retour de la table propre ;
+  d'un en-tête différent ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
+- `tests/test_format.py` — nombres à la française ;
 - `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
   de `compute_metrics` ;
 - `tests/test_graphiques.py` — structure des trois graphiques Altair ;

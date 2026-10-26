@@ -15,8 +15,7 @@ data & automatisation).
 ```text
 .
 ├── app.py                  # application Streamlit (affichage seul)
-├── main.py                 # raccourci vers python -m mybestsim
-├── Makefile                # install / data / report / run / test / lint / clean
+├── Makefile                # install / data / run / test / lint / clean
 ├── pyproject.toml          # dépendances, ruff, pytest
 ├── requirements.txt        # dépendances lues par Streamlit Cloud
 ├── .streamlit/config.toml  # thème MyBestSim (couleurs, police, arrondis)
@@ -29,12 +28,10 @@ data & automatisation).
 │   ├── metrics.py          # six KPI + série des meilleures offres
 │   ├── graphiques.py       # spécifications Altair
 │   ├── format.py           # nombres à la française
-│   ├── merge.py            # produit data/processed/
-│   ├── report.py           # affiche les KPI en console
-│   └── __main__.py         # enchaîne merge puis report
+│   └── merge.py            # produit data/processed/
 ├── data/raw/               # 18 CSV fournisseurs, jamais modifiés
 ├── data/processed/         # sorties régénérées (ignorées par git)
-├── tests/                  # 47 tests
+├── tests/                  # 46 tests
 └── docs/
     ├── FONCTIONS.md        # détail des fonctions
     ├── enonce-test.pdf     # sujet du test
@@ -66,13 +63,10 @@ pip install -e ".[dev]"
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement |
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
-| `make report` | `python -m mybestsim.report` | affiche les KPI en console |
 | `make run` | `python -m streamlit run app.py` | lance l'application |
-| `make test` | `python -m pytest` | exécute les 47 tests |
+| `make test` | `python -m pytest` | exécute les 46 tests |
 | `make lint` | `ruff check .` | vérifie le style |
 | `make clean` | `rm -rf data/processed …` | supprime les sorties |
-
-`python -m mybestsim` enchaîne `merge` puis `report`.
 
 ## Deux chemins, une seule source
 
@@ -163,7 +157,7 @@ un code de sortie non nul.
 make test
 ```
 
-47 tests couvrent les invariants des données réelles (5 056 lignes, 653
+46 tests couvrent les invariants des données réelles (5 056 lignes, 653
 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, la série des
 meilleures offres (1 113 combinaisons, minimum et départage), la structure des
 graphiques, le rendu de l'application et le rejet des cas invalides.
