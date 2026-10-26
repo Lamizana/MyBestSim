@@ -17,8 +17,10 @@ class AppTestSuite(unittest.TestCase):
     def test_titre(self):
         self.assertIn("5 056 offres comparées", self.page.title[0].value)
 
-    def test_six_metriques(self):
-        self.assertEqual(len(self.page.metric), 6)
+    def test_metriques_affichees(self):
+        # Deux variantes de cartes KPI sont affichées pour comparaison :
+        # 6 métriques chacune. À ramener à 6 après arbitrage.
+        self.assertEqual(len(self.page.metric), 12)
 
     def test_valeurs_kpi(self):
         valeurs = [metrique.value for metrique in self.page.metric]
