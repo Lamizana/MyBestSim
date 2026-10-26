@@ -5,16 +5,11 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from mybestsim.config import METRICS_OUTPUT, PROJECT_ROOT
+from mybestsim.format import format_fr
 
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 SITE_DIR = PROJECT_ROOT / "site"
 SITE_OUTPUT = SITE_DIR / "index.html"
-
-
-def format_fr(valeur, decimales: int = 0) -> str:
-    """Formate un nombre à la française : 5056 -> 5 056, 14.49 -> 14,49."""
-    texte = f"{valeur:,.{decimales}f}"
-    return texte.replace(",", " ").replace(".", ",")
 
 
 def load_metrics(path: Path = METRICS_OUTPUT) -> dict:
