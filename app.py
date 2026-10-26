@@ -168,10 +168,9 @@ def _tableau_offres(offres: list) -> None:
         offres,
         columns=["destination", "provider", "prix", "prix_max", "offres"],
     )
-    donnees["ecart"] = [
-        f"+{(ligne.prix_max - ligne.prix) / ligne.prix * 100:.1f} %"
-        for ligne in donnees.itertuples()
-    ]
+    donnees["ecart"] = (
+        (donnees["prix_max"] - donnees["prix"]) / donnees["prix"] * 100
+    ).map(lambda valeur: f"+{format_fr(valeur, 1)} %")
     donnees = donnees.rename(
         columns={
             "destination": "Destination",
