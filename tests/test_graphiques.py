@@ -18,9 +18,9 @@ class GraphiquesTest(unittest.TestCase):
 
     def test_histogramme(self):
         spec = graphiques.prix(self.metrics).to_dict()
-        self.assertNotIn("layer", spec)
+        self.assertEqual(len(spec["layer"]), 2)
         self.assertEqual(spec["height"], 420)
-        encodage = spec["encoding"]
+        encodage = spec["layer"][0]["encoding"]
         self.assertEqual(encodage["x"]["type"], "nominal")
         self.assertEqual(encodage["x"]["field"], "libelle")
         self.assertEqual(encodage["x"]["scale"]["paddingInner"], 0.04)
