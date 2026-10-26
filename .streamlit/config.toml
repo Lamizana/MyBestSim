@@ -14,8 +14,6 @@ headingFontWeights = [700, 700, 700, 600, 600, 600]
 metricValueFontSize = "1.55rem"
 metricValueFontWeight = 700
 chartCategoricalColors = ["#007bff", "#ffcc00", "#de1414"]
-paddingTop = "1rem"
-paddingBottom = "1rem"
 
 [client]
 toolbarMode = "viewer"
