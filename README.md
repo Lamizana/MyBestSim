@@ -7,7 +7,7 @@ affiché dans une application Streamlit.
 Projet réalisé dans le cadre du test de recrutement MyBestSim (partie 1 :
 data & automatisation).
 
-- **Application** : à compléter après déploiement sur Streamlit Cloud
+- **Application** : [mybestsim-dashboard.streamlit.app](https://mybestsim-dashboard.streamlit.app)
 - **Code** : [github.com/Lamizana/MyBestSim](https://github.com/Lamizana/MyBestSim)
 
 ## Arborescence
