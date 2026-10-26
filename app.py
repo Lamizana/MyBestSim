@@ -205,11 +205,12 @@ def _tableau_offres(offres: list) -> None:
 def _podium(offres: list) -> None:
     """Trois destinations les moins chères, en cartes natives."""
     rangs = ["1er", "2e", "3e"]
+    couleurs = {"1er": "yellow", "2e": "gray", "3e": "orange"}
     for colonne, rang, offre in zip(st.columns(3), rangs, offres[:3], strict=False):
         with colonne, st.container(border=True):
-            st.caption(rang)
-            st.markdown(offre["destination"])
-            st.markdown(f"{format_fr(offre['prix'], 2)} €")
+            st.caption(f":{couleurs[rang]}-background[**{rang}**]")
+            st.markdown(f"**{offre['destination']}**")
+            st.markdown(f"### {format_fr(offre['prix'], 2)} €")
             st.caption(offre["provider"])
 
 
