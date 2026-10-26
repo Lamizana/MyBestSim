@@ -1,5 +1,10 @@
 # Test de recrutement MyBestSim — plan d'exécution
 
+> **État au 26 octobre 2026.** Le pipeline est implémenté (pandas, Jinja2) et les
+> six KPI sont en place. Ce document garde la trace des décisions initiales ;
+> pour l'état réel du code, voir le `README.md`. Pour le passage de la page
+> statique à Streamlit, voir `docs/PLAN-STREAMLIT.md`.
+
 **Objectif :** livrer un dashboard de statistiques eSIM en ligne et un article SEO publié, avant le **vendredi 30 octobre 2026**.
 **Contrainte :** aucune ligne de code dans ce plan, seulement l'architecture et les décisions.
 **Nature du test :** 18 CSV fournisseurs, 1 dashboard public, 1 article SEO public, 1 note sur l'usage de l'IA.
@@ -28,8 +33,6 @@
 | `top_up` | oui 2 738 / non 2 318 | 54,2 % rechargeables |
 | SKU dupliqués | 0 | Dédup = garde-fou, pas un travail |
 | Pays | 54 codes dont 4 régions (Europe, Asie, Amérique du Nord, Monde) | 50 pays + 4 zones |
-| Bundles identiques chez ≥ 2 fournisseurs | 1 033 | Écart de prix médian 13,4 % |
-| Prix au Go | médiane 2,55 € ; min 0,91 (Yesim) ; max 11,86 (Yatelo) | Bonus pertinent |
 
 ---
 
@@ -44,12 +47,12 @@
 | Sujet | Décision | Alternative écartée |
 |---|---|---|
 | Ingestion | Python + contrat de schéma explicite | Pandas sans contrat |
-| Stockage / calcul | DuckDB, requêtes SQL en fichiers séparés | Postgres (serveur inutile), pandas seul |
+| Stockage / calcul | pandas, calcul en mémoire | DuckDB (ajouté puis retiré : inutile à cette échelle) |
 | Artefact pivot | `metrics.json` (valeur + définition + périmètre) | Chiffres codés en dur dans la page |
-| Interface | Page statique générée (HTML + SVG) | Streamlit (lien qui s'endort), Power BI (binaire opaque, Windows), Looker Studio (méthodologie invisible) |
-| Déploiement | GitHub Actions → GitHub Pages | Hébergement manuel |
+| Interface | Streamlit (`*.streamlit.app`) | Page statique générée (implémentée le 25/10, remplacée pour gagner du temps) |
+| Déploiement | Streamlit Community Cloud, redéploiement sur push | GitHub Pages (implémenté, retiré avec la page statique) |
 | Article | ZehdBox, chemin dédié, mention « réalisé dans le cadre du test » | Google Doc, page noyée dans le dashboard |
-| Repos | Dashboard dans `MyBestSim/dashboard/` ; article dans ZehdBox | Tout dans un seul repo |
+| Repos | Racine du dépôt `MyBestSim` ; article dans ZehdBox | Sous-dossier `dashboard/` (abandonné) |
 | Langue | Français | — |
 
 ### Les six décisions à documenter dans `DECISIONS.md`
@@ -71,9 +74,9 @@
 |---|---|---|
 | L0 — Brut | CSV intacts, manifeste (nom, SHA-256, lignes) | `data/raw/2026-10-22/` |
 | L1 — Ingestion & contrat | Lecture défensive, typage, normalisation, contrôles | Table canonique + `quality_report` |
-| L2 — Analytique | KPI requis et bonus, un fichier SQL par famille | `metrics.json` |
-| L3 — Présentation | Page générée depuis `metrics.json` | `site/index.html` |
-| L4 — Publication | CI : rebuild + vérification + déploiement | URL publique |
+| L2 — Analytique | KPI requis | `metrics.json` |
+| L3 — Présentation | Application Streamlit lue depuis `metrics.json` | URL publique |
+| L4 — Publication | Streamlit Community Cloud, redéploiement sur push | URL publique |
 
 ### 4.2 Arborescence cible
 
@@ -90,7 +93,6 @@ MyBestSim/dashboard/
 ├── src/ingest.py               # lecture + validation + chargement DuckDB
 ├── src/quality.py              # contrôles qualité → reports/quality.json
 ├── src/sql/kpi_required.sql    # 6 KPI demandés
-├── src/sql/kpi_bonus.sql       # 6 à 8 KPI bonus
 ├── src/build_metrics.py        # exécution SQL → reports/metrics.json
 ├── src/build_site.py           # metrics.json + gabarit → site/index.html
 ├── templates/                  # gabarit de page
@@ -131,28 +133,15 @@ Règles : `sku` unique ; `price` > 0 ; `currency` = EUR ; `network` ∈ {4G, 5G}
 | Prix moyen global | **29,30 €** (médiane 20,70) |
 | Répartition par fournisseur | **18** fournisseurs, Airalo 722 → 4S eSIM 92 |
 
-### 5.2 Les bonus retenus
-
-| Bonus | Valeur |
-|---|---|
-| Part d'illimité | 653 cartes, 12,9 % |
-| Prix au Go | médiane 2,55 € |
-| Quartiles de prix | 11,76 / 20,70 / 39,29 € |
-| **Écart inter-fournisseurs** | 1 033 bundles, écart médian 13,4 % |
-| Prix moyen par fournisseur | 4S eSIM 24,26 € → Yesim 32,10 € |
-| Top destinations hors zones | Indonésie 104, Arabie saoudite 102, Singapour 99, Égypte 98 |
-
-### 5.3 Ce que doit contenir la page
+### 5.2 Ce que doit contenir la page
 
 1. Les 6 cartes KPI au-dessus de la ligne de flottaison.
 2. Classement des fournisseurs (barres horizontales triées).
 3. Histogramme des prix.
-4. Bloc bonus : illimité, 5G, top-up, prix au Go, top destinations.
-5. **Sélecteur de destination** → offre la moins chère par fournisseur + écart de prix.
-6. Bloc « Méthodologie » : définitions, rapport qualité, deux dénominateurs de la moyenne, lien GitHub.
-7. Lien croisé vers l'article.
+4. Bloc « Méthodologie » : définitions, deux dénominateurs de la moyenne, lien GitHub.
+5. Lien croisé vers l'article.
 
-Contraintes : français, mobile-first (le jury ouvrira depuis un téléphone), contraste accessible, Lighthouse ≥ 90, aucun backend.
+Contraintes : français, mobile-first (le jury ouvrira depuis un téléphone), contraste accessible.
 
 ---
 
@@ -195,9 +184,9 @@ Trois visuels maison (l'auteur est illustrateur, c'est un avantage différencian
 |---|---|---|---|
 | **Jeu 22** | Repo, structure, CSV + manifeste | Contrat de schéma, `DECISIONS.md`, README | Repo présentable même vide |
 | **Ven 23** | Ingestion + validation | Tests unitaires + rapport qualité | 5 056 lignes, 0 rejet, tests verts |
-| **Sam 24** | 6 KPI en SQL | Bonus + `metrics.json` + tests | Les 6 valeurs attendues tombent juste |
-| **Dim 25** | Génération de la page (cartes + 2 graphiques) | Déploiement Pages | **Lien public avec les 6 KPI** |
-| **Lun 26** | Bonus, sélecteur destination, méthodologie | Mobile, Lighthouse, README final | Page complète, Lighthouse ≥ 90 |
+| **Sam 24** | 6 KPI | `metrics.json` + tests | Les 6 valeurs attendues tombent juste |
+| **Dim 25** | Génération de la page (cartes + histogramme) | Déploiement Pages | **Lien public avec les 6 KPI** |
+| **Lun 26** | Passage à Streamlit | Méthodologie, README final | App Streamlit en ligne avec les 6 KPI |
 | **Mar 27** | Brief SEO, plan | Rédaction complète + illustrations | Article relu |
 | **Mer 28** | Publication, JSON-LD, maillage | Relecture à froid, Search Console | **Article en ligne et soumis** |
 | **Jeu 29** | Re-vérification des chiffres, journal IA | E-mail de rendu **envoyé** | Dossier clos |

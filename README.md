@@ -58,7 +58,7 @@ pip install -e ".[dev]"
 | `make data` | `python -m mybestsim.merge` | lit `data/raw/`, écrit `data/processed/` |
 | `make report` | `python -m mybestsim.report` | lit le CSV propre, affiche les KPI et écrit `metrics.json` |
 | `make site` | `python -m mybestsim.site` | rend `site/index.html` depuis `metrics.json` |
-| `make test` | `python -m pytest` | exécute les 47 tests |
+| `make test` | `python -m pytest` | exécute les 37 tests |
 | `make lint` | `ruff check .` | vérifie le style et les erreurs |
 | `make clean` | `rm -rf data/processed site …` | supprime les sorties générées |
 
@@ -90,23 +90,13 @@ Les six indicateurs demandés :
 | Prix moyen | 29,30 € (médiane 20,70 €) |
 | Répartition par fournisseur | 18 fournisseurs, Airalo 722 → 4S eSIM 92 |
 
-Cinq indicateurs complémentaires :
-
-| Indicateur | Valeur |
-|---|---|
-| Part d'illimité | 12,9 % (653 offres) |
-| Prix au Go | médiane 2,55 € — q1 1,67 / q3 3,82 — de 0,91 à 11,86 € |
-| Écart sur un même bundle | 1 033 bundles, écart médian 13,4 %, max 64,3 % |
-| Prix moyen par fournisseur | 24,26 € (4S eSIM) → 32,10 € (Yesim) |
-| Meilleure offre par destination | 50 pays × 6 paliers de volume, à 15 jours |
-
 ## Fichiers produits
 
 | Fichier | Contenu |
 |---|---|
 | `data/processed/all_products.csv` | fusion brute : 5 056 lignes, 12 colonnes, valeurs texte inchangées |
-| `data/processed/clean_products.csv` | fusion typée : 5 056 lignes, 15 colonnes |
-| `data/processed/metrics.json` | les 11 KPI et les séries de graphiques |
+| `data/processed/clean_products.csv` | fusion typée : 5 056 lignes, 14 colonnes |
+| `data/processed/metrics.json` | les 6 KPI et l'histogramme des prix |
 
 `data/raw/` est la matière première et n'est jamais modifiée : toute règle de
 nettoyage peut être rejouée sans retélécharger les fichiers.
@@ -119,8 +109,7 @@ inclus dans le fichier, aucune requête réseau) qui reprend la palette MyBestSi
 système.
 
 Elle contient les six KPI demandés, la répartition par fournisseur,
-l'histogramme des prix, le prix au Go par volume, l'écart sur un même bundle,
-un sélecteur de destination (50 pays) et la méthodologie.
+l'histogramme des prix et la méthodologie.
 
 ## Contrat de données
 
@@ -128,13 +117,12 @@ Douze colonnes source, identiques dans les 18 fichiers :
 `sku`, `provider`, `product_name`, `country_code`, `country_name`, `data_gb`,
 `data_display`, `validity_days`, `price`, `currency`, `network`, `top_up`.
 
-Trois colonnes dérivées :
+Deux colonnes dérivées :
 
 | Colonne | Type | Définition |
 |---|---|---|
 | `is_unlimited` | bool | vrai si `data_display` vaut « Illimité » (653 lignes) |
 | `is_region` | bool | vrai si l'offre couvre une zone multi-pays (778 lignes) |
-| `price_per_gb` | float | `price / data_gb`, vide si illimité |
 
 Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 
@@ -194,8 +182,8 @@ Ces options évitent les conversions implicites de pandas (`NA` → `NaN`,
 make test          # ou : python -m pytest
 ```
 
-47 tests couvrent les invariants des données réelles (5 056 lignes, 653
-illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 11 KPI, la
+37 tests couvrent les invariants des données réelles (5 056 lignes, 653
+illimitées, 778 zones, moyenne de 14,49 Go, durées entières), les 6 KPI, la
 structure de `metrics.json`, le round-trip de la table propre et le rejet des
 cas invalides (valeurs vides, SKU dupliqué, prix non positif, illimité
 incohérent, durée illisible ou non positive, colonnes différentes, dossier
@@ -208,6 +196,7 @@ La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` à chaque push.
 - [`docs/FONCTIONS.md`](docs/FONCTIONS.md) — détail de chaque fonction :
   signature, rôle, exemple, valeur attendue et pièges.
 - [`docs/PLAN.md`](docs/PLAN.md) — plan d'exécution du test et décisions.
+- [`docs/PLAN-STREAMLIT.md`](docs/PLAN-STREAMLIT.md) — plan de bascule de la page statique vers Streamlit.
 - [`docs/enonce-test.pdf`](docs/enonce-test.pdf) — énoncé du test.
 
 ## Limites connues

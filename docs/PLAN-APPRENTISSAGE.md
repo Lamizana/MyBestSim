@@ -23,7 +23,7 @@ Chaque **jalon** suit la même structure :
 > Ce plan ne contient volontairement **aucun code**. Le but est que tu puisses écrire et **défendre chaque chiffre** toi-même. Le test évalue la méthodologie ; un dashboard juste dont tu ne sais pas expliquer les définitions vaut moins qu'un dashboard simple que tu maîtrises.
 
 > [!WARNING] **Principe de réalité**
-> Contrairement à un projet d'école, la date est fixe. L'apprentissage est ici **instrumental** : chaque jalon produit une brique livrable. Si un jalon déborde, on coupe dans le bonus, jamais dans les tests ni dans les définitions.
+> Contrairement à un projet d'école, la date est fixe. L'apprentissage est ici **instrumental** : chaque jalon produit une brique livrable. Si un jalon déborde, on réduit le périmètre, jamais les tests ni les définitions.
 
 ---
 
@@ -382,26 +382,6 @@ Article en ligne, mobile propre, données structurées valides, indexation deman
 
 ### Critère de sortie
 E-mail envoyé le jeudi 29, dossier relu à froid le lendemain matin.
-
----
-
-## Annexe — Bonus
-
-> Les bonus ne comptent que si **tout le socle est parfait**. Ils sont hors planning principal.
-
-### B1 — Comparateur par destination *(le plus fort)*
-- Sélecteur de destination → offre la moins chère par fournisseur.
-- Écart de prix pour un bundle équivalent : 1 033 bundles, écart médian 13,4 %.
-- C'est le KPI qui prouve la compréhension du métier de MBS.
-
-### B2 — Visuels maison
-- Hero, schéma « mer vs escale », carte des zones.
-- L'auteur est illustrateur : avantage différenciant qu'aucun autre candidat n'aura.
-- Sources : documentation MkDocs Material pour l'intégration, WCAG pour les alternatives textuelles.
-
-### B3 — Qualité de page
-- Lighthouse ≥ 95 partout, contraste AA, navigation clavier.
-- Sources : web.dev, WCAG 2.2.
 
 ---
 
