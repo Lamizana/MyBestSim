@@ -101,10 +101,6 @@ commune : fond transparent, police Poppins, axes discrets.
 | `prix(metrics)` | histogramme par tranche, tranches ≥ 100 € en rouge, valeurs annotées |
 | `halteres(offres)` | segment du prix minimum au prix maximum par destination, trié par économie |
 
-## `mybestsim/format.py`
-
-`format_fr(valeur, decimales=0)` — nombres à la française : `5 056`, `14,49`.
-
 ## `app.py`
 
 Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
@@ -120,6 +116,7 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 | `_tableau_offres(offres)` | tableau triable ; message si la sélection est vide |
 | `afficher_offres(metrics)` | volume, durée, onglets Pays/Régions, recherche |
 | `afficher_methodologie(metrics)` | définitions et limites |
+| `format_fr(valeur, decimales)` | nombres à la française : `5 056`, `14,49` |
 | `main()` | assemble la page |
 
 ## Conventions
@@ -136,12 +133,11 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-46 tests, six fichiers :
+44 tests, cinq fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
-- `tests/test_format.py` — nombres à la française ;
 - `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
   de `compute_metrics` ;
 - `tests/test_graphiques.py` — structure des trois graphiques Altair ;

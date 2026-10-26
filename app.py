@@ -12,13 +12,18 @@ import streamlit as st
 from mybestsim import graphiques
 from mybestsim.config import DATA_DIR
 from mybestsim.etl import clean_data, load_raw
-from mybestsim.format import format_fr
 from mybestsim.metrics import compute_metrics
 
 LOGO = Path(__file__).resolve().parent / "assets" / "logo.png"
 LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
 
 VOLUMES = ["1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"]
+
+
+def format_fr(valeur, decimales: int = 0) -> str:
+    """Formate un nombre à la française : 5056 -> « 5 056 », 14.49 -> « 14,49 »."""
+    texte = f"{valeur:,.{decimales}f}"
+    return texte.replace(",", " ").replace(".", ",")
 
 
 # ---------------------------------------------------------------------
