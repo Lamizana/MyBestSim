@@ -1,19 +1,20 @@
 """Dashboard Streamlit du catalogue eSIM MyBestSim.
 
 L'application ne calcule rien : elle appelle ``compute_metrics`` et affiche.
-Toute la logique reste dans ``mybestsim/``, où elle est testée.
+Tout l'affichage passe par des composants Streamlit natifs, sans CSS ni HTML.
 """
 
-import altair as alt
-import pandas as pd
+from pathlib import Path
+
 import streamlit as st
 
+from mybestsim import graphiques
 from mybestsim.config import DATA_DIR
 from mybestsim.etl import clean_data, load_raw
 from mybestsim.format import format_fr
 from mybestsim.metrics import compute_metrics
 
-BLEU = "#007bff"
+LOGO = Path(__file__).resolve().parent / "assets" / "logo.png"
 
 
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
@@ -24,11 +25,18 @@ def charger_metriques() -> dict:
 
 def afficher_entete(metrics: dict) -> None:
     meta = metrics["meta"]
-    st.title("Catalogue eSIM — MyBestSim")
-    st.caption(
+    st.caption("Dashboard du catalogue eSIM — test de recrutement")
+    st.title(
         f"{format_fr(meta['lignes'])} offres comparées, "
-        f"{meta['fournisseurs']} fournisseurs, devise {meta['devise']}."
+        f"{meta['fournisseurs']} fournisseurs"
     )
+    st.markdown(
+        "Consolidation des 18 fichiers fournisseurs, nettoyage, contrôle et calcul des indicateurs de prix. Tous les chiffres proviennent du même calcul, mis en cache au démarrage."
+    )
+    with st.container(horizontal=True):
+        st.badge(f"{format_fr(meta['lignes'])} offres", color="blue")
+        st.badge(f"{meta['fournisseurs']} fournisseurs", color="gray")
+        st.badge(f"Devise : {meta['devise']}", color="gray")
 
 
 def afficher_kpi(metrics: dict) -> None:
@@ -36,6 +44,8 @@ def afficher_kpi(metrics: dict) -> None:
     fourchette = kpi["fourchette_prix"]["valeur"]
     data = kpi["data_gb_moyenne"]
     prix = kpi["prix_moyen"]["valeur"]
+
+    st.subheader("Les chiffres clés")
 
     premiere = st.columns(3)
     premiere[0].metric(
@@ -67,7 +77,10 @@ def afficher_kpi(metrics: dict) -> None:
     seconde[1].metric(
         "Prix moyen",
         f"{format_fr(prix['moyenne'], 2)} €",
-        help=f"{kpi['prix_moyen']['definition']} — médiane {format_fr(prix['mediane'], 2)} €",
+        help=(
+            f"{kpi['prix_moyen']['definition']} — "
+            f"médiane {format_fr(prix['mediane'], 2)} €"
+        ),
         border=True,
     )
     seconde[2].metric(
@@ -80,68 +93,43 @@ def afficher_kpi(metrics: dict) -> None:
 
 def afficher_fournisseurs(metrics: dict) -> None:
     st.subheader("Répartition par fournisseur")
-    donnees = pd.DataFrame(metrics["kpi"]["fournisseurs"]["valeur"])
-    graphique = (
-        alt.Chart(donnees)
-        .mark_bar(color=BLEU)
-        .encode(
-            x=alt.X("cartes:Q", title="Nombre d'offres"),
-            y=alt.Y("provider:N", sort="-x", title=None),
-            tooltip=[
-                alt.Tooltip("provider:N", title="Fournisseur"),
-                alt.Tooltip("cartes:Q", title="Offres"),
-                alt.Tooltip("part_pct:Q", title="Part (%)"),
-            ],
-        )
-        .properties(height=420)
-    )
-    st.altair_chart(graphique, width="stretch")
+    st.caption("Nombre d'offres par fournisseur, trié décroissant.")
+    st.altair_chart(graphiques.fournisseurs(metrics), width="stretch", theme=None)
 
 
 def afficher_prix(metrics: dict) -> None:
     st.subheader("Distribution des prix")
-    tranches = pd.DataFrame(metrics["series"]["histogramme_prix"])
-    graphique = (
-        alt.Chart(tranches)
-        .mark_bar(color=BLEU)
-        .encode(
-            x=alt.X("min:Q", title="Prix (€)", scale=alt.Scale(domain=[0, 160])),
-            x2="max:Q",
-            y=alt.Y("offres:Q", title="Nombre d'offres"),
-            tooltip=[
-                alt.Tooltip("min:Q", title="De (€)"),
-                alt.Tooltip("max:Q", title="À (€)"),
-                alt.Tooltip("offres:Q", title="Offres"),
-            ],
-        )
-        .properties(height=280)
+    st.caption(
+        "Tranches de 10 €. Trait rouge : seuil des 100 € · " "pointillés : prix médian."
     )
-    st.altair_chart(graphique, width="stretch")
+    st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
-    with st.expander("Méthodologie et définitions"):
+    with st.expander("Méthodologie et définitions", expanded=True):
         st.markdown(
-            f"""
-- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 fichiers
-  fournisseurs, aucune ligne rejetée.
-- Moyenne de data calculée sur les {format_fr(data['nb_offres'])} offres à
-  volume fini ; les offres illimitées sont exclues et ne valent jamais 0 Go.
-- Seuil des 100 € appliqué strictement : prix supérieur à 100,00 €.
-- Jeu de données synthétique fourni pour le test : les relations observées
-  décrivent ce catalogue, pas le marché réel.
-"""
+            f"- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 "
+            "fichiers fournisseurs, aucune ligne rejetée.\n"
+            f"- Moyenne de data calculée sur les {format_fr(data['nb_offres'])} "
+            "offres à volume fini ; les offres illimitées sont exclues et ne "
+            "valent jamais 0 Go.\n"
+            "- Seuil des 100 € appliqué strictement : prix supérieur à 100,00 €.\n"
+            "- Jeu de données synthétique fourni pour le test : les relations "
+            "observées décrivent ce catalogue, pas le marché réel."
         )
-        st.caption("Code source : github.com/Lamizana/MyBestSim")
 
 
 def main() -> None:
     st.set_page_config(
         page_title="Dashboard eSIM — MyBestSim",
         page_icon="📊",
-        layout="wide",
+        layout="centered",
+        initial_sidebar_state="collapsed",
     )
+
+    if LOGO.exists():
+        st.logo(str(LOGO), size="large")
 
     try:
         metrics = charger_metriques()
@@ -150,10 +138,18 @@ def main() -> None:
         st.stop()
 
     afficher_entete(metrics)
+    st.divider()
     afficher_kpi(metrics)
+    st.divider()
     afficher_fournisseurs(metrics)
+    st.divider()
     afficher_prix(metrics)
+    st.divider()
     afficher_methodologie(metrics)
+    st.caption(
+        "Réalisé dans le cadre du test de recrutement MyBestSim — "
+        "[code source](https://github.com/Lamizana/MyBestSim)."
+    )
 
 
 main()

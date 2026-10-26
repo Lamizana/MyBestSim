@@ -14,6 +14,9 @@ class AppTestSuite(unittest.TestCase):
     def test_aucune_exception(self):
         self.assertFalse(self.page.exception)
 
+    def test_titre(self):
+        self.assertIn("5 056 offres comparées", self.page.title[0].value)
+
     def test_six_metriques(self):
         self.assertEqual(len(self.page.metric), 6)
 
@@ -26,6 +29,10 @@ class AppTestSuite(unittest.TestCase):
         self.assertEqual(valeurs[3], "14,49 Go")
         self.assertEqual(valeurs[4], "29,30 €")
         self.assertEqual(valeurs[5], "18")
+
+    def test_methodologie(self):
+        texte = "\n".join(element.value for element in self.page.markdown)
+        self.assertIn("illimitées sont exclues", texte)
 
 
 if __name__ == "__main__":

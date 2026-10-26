@@ -1,9 +1,24 @@
 [theme]
 primaryColor = "#007bff"
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f5f7fa"
+secondaryBackgroundColor = "#f7f8fa"
 textColor = "#1d2939"
-font = "sans serif"
+borderColor = "#e4e7ec"
+linkColor = "#007bff"
+baseRadius = "small"
+baseFontSize = 16
+font = "Poppins:https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+headingFont = "Poppins:https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+headingFontSizes = ["2rem", "1.5rem", "1.15rem", "1rem", "0.95rem", "0.9rem"]
+headingFontWeights = [700, 700, 700, 600, 600, 600]
+metricValueFontSize = "1.55rem"
+metricValueFontWeight = 700
+chartCategoricalColors = ["#007bff", "#ffcc00", "#de1414"]
+paddingTop = "1rem"
+paddingBottom = "1rem"
+
+[client]
+toolbarMode = "viewer"
 
 [browser]
 gatherUsageStats = false
