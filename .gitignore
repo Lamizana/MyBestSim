@@ -11,10 +11,8 @@ venv/
 *.duckdb
 *.duckdb.wal
 *.egg-info/
-site/
 build/
 data/processed/
-site/
 _legacy/
 
 # Notes personnelles

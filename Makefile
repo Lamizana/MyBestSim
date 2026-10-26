@@ -1,7 +1,7 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
 
-.PHONY: install data report site test lint clean
+.PHONY: install data report run test lint clean
 
 install:
 	python3 -m venv $(VENV)
@@ -13,8 +13,8 @@ data:
 report:
 	$(PYTHON) -m mybestsim.report
 
-site:
-	$(PYTHON) -m mybestsim.site
+run:
+	$(PYTHON) -m streamlit run app.py
 
 test:
 	$(PYTHON) -m pytest
@@ -23,4 +23,4 @@ lint:
 	$(PYTHON) -m ruff check .
 
 clean:
-	rm -rf data/processed site *.egg-info .pytest_cache .ruff_cache
+	rm -rf data/processed *.egg-info .pytest_cache .ruff_cache
