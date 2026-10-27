@@ -4,11 +4,15 @@ L'application ne calcule rien : elle appelle ``compute_metrics`` et affiche.
 Tout l'affichage passe par des composants Streamlit natifs, sans CSS ni HTML.
 """
 
+import hashlib
+import inspect
+
 import pandas as pd
 import streamlit as st
 
+from mybestsim import etl as module_etl
 from mybestsim import graphiques
-from mybestsim.cache import version_donnees
+from mybestsim import metrics as module_metrics
 from mybestsim.config import (
     DATA_DIR,
     DUREE_DEFAUT,
@@ -27,6 +31,16 @@ def format_fr(valeur, decimales: int = 0) -> str:
     """Formate un nombre à la française : 5056 -> « 5 056 », 14.49 -> « 14,49 »."""
     texte = f"{valeur:,.{decimales}f}"
     return texte.replace(",", " ").replace(".", ",")
+
+
+def version_donnees() -> str:
+    """12 premiers caractères du SHA-256 de etl.py et metrics.py.
+
+    `st.cache_data` ne hache que le code de la fonction décorée. Passer cette
+    empreinte en argument force le recalcul dès qu'un module de calcul change.
+    """
+    source = inspect.getsource(module_etl) + inspect.getsource(module_metrics)
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()[:12]
 
 
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
