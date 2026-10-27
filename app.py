@@ -192,8 +192,8 @@ def afficher_prix_go(metrics: dict) -> None:
         st.caption(
             "Médiane des prix au gigaoctet, toutes durées confondues : plus le "
             f"forfait est gros, moins le Go coûte cher. Les {format_fr(illimitees['offres'])} "
-            "offres illimitées sont exclues, faute de volume en Go ; leur prix "
-            f"médian est de {format_fr(illimitees['prix_median'], 2)} €."
+            "offres illimitées sont exclues : sans volume en Go, elles n'ont "
+            "pas de prix au Go."
         )
         st.altair_chart(graphiques.prix_go_volume(metrics), width="stretch", theme=None)
 
@@ -377,6 +377,7 @@ def afficher_offres(metrics: dict) -> None:
 
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
+    illimitees = metrics["meta"]["illimitees"]
     with st.expander(":blue[**Méthodologie et définitions**]", expanded=False):
         st.markdown(
             f"- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 "
@@ -388,6 +389,9 @@ def afficher_methodologie(metrics: dict) -> None:
             "comparaisons par volume utilisent la médiane, plus robuste aux "
             "offres extrêmes ; la dispersion est représentée par l'écart "
             "interquartile.\n"
+            f"- Les offres illimitées n'ont pas de prix au Go ; leur prix "
+            f"médian, forfait complet, est de "
+            f"{format_fr(illimitees['prix_median'], 2)} €.\n"
             "- Seuil des "
             f"{SEUIL_PRIX:g} € appliqué strictement : prix supérieur à "
             f"{SEUIL_PRIX:g} €.\n"
