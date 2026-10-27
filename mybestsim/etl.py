@@ -1,3 +1,9 @@
+"""Lecture et validation des CSV fournisseurs.
+
+``load_raw`` ingère les fichiers et contrôle le schéma ; ``clean_data``
+applique le contrat de valeurs et ajoute les colonnes dérivées.
+"""
+
 import hashlib
 import io
 import warnings

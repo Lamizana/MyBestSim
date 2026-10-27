@@ -1,21 +1,24 @@
+"""Calcul des KPI et des séries affichées.
+
+Aucune dépendance à Streamlit : un DataFrame propre entre, des dictionnaires
+et des listes sérialisables sortent.
+"""
+
 import pandas as pd
 
 from mybestsim.config import DEVISE, SEUIL_PRIX
 
 
-# -----------------------------------------------------------------------------
 def total_cards(df: pd.DataFrame) -> int:
     """Nombre total d'offres (une ligne = un produit eSIM)."""
     return len(df)
 
 
-# -----------------------------------------------------------------------------
 def cards_above_price(df: pd.DataFrame, seuil: float = SEUIL_PRIX) -> int:
     """Nombre d'offres dont le prix dépasse strictement `seuil` euros."""
     return int((df["price"] > seuil).sum())
 
 
-# -----------------------------------------------------------------------------
 def price_range(df: pd.DataFrame) -> dict:
     """Prix minimum et maximum du catalogue, en euros."""
     return {
@@ -24,7 +27,6 @@ def price_range(df: pd.DataFrame) -> dict:
     }
 
 
-# -----------------------------------------------------------------------------
 def mean_data_gb(df: pd.DataFrame) -> dict:
     """Moyenne des data_gb des offres à volume fini (illimitées exclues)."""
     finies = df.loc[~df["is_unlimited"], "data_gb"]
@@ -34,7 +36,6 @@ def mean_data_gb(df: pd.DataFrame) -> dict:
     }
 
 
-# -----------------------------------------------------------------------------
 def mean_price(df: pd.DataFrame) -> dict:
     """Prix moyen et médian du catalogue, en euros."""
     return {
@@ -43,7 +44,6 @@ def mean_price(df: pd.DataFrame) -> dict:
     }
 
 
-# -----------------------------------------------------------------------------
 def prix_go_par_volume(df: pd.DataFrame) -> list:
     """Médiane du prix au Go par volume, avec quartiles (offres finies)."""
     finies = df.loc[~df["is_unlimited"]].copy()
@@ -80,7 +80,6 @@ def illimitees_prix(df: pd.DataFrame) -> dict:
     }
 
 
-# -----------------------------------------------------------------------------
 def provider_distribution(df: pd.DataFrame) -> list:
     """Nombre d'offres par fournisseur, trié décroissant, avec part en %."""
     comptes = df.groupby("provider").size().sort_values(ascending=False, kind="stable")
@@ -95,7 +94,6 @@ def provider_distribution(df: pd.DataFrame) -> list:
     ]
 
 
-# -----------------------------------------------------------------------------
 def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int = 160) -> list:
     """Répartition des prix par tranche, pour l'histogramme de la page."""
     bornes = list(range(0, maximum + largeur, largeur))
@@ -111,7 +109,6 @@ def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int = 160) -> 
     ]
 
 
-# -----------------------------------------------------------------------------
 def meilleures_offres(df: pd.DataFrame) -> list:
     """Offre la moins chère par destination, volume et durée.
 
@@ -166,7 +163,6 @@ def meilleures_offres(df: pd.DataFrame) -> list:
     ]
 
 
-# -----------------------------------------------------------------------------
 def compute_metrics(clean: pd.DataFrame) -> dict:
     """Assemble les KPI demandés et leurs définitions dans un dictionnaire sérialisable."""
     total = total_cards(clean)

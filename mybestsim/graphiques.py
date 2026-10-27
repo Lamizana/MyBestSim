@@ -16,7 +16,6 @@ TEXTE = "#1d2939"
 BORD = "#e4e7ec"
 
 
-# -----------------------------------------------------------------------------
 def _finaliser(graphique: alt.Chart) -> alt.Chart:
     """Applique la charte commune : fond transparent, police, axes discrets."""
     return (
@@ -35,7 +34,6 @@ def _finaliser(graphique: alt.Chart) -> alt.Chart:
     )
 
 
-# -----------------------------------------------------------------------------
 def fournisseurs(metrics: dict) -> alt.Chart:
     """Barres horizontales triées, noms alignés à gauche et coins arrondis."""
     donnees = pd.DataFrame(metrics["kpi"]["fournisseurs"]["valeur"])
@@ -84,7 +82,6 @@ def fournisseurs(metrics: dict) -> alt.Chart:
     return _finaliser((barres + valeurs).properties(height=420))
 
 
-# -----------------------------------------------------------------------------
 def prix(metrics: dict) -> alt.Chart:
     """Histogramme des prix par tranche de 10 €, seuil `SEUIL_PRIX` en rouge."""
     donnees = pd.DataFrame(metrics["series"]["histogramme_prix"])

@@ -1,3 +1,5 @@
+"""Constantes partagées : chemins, schéma d'entrée et vocabulaire du contrat."""
+
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
