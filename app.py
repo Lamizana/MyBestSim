@@ -190,10 +190,10 @@ def afficher_prix_go(metrics: dict) -> None:
     with gauche, st.container(border=True, key="carte_prix_go"):
         st.subheader(":blue[Prix au Go selon le volume]")
         st.caption(
-            "Médiane des prix au gigaoctet, toutes durées confondues : plus le "
-            f"forfait est gros, moins le Go coûte cher. Les {format_fr(illimitees['offres'])} "
-            "offres illimitées sont exclues : sans volume en Go, elles n'ont "
-            "pas de prix au Go."
+            "Médiane des prix au gigaoctet, toutes durées confondues : **plus le "
+            f"forfait est gros, moins le Go coûte cher**.  \n"
+            f"*Les {format_fr(illimitees['offres'])} offres illimitées sont "
+            "exclues : sans volume en Go, elles n'ont pas de prix au Go.*"
         )
         st.altair_chart(graphiques.prix_go_volume(metrics), width="stretch", theme=None)
 
@@ -437,7 +437,8 @@ def main() -> None:
         afficher_methodologie(metrics)
         st.caption(
             "Réalisé dans le cadre du test de recrutement **:blue[MyBest]:red[Sim]** - "
-            "[code source](https://github.com/Lamizana/MyBestSim)."
+            "[code source](https://github.com/Lamizana/MyBestSim) · "
+            "[article (partie 2)](https://lamizana.github.io/MyBestSim/)."
         )
 
 
