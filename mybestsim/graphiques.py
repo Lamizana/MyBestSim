@@ -152,3 +152,61 @@ def prix(metrics: dict) -> alt.Chart:
     )
 
     return _finaliser((barres + valeurs).properties(height=420))
+
+
+def prix_go_volume(metrics: dict) -> alt.Chart:
+    """Prix médian au Go par volume, avec écart interquartile."""
+    donnees = pd.DataFrame(metrics["series"]["prix_go_volume"])
+    maximum = float(donnees["p75"].max()) * 1.2
+
+    base = alt.Chart(donnees).encode(
+        x=alt.X(
+            "libelle:N",
+            sort=None,
+            title="Volume",
+            axis=alt.Axis(
+                labelAngle=0,
+                labelFontSize=11,
+                labelColor=TEXTE,
+                titleColor=TEXTE,
+                grid=False,
+                tickSize=0,
+            ),
+        ),
+        y=alt.Y(
+            "prix_go:Q",
+            title="Prix médian au Go (€)",
+            scale=alt.Scale(domain=[0, maximum]),
+            axis=alt.Axis(
+                tickCount=5,
+                labelColor=TEXTE,
+                titleColor=TEXTE,
+                grid=True,
+                gridColor="#E4E7EC",
+            ),
+        ),
+    )
+    barres = base.mark_bar(
+        color=BLEU, cornerRadiusTopLeft=3, cornerRadiusTopRight=3, size=32
+    ).encode(
+        tooltip=[
+            alt.Tooltip("libelle:N", title="Volume"),
+            alt.Tooltip("prix_go:Q", title="Médiane €/Go", format=".2f"),
+            alt.Tooltip("p25:Q", title="1er quartile", format=".2f"),
+            alt.Tooltip("p75:Q", title="3e quartile", format=".2f"),
+            alt.Tooltip("offres:Q", title="Offres"),
+        ]
+    )
+    ecarts = base.mark_rule(color=TEXTE, strokeWidth=2).encode(
+        y="p25:Q", y2="p75:Q"
+    )
+    valeurs = base.mark_text(
+        align="center",
+        baseline="bottom",
+        dy=-6,
+        fontSize=11,
+        fontWeight="bold",
+        color=TEXTE,
+    ).encode(y="p75:Q", text=alt.Text("prix_go:Q", format=".2f"))
+
+    return _finaliser((barres + ecarts + valeurs).properties(height=300))

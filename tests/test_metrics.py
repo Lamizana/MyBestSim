@@ -31,6 +31,17 @@ class MetricsTest(unittest.TestCase):
             {"moyenne": 29.3, "mediane": 20.7},
         )
 
+    def test_prix_go_par_volume(self):
+        serie = metrics.prix_go_par_volume(self.clean)
+        self.assertEqual(len(serie), 6)
+        self.assertEqual(serie[0]["libelle"], "1 Go")
+        self.assertEqual(serie[0]["prix_go"], 6.71)
+        self.assertEqual(serie[-1]["prix_go"], 1.18)
+        self.assertEqual(sum(ligne["offres"] for ligne in serie), 4403)
+        for ligne in serie:
+            self.assertLess(ligne["p25"], ligne["prix_go"])
+            self.assertLess(ligne["prix_go"], ligne["p75"])
+
     def test_provider_distribution_ordre(self):
         repartition = metrics.provider_distribution(self.clean)
         self.assertEqual(len(repartition), 18)

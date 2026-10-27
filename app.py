@@ -157,6 +157,17 @@ def afficher_prix(metrics: dict) -> None:
         st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
+def afficher_prix_go(metrics: dict) -> None:
+    with st.container(border=True):
+        st.subheader(":blue[Prix au Go selon le volume]")
+        st.caption(
+            "Médiane des prix au gigaoctet, toutes durées confondues, "
+            "offres illimitées exclues. Plus le forfait est gros, "
+            "moins le Go coûte cher."
+        )
+        st.altair_chart(graphiques.prix_go_volume(metrics), width="stretch", theme=None)
+
+
 # -----------------------------------------------------------------------------
 def _tableau_offres(offres: list) -> None:
     """Affiche le tableau triable des meilleures offres."""
@@ -218,6 +229,7 @@ def _tableau_offres(offres: list) -> None:
     )
 
 
+# -----------------------------------------------------------------------------
 def _podium(offres: list) -> None:
     """Trois destinations les moins chères, en cartes natives."""
     rangs = ["1er", "2e", "3e"]
@@ -230,24 +242,18 @@ def _podium(offres: list) -> None:
             st.caption(offre["provider"])
 
 
+# -----------------------------------------------------------------------------
 def afficher_offres(metrics: dict) -> None:
     offres = metrics["series"]["meilleures_offres"]
 
     st.subheader(":blue[Meilleures offres par destination]")
-
-    with st.container(border=True):
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.markdown("**:blue[Prix min]**")
-            st.caption("L'offre la moins chère, fournisseur indiqué.")
-        with col2:
-            st.markdown("**:red[Prix max]**")
-            st.caption("L'offre la plus chère, tous fournisseurs confondus.")
-        with col3:
-            st.markdown("**:orange[Écart]**")
-            st.caption("Surcoût en % de la plus chère par rapport à la moins chère.")
-
-    st.caption("Tableau triable en cliquant sur les en-têtes.")
+    st.caption(
+        "Ce tableau compare les offres tarifaires par destination :  \n"
+        "- **Prix min :** L'offre la moins chère, fournisseur indiqué.  \n"
+        "- **Prix max :** L'offre la plus chère, tous fournisseurs confondus.  \n"
+        "- **Écart :** Surcoût en % de la plus chère par rapport à la moins chère.  \n\n"
+        "*Cliquez sur un en-tête de colonne pour trier le tableau.*"
+    )
 
     gauche, droite = st.columns(2)
     volume = gauche.selectbox("Volume", VOLUMES, index=3)
@@ -311,6 +317,7 @@ def afficher_offres(metrics: dict) -> None:
             _tableau_offres(zones)
 
 
+# -----------------------------------------------------------------------------
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
     with st.expander(":blue[**Méthodologie et définitions**]", expanded=False):
@@ -320,6 +327,10 @@ def afficher_methodologie(metrics: dict) -> None:
             f"- Moyenne de data calculée sur les {format_fr(data['nb_offres'])} "
             "offres à volume fini ; les offres illimitées sont exclues et ne "
             "valent jamais 0 Go.\n"
+            "- Le prix moyen demandé est global, toutes offres confondues. Les "
+            "comparaisons par volume utilisent la médiane, plus robuste aux "
+            "offres extrêmes ; la dispersion est représentée par l'écart "
+            "interquartile.\n"
             "- Seuil des 100 € appliqué strictement : prix supérieur à 100,00 €.\n"
             "- Jeu de données synthétique fourni pour le test : les relations "
             "observées décrivent ce catalogue, pas le marché réel."
@@ -356,6 +367,7 @@ def main() -> None:
             afficher_fournisseurs(metrics)
         with droite:
             afficher_prix(metrics)
+        afficher_prix_go(metrics)
         st.divider()
         afficher_offres(metrics)
         st.divider()

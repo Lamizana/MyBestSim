@@ -74,6 +74,10 @@ préfixe les codes de zone en `ZONE_*`.
 **`price_histogram(df, largeur=10, maximum=160) -> list`** — 16 tranches de
 10 €, y compris les vides, somme = 5 056.
 
+**`prix_go_par_volume(df) -> list`** — par volume (1, 3, 5, 10, 20, 50 Go),
+médiane du prix au Go et quartiles p25/p75, avec le nombre d'offres. Les offres
+illimitées sont exclues : pas de dénominateur en Go.
+
 **`meilleures_offres(df) -> list`** — pour chaque destination, volume et durée,
 l'offre la moins chère. Une entrée contient `code`, `destination`, `zone`,
 `volume`, `data_gb`, `validity_days`, `provider`, `prix`, `provider_max`,
@@ -94,6 +98,7 @@ commune : fond transparent, police Poppins, axes discrets.
 |---|---|
 | `fournisseurs(metrics)` | barres horizontales triées, valeur en bout de barre |
 | `prix(metrics)` | histogramme par tranche, tranches ≥ 100 € en rouge, valeurs annotées |
+| `prix_go_volume(metrics)` | barres de la médiane €/Go, écart interquartile p25–p75 |
 
 ## `app.py`
 
@@ -127,14 +132,14 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-48 tests, cinq fichiers :
+51 tests, cinq fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
 - `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
   de `compute_metrics` ;
-- `tests/test_graphiques.py` — structure des trois graphiques Altair ;
+- `tests/test_graphiques.py` — structure des quatre graphiques Altair ;
 - `tests/test_app.py` — rendu, six métriques, méthodologie, recherche vide.
 
 La CI exécute `ruff` et `pytest` sur Python 3.12 à chaque push.

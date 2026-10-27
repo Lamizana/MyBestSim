@@ -42,6 +42,28 @@ def mean_price(df: pd.DataFrame) -> dict:
 
 
 # -----------------------------------------------------------------------------
+def prix_go_par_volume(df: pd.DataFrame) -> list:
+    """Médiane du prix au Go par volume, avec quartiles (offres finies)."""
+    finies = df.loc[~df["is_unlimited"]].copy()
+    finies["prix_go"] = finies["price"] / finies["data_gb"]
+
+    resultat = []
+    for volume, groupe in finies.groupby("data_gb", sort=True):
+        quartiles = groupe["prix_go"].quantile([0.25, 0.5, 0.75])
+        resultat.append(
+            {
+                "data_gb": float(volume),
+                "libelle": f"{int(volume)} Go",
+                "prix_go": round(float(quartiles.loc[0.5]), 2),
+                "p25": round(float(quartiles.loc[0.25]), 2),
+                "p75": round(float(quartiles.loc[0.75]), 2),
+                "offres": int(len(groupe)),
+            }
+        )
+    return resultat
+
+
+# -----------------------------------------------------------------------------
 def provider_distribution(df: pd.DataFrame) -> list:
     """Nombre d'offres par fournisseur, trié décroissant, avec part en %."""
     comptes = df.groupby("provider").size().sort_values(ascending=False, kind="stable")
@@ -177,6 +199,7 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
         },
         "series": {
             "histogramme_prix": price_histogram(clean),
+            "prix_go_volume": prix_go_par_volume(clean),
             "meilleures_offres": meilleures_offres(clean),
         },
     }

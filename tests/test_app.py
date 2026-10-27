@@ -32,6 +32,10 @@ class AppTestSuite(unittest.TestCase):
         self.assertEqual(valeurs[4], "29,30 €")
         self.assertEqual(valeurs[5], "18")
 
+    def test_prix_au_go(self):
+        texte = "\n".join(element.value for element in self.page.subheader)
+        self.assertIn("Prix au Go selon le volume", texte)
+
     def test_methodologie(self):
         texte = "\n".join(element.value for element in self.page.markdown)
         self.assertIn("illimitées sont exclues", texte)
