@@ -2,6 +2,9 @@
 
 L'application ne calcule rien : elle appelle ``compute_metrics`` et affiche.
 Tout l'affichage passe par des composants Streamlit natifs, sans CSS ni HTML.
+
+Sections, dans l'ordre de la page : entête → KPI → distributions → prix au Go
+→ offres → méthodologie.
 """
 
 import hashlib
