@@ -1,8 +1,16 @@
 import unittest
 
 from mybestsim import metrics
+from mybestsim.cache import version_donnees
 from mybestsim.config import DATA_DIR
 from mybestsim.etl import clean_data, load_raw
+
+
+class CacheTest(unittest.TestCase):
+    def test_version_stable_et_courte(self):
+        premiere = version_donnees()
+        self.assertEqual(len(premiere), 12)
+        self.assertEqual(premiere, version_donnees())
 
 
 class MetricsTest(unittest.TestCase):

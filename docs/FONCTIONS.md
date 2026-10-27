@@ -64,6 +64,12 @@ durée non entière ou non positive, prix illisible ou non positif, `data_gb`
 vide sans « Illimité » (et inversement). Ajoute `is_unlimited` et `is_region`,
 préfixe les codes de zone en `ZONE_*`.
 
+## `mybestsim/cache.py`
+
+`version_donnees() -> str` — 12 premiers caractères du SHA-256 de `etl.py` et
+`metrics.py`. Passée à `charger_metriques`, elle invalide le cache Streamlit
+dès que le code de calcul change.
+
 ## `mybestsim/metrics.py`
 
 ### KPI
@@ -145,7 +151,7 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-53 tests, cinq fichiers :
+54 tests, cinq fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;

@@ -71,9 +71,9 @@ L'application recalcule tout en mémoire, au démarrage, depuis `data/raw/` :
 `load_raw` → `clean_data` → `compute_metrics`. Aucun artefact intermédiaire,
 aucune étape de build. Le résultat est mis en cache par `@st.cache_data`.
 
-Conséquence : un clone du dépôt suffit à lancer l'application. Et toute
-modification de `etl.py` nécessite un redémarrage du serveur, le cache ne
-portant que sur le code de la fonction décorée.
+Conséquence : un clone du dépôt suffit à lancer l'application. Le cache
+Streamlit est versionné par une empreinte de `etl.py` et `metrics.py` : toute
+modification du calcul force le recalcul, sans redémarrage manuel.
 
 ## KPI
 

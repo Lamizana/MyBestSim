@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from mybestsim import graphiques
+from mybestsim.cache import version_donnees
 from mybestsim.config import (
     DATA_DIR,
     DUREE_DEFAUT,
@@ -29,8 +30,12 @@ def format_fr(valeur, decimales: int = 0) -> str:
 
 
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
-def charger_metriques() -> dict:
-    """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par processus."""
+def charger_metriques(version: str) -> dict:
+    """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par version.
+
+    `version` n'entre pas dans le calcul : elle sert uniquement de clé de cache,
+    pour que toute modification de etl.py ou metrics.py force le recalcul.
+    """
     return compute_metrics(clean_data(load_raw(DATA_DIR)))
 
 
@@ -386,7 +391,7 @@ def main() -> None:
         st.logo(str(LOGO_MARQUE), size="large")
 
     try:
-        metrics = charger_metriques()
+        metrics = charger_metriques(version_donnees())
     except (OSError, ValueError) as erreur:
         st.error(f"Impossible de calculer les KPI : {erreur}")
         st.caption("Vérifiez data/raw : un fichier a peut-être été dupliqué.")
