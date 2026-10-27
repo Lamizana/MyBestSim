@@ -1,6 +1,6 @@
 altair==6.3.0
     # via
-    #   mybestsim-dashboard (pyproject.toml)
+    #   mybestsim-dashboard
     #   streamlit
 anyio==4.15.1
     # via
@@ -36,9 +36,14 @@ jsonschema-specifications==2025.9.1
     # via jsonschema
 markupsafe==3.0.4
     # via jinja2
-narwhals==2.27.1
+narwhals==2.28.0
     # via altair
-numpy==2.5.4
+numpy==2.4.6 ; python_full_version < '3.12'
+    # via
+    #   pandas
+    #   pydeck
+    #   streamlit
+numpy==2.5.4 ; python_full_version >= '3.12'
     # via
     #   pandas
     #   pydeck
@@ -49,7 +54,7 @@ packaging==26.3
     #   streamlit
 pandas==3.1.0
     # via
-    #   mybestsim-dashboard (pyproject.toml)
+    #   mybestsim-dashboard
     #   streamlit
 pillow==13.0.0
     # via streamlit
@@ -78,7 +83,7 @@ six==1.17.0
 starlette==1.10.0
     # via streamlit
 streamlit==1.66.1
-    # via mybestsim-dashboard (pyproject.toml)
+    # via mybestsim-dashboard
 typing-extensions==4.16.0
     # via
     #   altair
@@ -87,12 +92,14 @@ typing-extensions==4.16.0
     #   starlette
     #   streamlit
 tzdata==2026.5
-    # via python-dateutil
+    # via
+    #   pandas
+    #   python-dateutil
 urllib3==2.8.0
     # via requests
 uvicorn==0.54.0
     # via streamlit
-watchdog==6.0.0
+watchdog==6.0.0 ; sys_platform != 'darwin'
     # via streamlit
 websockets==17.3
     # via streamlit

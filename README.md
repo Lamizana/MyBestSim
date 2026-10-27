@@ -127,7 +127,7 @@ dict { meta, kpi, series }
 
 - Python 3.11 ou plus récent (3.12 recommandé)
 - `make` pour les raccourcis
-- `uv` pour régénérer `requirements.txt` et construire la page de l'article
+- `uv` pour construire la page de l'article
 
 ### Étapes
 
@@ -159,7 +159,7 @@ pip install -e ".[dev]"
 | [`altair`](https://altair-viz.github.io/) | graphiques Vega-Lite |
 | [`pytest`](https://docs.pytest.org/) | 81 tests |
 | [`ruff`](https://docs.astral.sh/ruff/) | lint et style |
-| [`uv`](https://docs.astral.sh/uv/) | génération des dépendances épinglées |
+| [`uv`](https://docs.astral.sh/uv/) | construction de la page article |
 
 ---
 
@@ -171,8 +171,6 @@ pip install -e ".[dev]"
 | `make test` | exécute les 81 tests |
 | `make check` | valide `data/raw/` sans lancer Streamlit |
 | `make lint` | vérifie le style avec Ruff |
-| `make reqs` | régénère `requirements.txt` depuis `pyproject.toml` |
-| `make reqs-check` | vérifie que le lock est synchrone |
 | `make article` | construit la page HTML de l'article dans `article/_site/` |
 | `make clean` | supprime les caches |
 
@@ -247,7 +245,7 @@ make test
 
 81 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides. Une suite dédiée (`tests/test_etl_cas.py`) éprouve l'ETL sur des CSV générés : schéma, doublons, conflits, devises, réseaux, prix, durées, illimité, zones, BOM et lignes mal formées.
 
-La CI (`.github/workflows/ci.yml`) exécute `make reqs-check`, `ruff` et `pytest` sur Python 3.12 à chaque push vers `main` et à chaque pull request.
+La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` sur Python 3.12 à chaque push vers `main` et à chaque pull request.
 
 ---
 
@@ -272,7 +270,7 @@ La CI (`.github/workflows/ci.yml`) exécute `make reqs-check`, `ruff` et `pytest
 
 ```console
 MyBestSim/
-├── .github/workflows/     # CI (reqs-check, ruff, pytest)
+├── .github/workflows/     # CI (ruff, pytest)
 ├── .streamlit/            # thème MyBestSim
 ├── app.py                 # application Streamlit (affichage seul)
 ├── article/               # article SEO (partie 2)
@@ -286,9 +284,9 @@ MyBestSim/
 │   └── check.py           # validation sans Streamlit
 ├── tests/                 # 81 tests
 ├── docs/                  # FONCTIONS.md, sujet, archives
-├── Makefile               # install / reqs / reqs-check / run / test / check / lint / clean
+├── Makefile               # install / run / test / lint / check / article / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
-├── requirements.txt       # lock généré par make reqs
+├── requirements.txt       # dépendances épinglées pour Streamlit Cloud
 └── README.md
 ```
 

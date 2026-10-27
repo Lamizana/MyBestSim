@@ -166,5 +166,5 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 - `tests/test_app.py` — rendu, six métriques, prix au Go, méthodologie,
   recherche vide.
 
-La CI exécute `make reqs-check`, `ruff` et `pytest` sur Python 3.12 à chaque
+La CI exécute `ruff` et `pytest` sur Python 3.12 à chaque
 push vers `main` et à chaque pull request.
