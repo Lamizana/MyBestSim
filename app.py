@@ -22,14 +22,12 @@ from mybestsim.etl import clean_data, load_raw
 from mybestsim.metrics import compute_metrics
 
 
-# -----------------------------------------------------------------------------
 def format_fr(valeur, decimales: int = 0) -> str:
     """Formate un nombre à la française : 5056 -> « 5 056 », 14.49 -> « 14,49 »."""
     texte = f"{valeur:,.{decimales}f}"
     return texte.replace(",", " ").replace(".", ",")
 
 
-# -----------------------------------------------------------------------------
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
 def charger_metriques() -> dict:
     """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par processus."""
@@ -69,8 +67,12 @@ def afficher_entete(metrics: dict) -> None:
             st.badge(f"Devise : **{meta['devise']}**", color="green")
 
 
-# -----------------------------------------------------------------------------
 def afficher_kpi(metrics: dict) -> None:
+    """Affiche les six indicateurs clés.
+
+    Les parts sont calculées sur le catalogue complet, offres illimitées
+    comprises.
+    """
     kpi = metrics["kpi"]
     fourchette = kpi["fourchette_prix"]["valeur"]
     data = kpi["data_gb_moyenne"]
@@ -139,7 +141,6 @@ def afficher_kpi(metrics: dict) -> None:
     )
 
 
-# -----------------------------------------------------------------------------
 def afficher_fournisseurs(metrics: dict) -> None:
     with st.container(border=True):
         st.subheader(":blue[Répartition par fournisseur]")
@@ -147,7 +148,6 @@ def afficher_fournisseurs(metrics: dict) -> None:
         st.altair_chart(graphiques.fournisseurs(metrics), width="stretch", theme=None)
 
 
-# -----------------------------------------------------------------------------
 def afficher_prix(metrics: dict) -> None:
     with st.container(border=True):
 
@@ -164,8 +164,8 @@ def afficher_prix_go(metrics: dict) -> None:
     illimitees = metrics["meta"]["illimitees"]
     finies = metrics["kpi"]["data_gb_moyenne"]["nb_offres"]
 
-    gauche, droite = st.columns([2, 1], gap="medium", vertical_alignment="center")
-    with gauche, st.container(border=True):
+    gauche, droite = st.columns([2, 1], gap="medium")
+    with gauche, st.container(border=True, key="carte_prix_go"):
         st.subheader(":blue[Prix au Go selon le volume]")
         st.caption(
             "Médiane des prix au gigaoctet, toutes durées confondues : plus le "
@@ -177,7 +177,9 @@ def afficher_prix_go(metrics: dict) -> None:
             graphiques.prix_go_volume(metrics), width="stretch", theme=None
         )
 
-    with droite, st.container(border=True):
+    with droite, st.container(
+        border=True, key="carte_median_go", height=443, vertical_alignment="center"
+    ):
         st.caption("PRIX MÉDIAN AU GO")
         st.markdown(f"### {format_fr(metrics['series']['prix_go_median'], 2)} €")
         st.caption(f"sur {format_fr(finies)} offres finies")
@@ -187,7 +189,7 @@ def afficher_prix_go(metrics: dict) -> None:
         )
         st.caption(f"du {serie[0]['libelle']} au {serie[-1]['libelle']}")
 
-# -----------------------------------------------------------------------------
+
 def _tableau_offres(offres: list) -> None:
     """Affiche le tableau triable des meilleures offres."""
     if not offres:
@@ -248,7 +250,6 @@ def _tableau_offres(offres: list) -> None:
     )
 
 
-# -----------------------------------------------------------------------------
 def _podium(offres: list) -> None:
     """Trois destinations les moins chères, en cartes natives."""
     rangs = ["1er", "2e", "3e"]
@@ -261,8 +262,8 @@ def _podium(offres: list) -> None:
             st.caption(offre["provider"])
 
 
-# -----------------------------------------------------------------------------
 def afficher_offres(metrics: dict) -> None:
+    """Filtre les meilleures offres par volume et durée, puis sépare pays et régions."""
     offres = metrics["series"]["meilleures_offres"]
 
     st.subheader(":blue[Meilleures offres par destination]")
@@ -336,7 +337,6 @@ def afficher_offres(metrics: dict) -> None:
             _tableau_offres(zones)
 
 
-# -----------------------------------------------------------------------------
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
     with st.expander(":blue[**Méthodologie et définitions**]", expanded=False):
@@ -358,8 +358,8 @@ def afficher_methodologie(metrics: dict) -> None:
         )
 
 
-# ---------------------------------------------------------------------
 def main() -> None:
+    """Assemble la page dans l'ordre de lecture, du résumé aux définitions."""
     st.set_page_config(
         page_title="MyBestSim - Dashboard eSIM",
         page_icon=str(LOGO),
