@@ -4,6 +4,7 @@
 applique le contrat de valeurs et ajoute les colonnes dérivées.
 """
 
+import csv
 import hashlib
 import io
 import warnings
@@ -63,6 +64,21 @@ def _resoudre_doublons(df: pd.DataFrame) -> pd.DataFrame:
 OBLIGATOIRES = [colonne for colonne in EXPECTED_COLUMNS if colonne != "data_gb"]
 
 
+def _verifier_lignes(nom: str, contenu: bytes) -> None:
+    """Vérifie que chaque ligne a le même nombre de champs que l'en-tête."""
+    lecteur = csv.reader(io.StringIO(contenu.decode("utf-8-sig")))
+    try:
+        entete = next(lecteur)
+    except StopIteration:
+        return
+    for numero, champs in enumerate(lecteur, start=2):
+        if champs and len(champs) != len(entete):
+            raise ValueError(
+                f"Ligne mal formée dans {nom}, ligne {numero} : "
+                f"{len(champs)} champs au lieu de {len(entete)}"
+            )
+
+
 def _verifier_valeurs(df: pd.DataFrame) -> None:
     """Refuse les colonnes obligatoires vides, en nommant fichier, ligne et SKU."""
     for colonne in OBLIGATOIRES:
@@ -110,11 +126,14 @@ def load_raw(data_dir: Path) -> pd.DataFrame:
             continue
         empreintes[empreinte] = fichier.name
 
+        _verifier_lignes(fichier.name, contenu)
+
         df = pd.read_csv(
             io.BytesIO(contenu),
             dtype=str,
             keep_default_na=False,
             encoding="utf-8-sig",
+            index_col=False,
         )
 
         if list(df.columns) != EXPECTED_COLUMNS:

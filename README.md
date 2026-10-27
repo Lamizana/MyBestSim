@@ -157,7 +157,7 @@ pip install -e ".[dev]"
 | [`pandas`](https://pandas.pydata.org/) | lecture, validation et agrégation des CSV |
 | [`streamlit`](https://streamlit.io/) | interface web et cache de calcul |
 | [`altair`](https://altair-viz.github.io/) | graphiques Vega-Lite |
-| [`pytest`](https://docs.pytest.org/) | 53 tests |
+| [`pytest`](https://docs.pytest.org/) | 81 tests |
 | [`ruff`](https://docs.astral.sh/ruff/) | lint et style |
 | [`uv`](https://docs.astral.sh/uv/) | génération des dépendances épinglées |
 
@@ -168,7 +168,7 @@ pip install -e ".[dev]"
 | Commande | Effet |
 | --- | --- |
 | `make run` | lance l'application sur `localhost:8501` |
-| `make test` | exécute les 53 tests |
+| `make test` | exécute les 81 tests |
 | `make check` | valide `data/raw/` sans lancer Streamlit |
 | `make lint` | vérifie le style avec Ruff |
 | `make reqs` | régénère `requirements.txt` depuis `pyproject.toml` |
@@ -245,7 +245,7 @@ Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête av
 make test
 ```
 
-53 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go (médiane, quartiles, offres illimitées), la série des meilleures offres (1 113 combinaisons, minimum et départage), la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides.
+81 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides. Une suite dédiée (`tests/test_etl_cas.py`) éprouve l'ETL sur des CSV générés : schéma, doublons, conflits, devises, réseaux, prix, durées, illimité, zones, BOM et lignes mal formées.
 
 La CI (`.github/workflows/ci.yml`) exécute `make reqs-check`, `ruff` et `pytest` sur Python 3.12 à chaque push vers `main` et à chaque pull request.
 
@@ -284,7 +284,7 @@ MyBestSim/
 │   ├── metrics.py         # KPI et séries
 │   ├── graphiques.py      # spécifications Altair
 │   └── check.py           # validation sans Streamlit
-├── tests/                 # 53 tests
+├── tests/                 # 81 tests
 ├── docs/                  # FONCTIONS.md, sujet, archives
 ├── Makefile               # install / reqs / reqs-check / run / test / check / lint / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
