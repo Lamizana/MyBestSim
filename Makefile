@@ -1,7 +1,7 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
 
-.PHONY: install reqs run test lint check clean
+.PHONY: install reqs reqs-check run test lint check clean
 
 install:
 	python3 -m venv $(VENV)
@@ -12,6 +12,9 @@ run:
 
 reqs:
 	uv pip compile pyproject.toml --python-version 3.12 --no-header -o requirements.txt
+
+reqs-check:
+	uv pip compile pyproject.toml --python-version 3.12 --no-header | diff -u requirements.txt -
 
 test:
 	$(PYTHON) -m pytest

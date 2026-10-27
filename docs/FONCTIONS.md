@@ -80,7 +80,8 @@ préfixe les codes de zone en `ZONE_*`.
 ### Séries
 
 **`price_histogram(df, largeur=10, maximum=160) -> list`** — 16 tranches de
-10 €, y compris les vides, somme = 5 056.
+10 €, y compris les vides, somme = 5 056. La borne haute est 160 € : le prix
+maximal observé (154,63 €) reste couvert, mais un prix supérieur serait exclu.
 
 **`prix_go_median(df) -> float`** — médiane du prix au Go sur les offres finies.
 
@@ -98,9 +99,10 @@ l'offre la moins chère. Une entrée contient `code`, `destination`, `zone`,
 Départage déterministe : prix, puis nom du fournisseur. Les zones sont
 conservées et signalées par `zone=True`. 1 113 combinaisons réelles.
 
-**`compute_metrics(clean) -> dict`** — assemble `meta`, `kpi` (six indicateurs
-avec `definition` et `perimetre`) et `series` (`histogramme_prix`,
-`meilleures_offres`).
+**`compute_metrics(clean) -> dict`** — assemble `meta` (`lignes`,
+`fournisseurs`, `devise`, `illimitees`), `kpi` (six indicateurs avec
+`definition` et `perimetre`) et `series` (`histogramme_prix`, `prix_go_median`,
+`prix_go_volume`, `meilleures_offres`).
 
 ## `mybestsim/graphiques.py`
 
@@ -119,11 +121,12 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 | Fonction | Rôle |
 |---|---|
-| `charger_metriques()` | `load_raw` → `clean_data` → `compute_metrics`, mise en cache |
+| `charger_metriques(version)` | `load_raw` → `clean_data` → `compute_metrics` ; `version` est la clé de cache |
 | `afficher_entete(metrics)` | titre, contexte, carte de périmètre |
 | `afficher_kpi(metrics)` | six cartes, chacune avec une ligne de contexte |
 | `afficher_fournisseurs(metrics)` | carte + barres |
 | `afficher_prix(metrics)` | carte + histogramme |
+| `afficher_prix_go(metrics)` | carte du prix au Go + carte de synthèse (médiane, évolution) |
 | `_podium(offres)` | trois destinations les moins chères |
 | `_tableau_offres(offres)` | tableau triable ; message si la sélection est vide |
 | `afficher_offres(metrics)` | volume, durée, onglets Pays/Régions, recherche |
@@ -136,7 +139,7 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 | Sujet | Choix |
 |---|---|
-| Noms de fonctions et de modules | anglais |
+| Noms de fonctions et de modules | API de calcul (`etl`, `metrics`) en anglais ; affichage et graphiques en français |
 | Variables locales et docstrings | français |
 | Types de retour | Python natifs, sérialisables |
 | Arrondi | à la sortie seulement |
@@ -151,9 +154,11 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
-- `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
-  de `compute_metrics` ;
-- `tests/test_graphiques.py` — structure des quatre graphiques Altair ;
-- `tests/test_app.py` — rendu, six métriques, méthodologie, recherche vide.
+- `tests/test_metrics.py` — six KPI, prix au Go, histogramme, meilleures
+  offres, structure de `compute_metrics` ;
+- `tests/test_graphiques.py` — structure des trois graphiques Altair ;
+- `tests/test_app.py` — rendu, six métriques, prix au Go, méthodologie,
+  recherche vide.
 
-La CI exécute `ruff` et `pytest` sur Python 3.12 à chaque push.
+La CI exécute `make reqs-check`, `ruff` et `pytest` sur Python 3.12 à chaque
+push vers `main` et à chaque pull request.
