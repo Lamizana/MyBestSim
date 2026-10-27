@@ -36,11 +36,37 @@ def _resoudre_doublons(df: pd.DataFrame) -> pd.DataFrame:
     dedoublonne = df.drop_duplicates(subset=["sku"], keep="first")
     supprimes = len(df) - len(dedoublonne)
     if supprimes:
+        sources = ", ".join(
+            sorted(df.loc[df["sku"].isin(doublons["sku"]), "_source"].unique())
+        )
         warnings.warn(
-            f"{supprimes} doublons exacts ignorés (même SKU, mêmes valeurs)",
+            f"{supprimes} doublons exacts ignorés ({sources})",
             stacklevel=2,
         )
     return dedoublonne.reset_index(drop=True)
+
+
+OBLIGATOIRES = [colonne for colonne in EXPECTED_COLUMNS if colonne != "data_gb"]
+
+
+def _verifier_valeurs(df: pd.DataFrame) -> None:
+    """Refuse les colonnes obligatoires vides, en nommant fichier, ligne et SKU."""
+    for colonne in OBLIGATOIRES:
+        vides = df[df[colonne].eq("")]
+        if vides.empty:
+            continue
+        exemples = ", ".join(
+            f"{source} ligne {numero} (sku {sku})"
+            for source, numero, sku in zip(
+                vides["_source"].head(5),
+                vides["_ligne"].head(5),
+                vides["sku"].head(5),
+                strict=True,
+            )
+        )
+        reste = len(vides) - 5
+        suffixe = f" (+{reste} autres)" if reste > 0 else ""
+        raise ValueError(f"Valeurs vides : {colonne} — {exemples}{suffixe}")
 
 
 def load_raw(data_dir: Path) -> pd.DataFrame:
@@ -85,6 +111,7 @@ def load_raw(data_dir: Path) -> pd.DataFrame:
             )
 
         df["_source"] = fichier.name
+        df["_ligne"] = df.index + 2
         tableaux.append(df)
 
     if not tableaux:
@@ -92,7 +119,8 @@ def load_raw(data_dir: Path) -> pd.DataFrame:
 
     empile = pd.concat(tableaux, ignore_index=True)
     propre = _resoudre_doublons(empile)
-    return propre.drop(columns="_source")
+    _verifier_valeurs(propre)
+    return propre.drop(columns=["_source", "_ligne"])
 
 
 def clean_data(raw: pd.DataFrame) -> pd.DataFrame:

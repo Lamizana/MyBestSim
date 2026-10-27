@@ -53,10 +53,27 @@ class LoadDataTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as dossier:
             ecrire_csv(dossier, "a.csv", [LIGNE])
             ecrire_csv(dossier, "b.csv", [LIGNE, AUTRE])
-            raw = load_raw(Path(dossier))
+            with warnings.catch_warnings(record=True) as journal:
+                warnings.simplefilter("always")
+                raw = load_raw(Path(dossier))
 
         self.assertEqual(set(raw["sku"]), {"sku-1", "sku-2"})
         self.assertEqual(len(raw), 2)
+        self.assertTrue(any("a.csv" in str(a.message) and "b.csv" in str(a.message)
+                            for a in journal))
+
+    def test_refuse_provider_vide_avec_fichier(self):
+        with tempfile.TemporaryDirectory() as dossier:
+            ecrire_csv(dossier, "a.csv", [LIGNE.replace(",P,", ",,", 1)])
+            with self.assertRaises(ValueError) as capture:
+                load_raw(Path(dossier))
+
+        message = str(capture.exception)
+        self.assertIn("Valeurs vides", message)
+        self.assertIn("provider", message)
+        self.assertIn("a.csv", message)
+        self.assertIn("ligne 2", message)
+        self.assertIn("sku-1", message)
 
     def test_refuse_sku_avec_valeurs_divergentes(self):
         with tempfile.TemporaryDirectory() as dossier:

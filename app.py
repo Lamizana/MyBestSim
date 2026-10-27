@@ -234,19 +234,33 @@ def afficher_offres(metrics: dict) -> None:
     offres = metrics["series"]["meilleures_offres"]
 
     st.subheader(":blue[Meilleures offres par destination]")
-    st.caption(
-        "**Prix min** : l'offre la moins chère, chez le fournisseur indiqué. "
-        "**Prix max** : l'offre la plus chère pour la même destination, tous "
-        "fournisseurs confondus. **Écart** : surcoût de la plus chère par "
-        "rapport à la moins chère. Le tableau est triable."
-    )
+    # st.caption(
+    #     "Ce tableau compare les offres tarifaires par destination :  \n"
+    #     "- **Prix min :** offre la moins chère (avec le nom du fournisseur).  \n"
+    #     "- **Prix max :** offre la plus chère pour la même destination.  \n"
+    #     "- **Écart :** surcoût à payer entre l'offre la plus chère et la moins chère.  \n\n"
+    #     "*Cliquez sur l'en-tête d'une colonne pour trier le tableau.*"
+    # )
 
-    st.markdown(
-        "Ce tableau compare les opportunités tarifaires par destination :  \n"
-        "- **Prix min :** offre la moins chère (avec le nom du fournisseur).  \n"
-        "- **Prix max :** offre la plus chère pour la même destination.  \n"
-        "- **Écart :** surcoût à payer entre l'offre la plus chère et la moins chère.  \n\n"
-        "*Cliquez sur l'en-tête d'une colonne pour trier le tableau.*"
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        with st.container(border=True):
+            st.markdown("**:blue[Prix minimum]**")
+            st.caption("L'offre la moins chère et son fournisseur associé.")
+
+    with col2:
+        with st.container(border=True):
+            st.markdown("**:red[Prix maximum]**")
+            st.caption("L'offre la plus chère pour la même destination.")
+
+    with col3:
+        with st.container(border=True):
+            st.markdown("**:yellow[Écart tarifaire]**")
+            st.caption("Surcoût entre l'offre la plus chère et la moins chère.")
+
+    st.caption(
+        "💡 *Le tableau ci-dessous est entièrement triable en cliquant sur les en-têtes.*"
     )
 
     gauche, droite = st.columns(2)

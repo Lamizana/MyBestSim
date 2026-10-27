@@ -14,7 +14,7 @@ test:
 	$(PYTHON) -m pytest
 
 check:
-	$(PYTHON) -c "from mybestsim.config import DATA_DIR; from mybestsim.etl import clean_data, load_raw; df = clean_data(load_raw(DATA_DIR)); print(f'{len(df)} offres valides')"
+	$(PYTHON) -m mybestsim.check
 
 lint:
 	$(PYTHON) -m ruff check .
