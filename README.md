@@ -274,7 +274,7 @@ MyBestSim/
 │   └── check.py           # validation sans Streamlit
 ├── tests/                 # 53 tests
 ├── docs/                  # FONCTIONS.md, sujet, archives
-├── Makefile               # install / reqs / run / test / check / lint / clean
+├── Makefile               # install / reqs / reqs-check / run / test / check / lint / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
 ├── requirements.txt       # lock généré par make reqs
 └── README.md
