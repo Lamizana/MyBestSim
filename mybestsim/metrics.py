@@ -114,7 +114,8 @@ def meilleures_offres(df: pd.DataFrame) -> list:
 
     Les zones (Europe, Asie, Amérique du Nord, Monde) sont conservées et
     signalées par ``zone`` : elles ne doivent pas être mélangées aux pays dans
-    une même comparaison.
+    une même comparaison. ``ecart_pct`` mesure le surcoût du fournisseur le plus
+    cher par rapport au moins cher.
     """
     cles = [
         "country_code",
@@ -145,22 +146,27 @@ def meilleures_offres(df: pd.DataFrame) -> list:
         kind="stable",
     )
 
-    return [
-        {
-            "code": ligne.country_code,
-            "destination": ligne.country_name,
-            "zone": bool(ligne.is_region),
-            "volume": ligne.data_display,
-            "data_gb": None if pd.isna(ligne.data_gb) else float(ligne.data_gb),
-            "validity_days": int(ligne.validity_days),
-            "provider": ligne.provider,
-            "prix": round(float(ligne.price), 2),
-            "provider_max": ligne.provider_max,
-            "prix_max": round(float(ligne.prix_max), 2),
-            "offres": int(ligne.offres),
-        }
-        for ligne in fusion.itertuples()
-    ]
+    resultat = []
+    for ligne in fusion.itertuples():
+        prix = round(float(ligne.price), 2)
+        prix_max = round(float(ligne.prix_max), 2)
+        resultat.append(
+            {
+                "code": ligne.country_code,
+                "destination": ligne.country_name,
+                "zone": bool(ligne.is_region),
+                "volume": ligne.data_display,
+                "data_gb": None if pd.isna(ligne.data_gb) else float(ligne.data_gb),
+                "validity_days": int(ligne.validity_days),
+                "provider": ligne.provider,
+                "prix": prix,
+                "provider_max": ligne.provider_max,
+                "prix_max": prix_max,
+                "ecart_pct": round((prix_max - prix) / prix * 100, 1),
+                "offres": int(ligne.offres),
+            }
+        )
+    return resultat
 
 
 def compute_metrics(clean: pd.DataFrame) -> dict:
@@ -170,6 +176,7 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
     prix = price_range(clean)
     prix_stats = mean_price(clean)
     fournisseurs = provider_distribution(clean)
+    au_dessus = cards_above_price(clean)
 
     return {
         "meta": {
@@ -185,7 +192,8 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
                 "perimetre": f"{total} lignes",
             },
             "prix_superieur_100": {
-                "valeur": cards_above_price(clean),
+                "valeur": au_dessus,
+                "part_pct": round(au_dessus * 100 / total, 1),
                 "definition": (
                     f"Offres dont le prix dépasse strictement {SEUIL_PRIX:g} EUR"
                 ),
@@ -193,6 +201,7 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
             },
             "fourchette_prix": {
                 "valeur": prix,
+                "amplitude": round(prix["max"] - prix["min"], 2),
                 "definition": "Prix minimum et maximum du catalogue",
                 "perimetre": f"{total} offres",
             },

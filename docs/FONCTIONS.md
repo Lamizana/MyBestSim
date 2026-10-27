@@ -95,14 +95,16 @@ illimitées sont exclues : pas de dénominateur en Go.
 **`meilleures_offres(df) -> list`** — pour chaque destination, volume et durée,
 l'offre la moins chère. Une entrée contient `code`, `destination`, `zone`,
 `volume`, `data_gb`, `validity_days`, `provider`, `prix`, `provider_max`,
-`prix_max`, `offres`.
+`prix_max`, `ecart_pct`, `offres`.
 Départage déterministe : prix, puis nom du fournisseur. Les zones sont
 conservées et signalées par `zone=True`. 1 113 combinaisons réelles.
 
 **`compute_metrics(clean) -> dict`** — assemble `meta` (`lignes`,
 `fournisseurs`, `devise`, `illimitees`), `kpi` (six indicateurs avec
 `definition` et `perimetre`) et `series` (`histogramme_prix`, `prix_go_median`,
-`prix_go_volume`, `meilleures_offres`).
+`prix_go_volume`, `meilleures_offres`). `prix_superieur_100` porte aussi
+`part_pct` et `fourchette_prix` porte `amplitude` : `app.py` ne fait aucun
+calcul de KPI.
 
 ## `mybestsim/graphiques.py`
 

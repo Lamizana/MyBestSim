@@ -86,7 +86,7 @@ def afficher_entete(metrics: dict) -> None:
             st.markdown("**:blue[RÉSUMÉ DES MÉTRIQUES]**")
             st.badge(f"Volume : **{format_fr(meta['lignes'])}** offres", color="blue")
             st.badge(f"Sources : **{nb_fichiers}** fichiers", color="yellow")
-            st.badge(f"Devise : **{meta['devise']}**", color="green")
+            st.badge(f"Devise : **{meta['devise']}**", color="blue")
 
 
 def afficher_kpi(metrics: dict) -> None:
@@ -99,9 +99,9 @@ def afficher_kpi(metrics: dict) -> None:
     fourchette = kpi["fourchette_prix"]["valeur"]
     data = kpi["data_gb_moyenne"]
     prix = kpi["prix_moyen"]["valeur"]
-    illimitees = metrics["meta"]["lignes"] - data["nb_offres"]
-    part_cent = kpi["prix_superieur_100"]["valeur"] * 100 / metrics["meta"]["lignes"]
-    amplitude = fourchette["max"] - fourchette["min"]
+    illimitees = metrics["meta"]["illimitees"]["offres"]
+    part_pct = kpi["prix_superieur_100"]["part_pct"]
+    amplitude = kpi["fourchette_prix"]["amplitude"]
     tete = kpi["fournisseurs"]["valeur"][0]
 
     st.subheader(":blue[Les chiffres clés]")
@@ -118,7 +118,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[1].metric(
         f"Cartes au-delà de {SEUIL_PRIX:g} €",
         format_fr(kpi["prix_superieur_100"]["valeur"]),
-        delta=f"*soit :yellow[**{format_fr(part_cent, 1)}**] % du catalogue*",
+        delta=f"*soit :yellow[**{format_fr(part_pct, 1)}**] % du catalogue*",
         delta_color="off",
         help=kpi["prix_superieur_100"]["definition"],
         border=True,
@@ -241,12 +241,13 @@ def _tableau_offres(offres: list) -> None:
             "prix",
             "provider_max",
             "prix_max",
+            "ecart_pct",
             "offres",
         ],
     )
-    donnees["ecart"] = (
-        (donnees["prix_max"] - donnees["prix"]) / donnees["prix"] * 100
-    ).map(lambda valeur: f"+{format_fr(valeur, 1)} %")
+    donnees["ecart"] = donnees["ecart_pct"].map(
+        lambda valeur: f"+{format_fr(valeur, 1)} %"
+    )
     donnees = donnees.rename(
         columns={
             "destination": "Destination",

@@ -14,7 +14,7 @@
   <a href="https://mybestsim.com"><img src="https://img.shields.io/badge/Contexte-Test%20de%20recrutement-8A2BE2?style=for-the-badge" alt="Test de recrutement"></a>
 </p>
 
-<p>Créé le 26/10/2026 · Dernière mise à jour : 28/10/2026</p>
+<p>Créé le 26/10/2026 · Dernière mise à jour : 27/10/2026</p>
 
 </div>
 
@@ -144,7 +144,7 @@ pip install -e ".[dev]"
 ```
 
 > [!NOTE]
-> Deux dépendances runtime seulement : `pandas` et `streamlit` (Altair est fourni). `requirements.txt` est épinglé pour Streamlit Cloud, `pyproject.toml` fait foi en local.
+> Trois dépendances runtime directes : `altair`, `pandas` et `streamlit`. `requirements.txt` est épinglé pour Streamlit Cloud, `pyproject.toml` fait foi en local.
 
 ---
 
@@ -172,6 +172,14 @@ pip install -e ".[dev]"
 | `make reqs` | régénère `requirements.txt` depuis `pyproject.toml` |
 | `make reqs-check` | vérifie que le lock est synchrone |
 | `make clean` | supprime les caches |
+
+Ou directement, sans `make` :
+
+```bash
+python -m streamlit run app.py
+```
+
+Le point d'entrée de l'application est `app.py`.
 
 > [!TIP]
 > Avant `make run`, lancez `make check` : il détecte un fichier dupliqué, une valeur vide ou un conflit de SKU avec le fichier et la ligne fautive.

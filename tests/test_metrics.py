@@ -94,10 +94,12 @@ class MetricsTest(unittest.TestCase):
         kpi = metrics.compute_metrics(self.clean)["kpi"]
         self.assertEqual(kpi["total_cartes"]["valeur"], 5056)
         self.assertEqual(kpi["prix_superieur_100"]["valeur"], 56)
+        self.assertEqual(kpi["prix_superieur_100"]["part_pct"], 1.1)
         self.assertEqual(
             kpi["fourchette_prix"]["valeur"],
             {"min": 5.36, "max": 154.63},
         )
+        self.assertEqual(kpi["fourchette_prix"]["amplitude"], 149.27)
         self.assertEqual(kpi["data_gb_moyenne"]["valeur"], 14.49)
         self.assertEqual(kpi["data_gb_moyenne"]["nb_offres"], 4403)
         self.assertEqual(
@@ -143,6 +145,10 @@ class MeilleuresOffresTest(unittest.TestCase):
             self.assertIn("provider_max", offre)
             self.assertTrue(offre["provider_max"])
             self.assertGreaterEqual(offre["offres"], 1)
+            attendu = round(
+                (offre["prix_max"] - offre["prix"]) / offre["prix"] * 100, 1
+            )
+            self.assertEqual(offre["ecart_pct"], attendu)
 
     def test_espagne_dix_go_quinze_jours(self):
         offre = next(

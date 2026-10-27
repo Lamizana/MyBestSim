@@ -1,5 +1,7 @@
 altair==6.3.0
-    # via streamlit
+    # via
+    #   mybestsim-dashboard (pyproject.toml)
+    #   streamlit
 anyio==4.15.1
     # via
     #   starlette
