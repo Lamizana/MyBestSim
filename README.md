@@ -14,7 +14,7 @@
   <a href="https://mybestsim.com"><img src="https://img.shields.io/badge/Contexte-Test%20de%20recrutement-8A2BE2?style=for-the-badge" alt="Test de recrutement"></a>
 </p>
 
-<p>Créé le 26/10/2026 · Dernière mise à jour : 27/10/2026</p>
+<p>Créé le 26/10/2026 · Dernière mise à jour : 28/10/2026</p>
 
 </div>
 
@@ -59,7 +59,8 @@ Ce dashboard consolide les 18 fichiers CSV fournisseurs du catalogue eSIM MyBest
 | --- | --- |
 | Application en ligne | [mybestsim-dashboard.streamlit.app](https://mybestsim-dashboard.streamlit.app) |
 | Code source | [github.com/Lamizana/MyBestSim](https://github.com/Lamizana/MyBestSim) |
-| Article (partie 2) | [Internet en croisière : quelle eSIM choisir ?](article/internet-croisiere-esim.md) |
+| Article en ligne (partie 2) | [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) |
+| Source de l'article | [article/internet-croisiere-esim.md](article/internet-croisiere-esim.md) |
 | Sujet du test | [docs/enonce-test.pdf](docs/enonce-test.pdf) |
 
 ---
@@ -75,6 +76,7 @@ Ce dashboard consolide les 18 fichiers CSV fournisseurs du catalogue eSIM MyBest
 | **Qualité** | pytest, Ruff | [![Ruff](https://img.shields.io/badge/Ruff-0.6-D7FF64?style=flat-square&logo=ruff&logoColor=black)](https://docs.astral.sh/ruff/) |
 | **CI/CD** | GitHub Actions | [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI-2088FF?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/features/actions) |
 | **Hébergement** | Streamlit Community Cloud | [![Streamlit Cloud](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/cloud) |
+| **Article** | GitHub Pages | [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-en%20ligne-222222?style=flat-square&logo=githubpages&logoColor=white)](https://lamizana.github.io/MyBestSim/) |
 
 ---
 
@@ -125,7 +127,7 @@ dict { meta, kpi, series }
 
 - Python 3.11 ou plus récent (3.12 recommandé)
 - `make` pour les raccourcis
-- `uv` uniquement pour régénérer `requirements.txt`
+- `uv` pour régénérer `requirements.txt` et construire la page de l'article
 
 ### Étapes
 
@@ -171,6 +173,7 @@ pip install -e ".[dev]"
 | `make lint` | vérifie le style avec Ruff |
 | `make reqs` | régénère `requirements.txt` depuis `pyproject.toml` |
 | `make reqs-check` | vérifie que le lock est synchrone |
+| `make article` | construit la page HTML de l'article dans `article/_site/` |
 | `make clean` | supprime les caches |
 
 Ou directement, sans `make` :
@@ -260,7 +263,8 @@ La CI (`.github/workflows/ci.yml`) exécute `make reqs-check`, `ruff` et `pytest
 
 ## Publications
 
-- [Internet en croisière : quelle eSIM choisir ?](article/internet-croisiere-esim.md) — choisir une eSIM utile en mer et à quai, selon l'itinéraire.
+- **En ligne** — [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) : page HTML brandée, déployée par GitHub Pages, avec métadonnées SEO et données structurées.
+- **Source** — [article/internet-croisiere-esim.md](article/internet-croisiere-esim.md) : Markdown de référence ; la page est générée par `make article`.
 
 ---
 
