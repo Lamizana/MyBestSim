@@ -203,12 +203,19 @@ def _tableau_offres(offres: list) -> None:
         hide_index=True,
         width="stretch",
         column_config={
-            "Prix min": st.column_config.NumberColumn(format="%.2f €"),
-            "Prix max": st.column_config.NumberColumn(
-                format="%.2f €", alignment="right"
+            "Destination": st.column_config.TextColumn(width="medium"),
+            "Fournisseur min": st.column_config.TextColumn(width="small"),
+            "Prix min": st.column_config.NumberColumn(
+                format="%.2f €", width="small"
             ),
-            "Écart": st.column_config.TextColumn(alignment="right"),
-            "Offres": st.column_config.NumberColumn(format="%d", alignment="right"),
+            "Fournisseur max": st.column_config.TextColumn(width="small"),
+            "Prix max": st.column_config.NumberColumn(
+                format="%.2f €", width="small", alignment="right"
+            ),
+            "Écart": st.column_config.TextColumn(width="small", alignment="right"),
+            "Offres": st.column_config.NumberColumn(
+                format="%d", width="small", alignment="right"
+            ),
         },
     )
 
@@ -347,7 +354,7 @@ def main() -> None:
         st.divider()
         afficher_methodologie(metrics)
         st.caption(
-            "Réalisé dans le cadre du test de recrutement MyBestSim - "
+            "Réalisé dans le cadre du test de recrutement **:blue[MyBest]:red[Sim]** - "
             "[code source](https://github.com/Lamizana/MyBestSim)."
         )
 
