@@ -15,7 +15,7 @@ BORD = "#e4e7ec"
 SEUIL_PRIX = 100
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _finaliser(graphique: alt.Chart) -> alt.Chart:
     """Applique la charte commune : fond transparent, police, axes discrets."""
     return (
@@ -34,7 +34,7 @@ def _finaliser(graphique: alt.Chart) -> alt.Chart:
     )
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def fournisseurs(metrics: dict) -> alt.Chart:
     """Barres horizontales triées, noms alignés à gauche et coins arrondis."""
     donnees = pd.DataFrame(metrics["kpi"]["fournisseurs"]["valeur"])
@@ -83,7 +83,7 @@ def fournisseurs(metrics: dict) -> alt.Chart:
     return _finaliser((barres + valeurs).properties(height=420))
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def prix(metrics: dict) -> alt.Chart:
     """Histogramme des prix par tranche de 10 €, avec seuil à 100 €."""
     donnees = pd.DataFrame(metrics["series"]["histogramme_prix"])
