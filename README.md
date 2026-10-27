@@ -28,7 +28,7 @@ data & automatisation).
 │   ├── metrics.py          # six KPI + série des meilleures offres
 │   └── graphiques.py       # spécifications Altair
 ├── data/raw/               # 18 CSV fournisseurs, jamais modifiés
-├── tests/                  # 48 tests
+├── tests/                  # 53 tests
 └── docs/
     ├── FONCTIONS.md        # détail des fonctions
     ├── enonce-test.pdf     # sujet du test
@@ -59,11 +59,15 @@ pip install -e ".[dev]"
 | Commande | Équivalent | Effet |
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement |
+| `make reqs` | `uv pip compile pyproject.toml --python-version 3.12 -o requirements.txt` | régénère les dépendances épinglées |
 | `make run` | `python -m streamlit run app.py` | lance l'application |
-| `make test` | `python -m pytest` | exécute les 48 tests |
+| `make test` | `python -m pytest` | exécute les 53 tests |
 | `make check` | `python -m mybestsim.check` | vérifie `data/raw/` |
 | `make lint` | `ruff check .` | vérifie le style |
 | `make clean` | `rm -rf …` | supprime les caches |
+
+`requirements.txt` est **généré** depuis `pyproject.toml` par `make reqs` : ne
+pas l'éditer à la main. Streamlit Cloud l'installe tel quel, versions figées.
 
 ## Un seul chemin
 
@@ -157,7 +161,7 @@ un code de sortie non nul.
 make test
 ```
 
-48 tests couvrent les invariants des données réelles (5 056 lignes, 653
+53 tests couvrent les invariants des données réelles (5 056 lignes, 653
 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, la série des
 meilleures offres (1 113 combinaisons, minimum et départage), la structure des
 graphiques, le rendu de l'application et le rejet des cas invalides.

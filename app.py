@@ -222,7 +222,7 @@ def afficher_prix_go(metrics: dict) -> None:
             text_alignment="center",
         )
         st.caption(
-            f"*du {serie[0]['libelle']} au {serie[-1]['libelle']}*",
+            f"*du forfait **{serie[0]['libelle']}** au forfait **{serie[-1]['libelle']}***",
             text_alignment="center",
         )
 
