@@ -1,5 +1,7 @@
 import pandas as pd
 
+from mybestsim.config import DEVISE, SEUIL_PRIX
+
 
 # -----------------------------------------------------------------------------
 def total_cards(df: pd.DataFrame) -> int:
@@ -8,7 +10,7 @@ def total_cards(df: pd.DataFrame) -> int:
 
 
 # -----------------------------------------------------------------------------
-def cards_above_price(df: pd.DataFrame, seuil: float = 100.0) -> int:
+def cards_above_price(df: pd.DataFrame, seuil: float = SEUIL_PRIX) -> int:
     """Nombre d'offres dont le prix dépasse strictement `seuil` euros."""
     return int((df["price"] > seuil).sum())
 
@@ -61,6 +63,21 @@ def prix_go_par_volume(df: pd.DataFrame) -> list:
             }
         )
     return resultat
+
+
+def prix_go_median(df: pd.DataFrame) -> float:
+    """Médiane du prix au Go sur les offres finies."""
+    finies = df.loc[~df["is_unlimited"]]
+    return round(float((finies["price"] / finies["data_gb"]).median()), 2)
+
+
+def illimitees_prix(df: pd.DataFrame) -> dict:
+    """Nombre et prix médian des offres illimitées, exclues du prix au Go."""
+    illimitees = df.loc[df["is_unlimited"]]
+    return {
+        "offres": int(len(illimitees)),
+        "prix_median": round(float(illimitees["price"].median()), 2),
+    }
 
 
 # -----------------------------------------------------------------------------
@@ -162,7 +179,8 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
         "meta": {
             "lignes": int(len(clean)),
             "fournisseurs": int(clean["provider"].nunique()),
-            "devise": "EUR",
+            "devise": DEVISE,
+            "illimitees": illimitees_prix(clean),
         },
         "kpi": {
             "total_cartes": {
@@ -172,7 +190,9 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
             },
             "prix_superieur_100": {
                 "valeur": cards_above_price(clean),
-                "definition": "Offres dont le prix dépasse strictement 100 EUR",
+                "definition": (
+                    f"Offres dont le prix dépasse strictement {SEUIL_PRIX:g} EUR"
+                ),
                 "perimetre": f"{total} offres",
             },
             "fourchette_prix": {
@@ -199,6 +219,7 @@ def compute_metrics(clean: pd.DataFrame) -> dict:
         },
         "series": {
             "histogramme_prix": price_histogram(clean),
+            "prix_go_median": prix_go_median(clean),
             "prix_go_volume": prix_go_par_volume(clean),
             "meilleures_offres": meilleures_offres(clean),
         },

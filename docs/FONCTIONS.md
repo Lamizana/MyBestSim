@@ -31,9 +31,17 @@ Chemins du projet et contrat d'entrée.
 |---|---|
 | `PROJECT_ROOT` | racine du dépôt |
 | `DATA_DIR` | `data/raw/` |
+| `ASSETS_DIR`, `LOGO`, `LOGO_MARQUE` | dossier `assets/` et logos |
 | `EXPECTED_COLUMNS` | les 12 colonnes attendues, dans l'ordre |
 | `REGION_CODES` | `EU`, `AS`, `NA`, `WW` |
 | `ZONE_PREFIX` | `ZONE_` |
+| `SEUIL_PRIX` | seuil du KPI « prix supérieur à 100 € » et de l'histogramme |
+| `DEVISE` | devise acceptée (`EUR`) |
+| `RESEAUX` | réseaux acceptés (`4G`, `5G`) |
+| `VALEURS_TOP_UP` | correspondance `oui`/`non` → booléen |
+| `LIBELLE_ILLIMITE` | libellé du volume illimité |
+| `VOLUMES`, `VOLUME_DEFAUT` | volumes du filtre et sélection par défaut |
+| `DUREES`, `DUREE_DEFAUT` | durées du filtre et sélection par défaut |
 
 ## `mybestsim/etl.py`
 
@@ -63,7 +71,7 @@ préfixe les codes de zone en `ZONE_*`.
 | Fonction | Retour |
 |---|---|
 | `total_cards(df)` | nombre de lignes |
-| `cards_above_price(df, seuil=100.0)` | offres dont le prix dépasse strictement le seuil |
+| `cards_above_price(df, seuil=SEUIL_PRIX)` | offres dont le prix dépasse strictement le seuil |
 | `price_range(df)` | `{"min", "max"}` |
 | `mean_data_gb(df)` | `{"valeur", "nb_offres"}`, illimitées exclues |
 | `mean_price(df)` | `{"moyenne", "mediane"}` |
@@ -73,6 +81,11 @@ préfixe les codes de zone en `ZONE_*`.
 
 **`price_histogram(df, largeur=10, maximum=160) -> list`** — 16 tranches de
 10 €, y compris les vides, somme = 5 056.
+
+**`prix_go_median(df) -> float`** — médiane du prix au Go sur les offres finies.
+
+**`illimitees_prix(df) -> dict`** — nombre et prix médian des offres illimitées,
+exclues du prix au Go.
 
 **`prix_go_par_volume(df) -> list`** — par volume (1, 3, 5, 10, 20, 50 Go),
 médiane du prix au Go et quartiles p25/p75, avec le nombre d'offres. Les offres
@@ -132,7 +145,7 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-51 tests, cinq fichiers :
+53 tests, cinq fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;

@@ -31,6 +31,15 @@ class MetricsTest(unittest.TestCase):
             {"moyenne": 29.3, "mediane": 20.7},
         )
 
+    def test_prix_go_median(self):
+        self.assertEqual(metrics.prix_go_median(self.clean), 2.55)
+
+    def test_illimitees_prix(self):
+        self.assertEqual(
+            metrics.illimitees_prix(self.clean),
+            {"offres": 653, "prix_median": 51.28},
+        )
+
     def test_prix_go_par_volume(self):
         serie = metrics.prix_go_par_volume(self.clean)
         self.assertEqual(len(serie), 6)
@@ -73,7 +82,12 @@ class MetricsTest(unittest.TestCase):
         )
         self.assertEqual(
             rapport["meta"],
-            {"lignes": 5056, "fournisseurs": 18, "devise": "EUR"},
+            {
+                "lignes": 5056,
+                "fournisseurs": 18,
+                "devise": "EUR",
+                "illimitees": {"offres": 653, "prix_median": 51.28},
+            },
         )
 
     def test_compute_metrics_valeurs(self):

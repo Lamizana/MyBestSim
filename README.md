@@ -103,7 +103,7 @@ et ses quartiles, sur les seules offres finies.
 3. **Distribution des prix** — histogramme par tranche de 10 €, tranches à
    partir de 100 € en rouge.
 4. **Prix au Go selon le volume** — médiane par forfait, écart interquartile
-   p25–p75, offres illimitées exclues.
+   p25–p75, offres illimitées exclues ; carte du prix médian au Go (2,55 €).
 5. **Meilleures offres par destination** — sélection du volume et de la durée,
    podium des trois destinations les moins chères, onglets Pays / Régions,
    recherche, tableau triable.

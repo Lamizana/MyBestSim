@@ -7,12 +7,13 @@ Aucun HTML, aucun CSS : uniquement des spécifications Vega-Lite passées à
 import altair as alt
 import pandas as pd
 
+from mybestsim.config import SEUIL_PRIX
+
 BLEU = "#007bff"
 ROUGE = "#de1414"
 MUTED = "#667085"
 TEXTE = "#1d2939"
 BORD = "#e4e7ec"
-SEUIL_PRIX = 100
 
 
 # -----------------------------------------------------------------------------
@@ -85,7 +86,7 @@ def fournisseurs(metrics: dict) -> alt.Chart:
 
 # -----------------------------------------------------------------------------
 def prix(metrics: dict) -> alt.Chart:
-    """Histogramme des prix par tranche de 10 €, avec seuil à 100 €."""
+    """Histogramme des prix par tranche de 10 €, seuil `SEUIL_PRIX` en rouge."""
     donnees = pd.DataFrame(metrics["series"]["histogramme_prix"])
     donnees["plage"] = [
         f"{int(ligne['min'])}–{int(ligne['max'])} €" for _, ligne in donnees.iterrows()

@@ -4,20 +4,22 @@ L'application ne calcule rien : elle appelle ``compute_metrics`` et affiche.
 Tout l'affichage passe par des composants Streamlit natifs, sans CSS ni HTML.
 """
 
-from pathlib import Path
-
 import pandas as pd
 import streamlit as st
 
 from mybestsim import graphiques
-from mybestsim.config import DATA_DIR
+from mybestsim.config import (
+    DATA_DIR,
+    DUREE_DEFAUT,
+    DUREES,
+    LOGO,
+    LOGO_MARQUE,
+    SEUIL_PRIX,
+    VOLUME_DEFAUT,
+    VOLUMES,
+)
 from mybestsim.etl import clean_data, load_raw
 from mybestsim.metrics import compute_metrics
-
-LOGO = Path(__file__).resolve().parent / "assets" / "logo.png"
-LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
-
-VOLUMES = ["1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"]
 
 
 # -----------------------------------------------------------------------------
@@ -90,7 +92,7 @@ def afficher_kpi(metrics: dict) -> None:
         border=True,
     )
     premiere[1].metric(
-        "Cartes au-delà de 100 €",
+        f"Cartes au-delà de {SEUIL_PRIX:g} €",
         format_fr(kpi["prix_superieur_100"]["valeur"]),
         delta=f"*soit :yellow[**{format_fr(part_cent, 1)}**] % du catalogue*",
         delta_color="off",
@@ -151,22 +153,39 @@ def afficher_prix(metrics: dict) -> None:
 
         st.subheader(":blue[Distribution des prix]")
         st.caption(
-            "Nombre d'offres par tranche de 10 €. "
-            "Les tranches à partir de 100 € sont en rouge."
+            f"Nombre d'offres par tranche de 10 €. "
+            f"Les tranches à partir de {SEUIL_PRIX:g} € sont en rouge."
         )
         st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
 def afficher_prix_go(metrics: dict) -> None:
-    with st.container(border=True):
+    serie = metrics["series"]["prix_go_volume"]
+    illimitees = metrics["meta"]["illimitees"]
+    finies = metrics["kpi"]["data_gb_moyenne"]["nb_offres"]
+
+    gauche, droite = st.columns([2, 1], gap="medium", vertical_alignment="center")
+    with gauche, st.container(border=True):
         st.subheader(":blue[Prix au Go selon le volume]")
         st.caption(
-            "Médiane des prix au gigaoctet, toutes durées confondues, "
-            "offres illimitées exclues. Plus le forfait est gros, "
-            "moins le Go coûte cher."
+            "Médiane des prix au gigaoctet, toutes durées confondues : plus le "
+            f"forfait est gros, moins le Go coûte cher. Les {format_fr(illimitees['offres'])} "
+            "offres illimitées sont exclues, faute de volume en Go ; leur prix "
+            f"médian est de {format_fr(illimitees['prix_median'], 2)} €."
         )
-        st.altair_chart(graphiques.prix_go_volume(metrics), width="stretch", theme=None)
+        st.altair_chart(
+            graphiques.prix_go_volume(metrics), width="stretch", theme=None
+        )
 
+    with droite, st.container(border=True):
+        st.caption("PRIX MÉDIAN AU GO")
+        st.markdown(f"### {format_fr(metrics['series']['prix_go_median'], 2)} €")
+        st.caption(f"sur {format_fr(finies)} offres finies")
+        st.divider()
+        st.markdown(
+            f"### {format_fr(serie[0]['prix_go'], 2)} € → {format_fr(serie[-1]['prix_go'], 2)} €"
+        )
+        st.caption(f"du {serie[0]['libelle']} au {serie[-1]['libelle']}")
 
 # -----------------------------------------------------------------------------
 def _tableau_offres(offres: list) -> None:
@@ -256,15 +275,15 @@ def afficher_offres(metrics: dict) -> None:
     )
 
     gauche, droite = st.columns(2)
-    volume = gauche.selectbox("Volume", VOLUMES, index=3)
+    volume = gauche.selectbox("Volume", VOLUMES, index=VOLUMES.index(VOLUME_DEFAUT))
     duree = (
         droite.segmented_control(
             "Durée",
-            options=[7, 15, 30],
-            default=15,
+            options=DUREES,
+            default=DUREE_DEFAUT,
             format_func=lambda jours: f"{jours} jours",
         )
-        or 15
+        or DUREE_DEFAUT
     )
 
     filtre = [
@@ -331,7 +350,9 @@ def afficher_methodologie(metrics: dict) -> None:
             "comparaisons par volume utilisent la médiane, plus robuste aux "
             "offres extrêmes ; la dispersion est représentée par l'écart "
             "interquartile.\n"
-            "- Seuil des 100 € appliqué strictement : prix supérieur à 100,00 €.\n"
+            "- Seuil des "
+            f"{SEUIL_PRIX:g} € appliqué strictement : prix supérieur à "
+            f"{SEUIL_PRIX:g} €.\n"
             "- Jeu de données synthétique fourni pour le test : les relations "
             "observées décrivent ce catalogue, pas le marché réel."
         )
@@ -341,7 +362,7 @@ def afficher_methodologie(metrics: dict) -> None:
 def main() -> None:
     st.set_page_config(
         page_title="MyBestSim - Dashboard eSIM",
-        page_icon="assets/logo.png",
+        page_icon=str(LOGO),
         layout="wide",
         initial_sidebar_state="auto",
     )

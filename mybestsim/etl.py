@@ -5,7 +5,15 @@ from pathlib import Path
 
 import pandas as pd
 
-from mybestsim.config import EXPECTED_COLUMNS, REGION_CODES, ZONE_PREFIX
+from mybestsim.config import (
+    DEVISE,
+    EXPECTED_COLUMNS,
+    LIBELLE_ILLIMITE,
+    REGION_CODES,
+    RESEAUX,
+    VALEURS_TOP_UP,
+    ZONE_PREFIX,
+)
 
 
 def _resoudre_doublons(df: pd.DataFrame) -> pd.DataFrame:
@@ -147,10 +155,10 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
         suffixe = f" (+{reste} autres)" if reste > 0 else ""
         raise ValueError(f"SKU dupliqué : {exemples}{suffixe}")
 
-    if not df["currency"].eq("EUR").all():
+    if not df["currency"].eq(DEVISE).all():
         raise ValueError(f"Devise inattendue : {sorted(df['currency'].unique())}")
 
-    if not df["network"].isin({"4G", "5G"}).all():
+    if not df["network"].isin(RESEAUX).all():
         raise ValueError(f"Réseau inattendu : {sorted(df['network'].unique())}")
 
     durees = pd.to_numeric(df["validity_days"], errors="coerce")
@@ -175,13 +183,13 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
             "Prix non positif : " + ", ".join(df.loc[df["price"] <= 0, "sku"])
         )
 
-    top_up = df["top_up"].map({"oui": True, "non": False})
+    top_up = df["top_up"].map(VALEURS_TOP_UP)
     if top_up.isna().any():
         valeurs = sorted(df.loc[top_up.isna(), "top_up"].unique())
         raise ValueError(f"Valeur top_up inattendue : {valeurs}")
 
     df["top_up"] = top_up.astype(bool)
-    df["is_unlimited"] = df["data_display"].eq("Illimité")
+    df["is_unlimited"] = df["data_display"].eq(LIBELLE_ILLIMITE)
 
     # data_gb vide et "Illimité" doivent aller ensemble : sinon une offre
     # finie sans volume sortirait silencieusement de la moyenne de Go.
