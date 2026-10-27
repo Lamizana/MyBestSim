@@ -173,21 +173,25 @@ def afficher_prix_go(metrics: dict) -> None:
             "offres illimitées sont exclues, faute de volume en Go ; leur prix "
             f"médian est de {format_fr(illimitees['prix_median'], 2)} €."
         )
-        st.altair_chart(
-            graphiques.prix_go_volume(metrics), width="stretch", theme=None
-        )
+        st.altair_chart(graphiques.prix_go_volume(metrics), width="stretch", theme=None)
 
-    with droite, st.container(
-        border=True, key="carte_median_go", height=443, vertical_alignment="center"
+    with (
+        droite,
+        st.container(
+            border=True, key="carte_median_go", height=443, vertical_alignment="center"
+        ),
     ):
         st.caption("PRIX MÉDIAN AU GO")
         st.markdown(f"### {format_fr(metrics['series']['prix_go_median'], 2)} €")
-        st.caption(f"sur {format_fr(finies)} offres finies")
+        st.caption(f"sur {format_fr(finies)} offres à volume limité")
+
         st.divider()
+
+        st.caption("DU 1 GO AU 50 GO")
         st.markdown(
-            f"### {format_fr(serie[0]['prix_go'], 2)} € → {format_fr(serie[-1]['prix_go'], 2)} €"
+            f"### {format_fr(serie[0]['prix_go'], 2)} € → "
+            f"{format_fr(serie[-1]['prix_go'], 2)} €"
         )
-        st.caption(f"du {serie[0]['libelle']} au {serie[-1]['libelle']}")
 
 
 def _tableau_offres(offres: list) -> None:
