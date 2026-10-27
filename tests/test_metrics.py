@@ -115,6 +115,8 @@ class MeilleuresOffresTest(unittest.TestCase):
     def test_prix_coherents(self):
         for offre in self.offres:
             self.assertLessEqual(offre["prix"], offre["prix_max"])
+            self.assertIn("provider_max", offre)
+            self.assertTrue(offre["provider_max"])
             self.assertGreaterEqual(offre["offres"], 1)
 
     def test_espagne_dix_go_quinze_jours(self):

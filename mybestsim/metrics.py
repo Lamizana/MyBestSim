@@ -85,7 +85,15 @@ def meilleures_offres(df: pd.DataFrame) -> list:
         prix_max=("price", "max"),
         offres=("sku", "size"),
     )
-    fusion = meilleures.merge(bornes, on=cles)
+    trie_max = df.sort_values(
+        cles + ["price", "provider"],
+        ascending=[True] * len(cles) + [False, True],
+        kind="stable",
+    )
+    plus_chers = trie_max.groupby(cles, as_index=False, dropna=False).first()[
+        cles + ["provider"]
+    ].rename(columns={"provider": "provider_max"})
+    fusion = meilleures.merge(bornes, on=cles).merge(plus_chers, on=cles)
     fusion = fusion.sort_values(
         ["is_region", "country_name", "validity_days", "data_display"],
         kind="stable",
@@ -101,6 +109,7 @@ def meilleures_offres(df: pd.DataFrame) -> list:
             "validity_days": int(ligne.validity_days),
             "provider": ligne.provider,
             "prix": round(float(ligne.price), 2),
+            "provider_max": ligne.provider_max,
             "prix_max": round(float(ligne.prix_max), 2),
             "offres": int(ligne.offres),
         }

@@ -20,14 +20,14 @@ LOGO_MARQUE = Path(__file__).resolve().parent / "assets" / "logo_wordmark.png"
 VOLUMES = ["1 Go", "3 Go", "5 Go", "10 Go", "20 Go", "50 Go", "Illimité"]
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def format_fr(valeur, decimales: int = 0) -> str:
     """Formate un nombre à la française : 5056 -> « 5 056 », 14.49 -> « 14,49 »."""
     texte = f"{valeur:,.{decimales}f}"
     return texte.replace(",", " ").replace(".", ",")
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
 def charger_metriques() -> dict:
     """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par processus."""
@@ -67,7 +67,7 @@ def afficher_entete(metrics: dict) -> None:
             st.badge(f"Devise : **{meta['devise']}**", color="green")
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def afficher_kpi(metrics: dict) -> None:
     kpi = metrics["kpi"]
     fourchette = kpi["fourchette_prix"]["valeur"]
@@ -84,7 +84,7 @@ def afficher_kpi(metrics: dict) -> None:
     premiere[0].metric(
         "Nombre total de cartes eSIM",
         format_fr(kpi["total_cartes"]["valeur"]),
-        delta=f"*dont :yellow[**{format_fr(illimitees)}**] illimitées*",
+        delta=f"*dont :yellow[**{format_fr(illimitees)}**] offres à Go illimité*",
         delta_color="off",
         help=kpi["total_cartes"]["definition"],
         border=True,
@@ -137,7 +137,7 @@ def afficher_kpi(metrics: dict) -> None:
     )
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def afficher_fournisseurs(metrics: dict) -> None:
     with st.container(border=True):
         st.subheader(":blue[Répartition par fournisseur]")
@@ -145,7 +145,7 @@ def afficher_fournisseurs(metrics: dict) -> None:
         st.altair_chart(graphiques.fournisseurs(metrics), width="stretch", theme=None)
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def afficher_prix(metrics: dict) -> None:
     with st.container(border=True):
 
@@ -157,7 +157,7 @@ def afficher_prix(metrics: dict) -> None:
         st.altair_chart(graphiques.prix(metrics), width="stretch", theme=None)
 
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def _tableau_offres(offres: list) -> None:
     """Affiche le tableau triable des meilleures offres."""
     if not offres:
@@ -166,7 +166,14 @@ def _tableau_offres(offres: list) -> None:
 
     donnees = pd.DataFrame(
         offres,
-        columns=["destination", "provider", "prix", "prix_max", "offres"],
+        columns=[
+            "destination",
+            "provider",
+            "prix",
+            "provider_max",
+            "prix_max",
+            "offres",
+        ],
     )
     donnees["ecart"] = (
         (donnees["prix_max"] - donnees["prix"]) / donnees["prix"] * 100
@@ -174,8 +181,9 @@ def _tableau_offres(offres: list) -> None:
     donnees = donnees.rename(
         columns={
             "destination": "Destination",
-            "provider": "Fournisseur",
-            "prix": "Prix",
+            "provider": "Fournisseur min",
+            "prix": "Prix min",
+            "provider_max": "Fournisseur max",
             "prix_max": "Prix max",
             "ecart": "Écart",
             "offres": "Offres",
@@ -195,7 +203,7 @@ def _tableau_offres(offres: list) -> None:
         hide_index=True,
         width="stretch",
         column_config={
-            "Prix": st.column_config.NumberColumn(format="%.2f €"),
+            "Prix min": st.column_config.NumberColumn(format="%.2f €"),
             "Prix max": st.column_config.NumberColumn(
                 format="%.2f €", alignment="right"
             ),
@@ -222,8 +230,10 @@ def afficher_offres(metrics: dict) -> None:
 
     st.subheader(":blue[Meilleures offres par destination]")
     st.caption(
-        "Prix le plus bas par destination et écart avec l'offre la plus chère, "
-        "pour un forfait donné. Le tableau est triable."
+        "**Prix min** : l'offre la moins chère, chez le fournisseur indiqué. "
+        "**Prix max** : l'offre la plus chère pour la même destination, tous "
+        "fournisseurs confondus. **Écart** : surcoût de la plus chère par "
+        "rapport à la moins chère. Le tableau est triable."
     )
 
     gauche, droite = st.columns(2)

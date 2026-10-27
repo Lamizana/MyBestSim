@@ -71,7 +71,8 @@ préfixe les codes de zone en `ZONE_*`.
 
 **`meilleures_offres(df) -> list`** — pour chaque destination, volume et durée,
 l'offre la moins chère. Une entrée contient `code`, `destination`, `zone`,
-`volume`, `data_gb`, `validity_days`, `provider`, `prix`, `prix_max`, `offres`.
+`volume`, `data_gb`, `validity_days`, `provider`, `prix`, `provider_max`,
+`prix_max`, `offres`.
 Départage déterministe : prix, puis nom du fournisseur. Les zones sont
 conservées et signalées par `zone=True`. 1 113 combinaisons réelles.
 
