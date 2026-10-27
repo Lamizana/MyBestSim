@@ -234,34 +234,20 @@ def afficher_offres(metrics: dict) -> None:
     offres = metrics["series"]["meilleures_offres"]
 
     st.subheader(":blue[Meilleures offres par destination]")
-    # st.caption(
-    #     "Ce tableau compare les offres tarifaires par destination :  \n"
-    #     "- **Prix min :** offre la moins chère (avec le nom du fournisseur).  \n"
-    #     "- **Prix max :** offre la plus chère pour la même destination.  \n"
-    #     "- **Écart :** surcoût à payer entre l'offre la plus chère et la moins chère.  \n\n"
-    #     "*Cliquez sur l'en-tête d'une colonne pour trier le tableau.*"
-    # )
 
-    col1, col2, col3 = st.columns(3)
+    with st.container(border=True):
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("**:blue[Prix min]**")
+            st.caption("L'offre la moins chère, fournisseur indiqué.")
+        with col2:
+            st.markdown("**:red[Prix max]**")
+            st.caption("L'offre la plus chère, tous fournisseurs confondus.")
+        with col3:
+            st.markdown("**:orange[Écart]**")
+            st.caption("Surcoût en % de la plus chère par rapport à la moins chère.")
 
-    with col1:
-        with st.container(border=True):
-            st.markdown("**:blue[Prix minimum]**")
-            st.caption("L'offre la moins chère et son fournisseur associé.")
-
-    with col2:
-        with st.container(border=True):
-            st.markdown("**:red[Prix maximum]**")
-            st.caption("L'offre la plus chère pour la même destination.")
-
-    with col3:
-        with st.container(border=True):
-            st.markdown("**:yellow[Écart tarifaire]**")
-            st.caption("Surcoût entre l'offre la plus chère et la moins chère.")
-
-    st.caption(
-        "💡 *Le tableau ci-dessous est entièrement triable en cliquant sur les en-têtes.*"
-    )
+    st.caption("Tableau triable en cliquant sur les en-têtes.")
 
     gauche, droite = st.columns(2)
     volume = gauche.selectbox("Volume", VOLUMES, index=3)
