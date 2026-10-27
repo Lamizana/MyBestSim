@@ -8,6 +8,8 @@ author: MyBestSim
 
 # Internet en croisière : quelle eSIM choisir ?
 
+Choisir une **eSIM croisière** ne se résume pas à comparer des prix : la mer et les escales n'utilisent pas le même réseau.
+
 **En bref**
 
 - **En pleine mer, une eSIM de voyage classique ne capte rien.** Le Wi-Fi du navire, transmis par satellite, reste la solution pour les jours de navigation.
@@ -30,6 +32,66 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 | eSIM spécialisée croisière | Selon navire et zone | Oui | Ceux qui veulent un seul forfait, mer comprise |
 | Roaming de votre opérateur | Risqué et cher | Selon le forfait | À éviter en mer |
 
+
+
+<figure class="figure">
+  <svg viewBox="0 0 600 280" role="img" aria-labelledby="fig-mer fig-port">
+    <title id="fig-mer">En mer : le navire se connecte par satellite.</title>
+    <title id="fig-port">À quai : l'eSIM capte le réseau mobile terrestre.</title>
+    <rect x="0" y="0" width="290" height="280" rx="12" fill="#eef6ff"/>
+    <rect x="310" y="0" width="290" height="280" rx="12" fill="#f7f8fa"/>
+    <text x="22" y="34" font-family="Poppins, sans-serif" font-size="18" font-weight="700" fill="#007bff">EN MER</text>
+    <text x="332" y="34" font-family="Poppins, sans-serif" font-size="18" font-weight="700" fill="#007bff">À QUAI</text>
+
+    <g fill="#007bff">
+      <rect x="118" y="58" width="34" height="18" rx="3"/>
+      <rect x="104" y="62" width="12" height="10" rx="2" opacity="0.7"/>
+      <rect x="154" y="62" width="12" height="10" rx="2" opacity="0.7"/>
+    </g>
+    <path d="M135 80 Q150 100 168 138" fill="none" stroke="#007bff" stroke-width="2" stroke-dasharray="5 5" opacity="0.7"/>
+
+    <path d="M52 178 Q90 168 128 178 T204 178 T280 178 V236 H52 Z" fill="#1e90ff" opacity="0.35"/>
+    <rect x="88" y="150" width="120" height="26" rx="5" fill="#ffffff"/>
+    <rect x="98" y="132" width="86" height="18" rx="4" fill="#ffffff"/>
+    <rect x="106" y="137" width="12" height="8" rx="1" fill="#007bff"/>
+    <rect x="124" y="137" width="12" height="8" rx="1" fill="#007bff"/>
+    <rect x="142" y="137" width="12" height="8" rx="1" fill="#007bff"/>
+    <rect x="160" y="137" width="12" height="8" rx="1" fill="#007bff"/>
+    <rect x="188" y="124" width="12" height="18" rx="2" fill="#de1414"/>
+    <path d="M60 206 Q90 196 120 206 T180 206 T240 206" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+
+    <g stroke="#007bff" stroke-width="2.5" fill="none" stroke-linecap="round">
+      <path d="M420 96 V150"/>
+      <path d="M408 108 H432"/>
+      <path d="M410 124 H430"/>
+    </g>
+    <circle cx="420" cy="90" r="5" fill="#de1414"/>
+    <path d="M398 82 Q420 60 442 82" fill="none" stroke="#007bff" stroke-width="2" opacity="0.6"/>
+    <path d="M390 72 Q420 42 450 72" fill="none" stroke="#007bff" stroke-width="2" opacity="0.35"/>
+    <path d="M420 96 Q460 120 486 148" fill="none" stroke="#007bff" stroke-width="2" stroke-dasharray="5 5" opacity="0.7"/>
+
+    <g>
+      <rect x="330" y="176" width="38" height="60" fill="#ffffff" stroke="#e4e7ec"/>
+      <rect x="338" y="186" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="350" y="186" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="338" y="200" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="350" y="200" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="374" y="156" width="44" height="80" fill="#ffffff" stroke="#e4e7ec"/>
+      <rect x="382" y="166" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="394" y="166" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="382" y="180" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="394" y="180" width="8" height="8" fill="#cfe6ff"/>
+      <rect x="330" y="236" width="200" height="10" rx="3" fill="#e4e7ec"/>
+      <rect x="486" y="128" width="42" height="76" rx="8" fill="#ffffff" stroke="#007bff" stroke-width="2.5"/>
+      <rect x="492" y="138" width="30" height="48" rx="3" fill="#eef6ff"/>
+      <rect x="500" y="150" width="4" height="18" rx="1" fill="#007bff"/>
+      <rect x="508" y="144" width="4" height="24" rx="1" fill="#de1414"/>
+      <circle cx="507" cy="196" r="2.5" fill="#cfe6ff"/>
+    </g>
+  </svg>
+  <figcaption>À gauche, la liaison satellite du navire en mer. À droite, le réseau mobile terrestre que l'eSIM capte à quai.</figcaption>
+</figure>
+
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
 
 ## La question à se poser avant d'acheter
@@ -42,7 +104,7 @@ Avant de comparer les prix, répondez à une seule question : **où le bateau se
 
 Une eSIM se juge sur sa **couverture pays par pays**, pas sur son nom. Vérifiez la liste des destinations incluses, la présence du pays de chaque escale, la durée de validité et les règles de partage de connexion.
 
-## Quelle eSIM selon votre itinéraire
+## Quelle eSIM croisière selon votre itinéraire
 
 ### Méditerranée : une eSIM régionale suffit presque toujours
 
@@ -140,7 +202,7 @@ Le [comparateur MyBestSim](https://mybestsim.com/fr/) affiche les offres par des
 **Une eSIM fonctionne-t-elle en pleine mer ?**
 Une eSIM de voyage classique non : elle dépend des réseaux terrestres. En mer, il faut le Wi-Fi du navire ou une eSIM spécialisée qui couvre explicitement la zone maritime et votre navire.
 
-**Quelle eSIM pour une croisière en Méditerranée ?**
+**Quelle eSIM croisière pour la Méditerranée ?**
 Une eSIM régionale Europe de 5 à 10 Go couvre la plupart des escales. Vérifiez les pays hors UE de votre itinéraire.
 
 **Une eSIM régionale suffit-elle pour les Caraïbes ?**

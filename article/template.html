@@ -14,12 +14,14 @@
 <meta property="og:description" content="{{DESCRIPTION}}">
 <meta property="og:url" content="{{CANONICAL}}">
 <meta property="og:image" content="{{OG_IMAGE}}">
+<meta property="og:image:alt" content="Internet en croisière : quelle eSIM choisir ? — guide MyBestSim">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{TITLE}}">
 <meta name="twitter:description" content="{{DESCRIPTION}}">
 <meta name="twitter:image" content="{{OG_IMAGE}}">
+<meta name="twitter:image:alt" content="Internet en croisière : quelle eSIM choisir ? — guide MyBestSim">
 <link rel="icon" href="logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,6 +130,9 @@ article blockquote p { margin: 0 0 8px; }
 article blockquote p:last-child { margin-bottom: 0; }
 article hr { border: 0; border-top: 1px solid var(--border); margin: 42px 0; }
 .table-wrap { overflow-x: auto; margin: 20px 0; }
+.figure { margin: 26px 0; }
+.figure svg { display: block; width: 100%; height: auto; border-radius: var(--radius); }
+.figure figcaption { margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
 article table {
   width: 100%;
   border-collapse: collapse;
@@ -213,7 +218,7 @@ article tr:nth-child(even) td { background: #fafbfc; }
 
     {{H1}}
 
-    <p class="meta">Publié le {{DATE_FR}} · {{READING_TIME}} min de lecture</p>
+    <p class="meta">Publié le <time datetime="{{DATE_ISO}}">{{DATE_FR}}</time> · {{READING_TIME}} min de lecture</p>
 
     <div class="hero" aria-hidden="true">
       <svg viewBox="0 0 780 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Navire de croisière au large, téléphone connecté">

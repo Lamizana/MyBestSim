@@ -129,6 +129,7 @@ def rendre() -> None:
         "{{CANONICAL}}": SITE_URL,
         "{{OG_IMAGE}}": OG_IMAGE,
         "{{DATE_FR}}": date_francaise(meta["date"]),
+        "{{DATE_ISO}}": meta.get("date", ""),
         "{{READING_TIME}}": str(minutes),
         "{{H1}}": titre_html,
         "{{TOC}}": construire_sommaire(md.toc_tokens),
