@@ -248,6 +248,7 @@ def _tableau_offres(offres: list) -> None:
     donnees["ecart"] = donnees["ecart_pct"].map(
         lambda valeur: f"+{format_fr(valeur, 1)} %"
     )
+    donnees = donnees.drop(columns="ecart_pct")
     donnees = donnees.rename(
         columns={
             "destination": "Destination",

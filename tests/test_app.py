@@ -36,6 +36,21 @@ class AppTestSuite(unittest.TestCase):
         texte = "\n".join(element.value for element in self.page.subheader)
         self.assertIn("Prix au Go selon le volume", texte)
 
+    def test_colonnes_tableau_offres(self):
+        colonnes = list(self.page.dataframe[0].value.columns)
+        self.assertEqual(
+            colonnes,
+            [
+                "Destination",
+                "Fournisseur min",
+                "Prix min",
+                "Fournisseur max",
+                "Prix max",
+                "Offres",
+                "Écart",
+            ],
+        )
+
     def test_methodologie(self):
         texte = "\n".join(element.value for element in self.page.markdown)
         self.assertIn("illimitées sont exclues", texte)
