@@ -1,7 +1,7 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
 
-.PHONY: install reqs reqs-check run test lint check clean
+.PHONY: install reqs reqs-check run test lint check article clean
 
 install:
 	python3 -m venv $(VENV)
@@ -21,6 +21,9 @@ test:
 
 check:
 	$(PYTHON) -m mybestsim.check
+
+article:
+	uv run --no-project --with "markdown>=3.6" python article/build.py
 
 lint:
 	$(PYTHON) -m ruff check .

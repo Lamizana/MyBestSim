@@ -22,3 +22,6 @@ docs/NOTES.md
 .idea/
 .vscode/
 .openchamber/
+
+# Sortie de build de l'article
+article/_site/

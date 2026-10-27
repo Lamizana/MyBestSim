@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="MyBestSim">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{TITLE}}">
+<meta name="twitter:description" content="{{DESCRIPTION}}">
+<meta name="twitter:image" content="{{OG_IMAGE}}">
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{{JSONLD}}</script>
+<style>
+:root {
+  --blue: #007bff;
+  --blue-dark: #0062cc;
+  --red: #de1414;
+  --text: #1d2939;
+  --muted: #667085;
+  --border: #e4e7ec;
+  --soft: #f7f8fa;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: #ffffff;
+  line-height: 1.75;
+  font-size: 17px;
+}
+a { color: var(--blue-dark); text-underline-offset: 3px; }
+a:hover { color: var(--blue); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--blue);
+  color: #fff;
+  padding: 10px 16px;
+  z-index: 10;
+}
+.skip:focus { left: 12px; top: 12px; }
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.brand img { display: block; height: 34px; width: auto; }
+.site-header nav a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--blue-dark);
+}
+.breadcrumb {
+  margin: 26px 0 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--blue-dark); text-decoration: underline; }
+.breadcrumb span { margin: 0 6px; }
+main { padding-bottom: 24px; }
+h1 {
+  font-size: clamp(2rem, 5vw, 2.65rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  margin: 6px 0 10px;
+}
+.meta { color: var(--muted); font-size: 0.88rem; margin: 0 0 22px; }
+.hero {
+  margin: 6px 0 26px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #eef6ff;
+}
+.hero svg { display: block; width: 100%; height: auto; }
+article h2 {
+  font-size: 1.42rem;
+  line-height: 1.3;
+  margin: 2.3em 0 0.7em;
+  padding-left: 12px;
+  border-left: 4px solid var(--blue);
+}
+article h3 {
+  font-size: 1.12rem;
+  margin: 1.7em 0 0.5em;
+}
+article p, article li { font-size: 1rem; }
+article ul, article ol { padding-left: 1.3em; }
+article li { margin: 0.35em 0; }
+article strong { font-weight: 600; }
+article blockquote {
+  margin: 24px 0;
+  padding: 18px 20px;
+  background: var(--soft);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+article blockquote p { margin: 0 0 8px; }
+article blockquote p:last-child { margin-bottom: 0; }
+article hr { border: 0; border-top: 1px solid var(--border); margin: 42px 0; }
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  min-width: 520px;
+}
+article th, article td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+article th { background: var(--soft); font-weight: 600; }
+article tr:nth-child(even) td { background: #fafbfc; }
+.toc {
+  margin: 8px 0 30px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+}
+.toc p { margin: 0 0 8px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
+.toc ol { margin: 0; padding-left: 1.1em; }
+.toc li { margin: 0.3em 0; font-size: 0.92rem; }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--blue-dark); text-decoration: underline; }
+.cta {
+  margin: 48px 0 8px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--soft);
+}
+.cta p { margin: 0 0 8px; }
+.cta .button {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  background: var(--blue);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.cta .button:hover { background: var(--blue-dark); color: #fff; }
+.site-footer {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding: 22px 0 40px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.site-footer p { margin: 0; }
+.site-footer a { color: var(--muted); }
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .wrap { padding: 0 18px; }
+  .brand img { height: 28px; }
+  article table { min-width: 440px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://mybestsim.com/fr/" aria-label="MyBestSim">
+      <img src="logo_wordmark.png" alt="MyBestSim" width="180" height="40">
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="https://mybestsim.com/fr/">Comparateur</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+  <div class="wrap">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="https://mybestsim.com/fr/">Accueil</a><span>›</span><a href="https://mybestsim.com/fr/articles/">Guides</a><span>›</span><span>Croisière</span>
+    </nav>
+
+    {{H1}}
+
+    <p class="meta">Publié le {{DATE_FR}} · {{READING_TIME}} min de lecture</p>
+
+    <div class="hero" aria-hidden="true">
+      <svg viewBox="0 0 780 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Navire de croisière au large, téléphone connecté">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#eaf4ff"/>
+            <stop offset="1" stop-color="#cfe6ff"/>
+          </linearGradient>
+          <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1e90ff"/>
+            <stop offset="1" stop-color="#0062cc"/>
+          </linearGradient>
+        </defs>
+        <rect width="780" height="250" fill="url(#sky)"/>
+        <circle cx="650" cy="62" r="34" fill="#ffcc00"/>
+        <path d="M0 168 Q60 150 120 168 T240 168 T360 168 T480 168 T600 168 T720 168 T840 168 V250 H0 Z" fill="url(#sea)"/>
+        <path d="M0 196 Q70 180 140 196 T280 196 T420 196 T560 196 T700 196 T840 196 V250 H0 Z" fill="#007bff" opacity="0.55"/>
+        <g>
+          <rect x="210" y="118" width="300" height="42" rx="8" fill="#ffffff"/>
+          <rect x="226" y="96" width="220" height="28" rx="6" fill="#ffffff"/>
+          <rect x="238" y="102" width="26" height="14" rx="2" fill="#007bff"/>
+          <rect x="272" y="102" width="26" height="14" rx="2" fill="#007bff"/>
+          <rect x="306" y="102" width="26" height="14" rx="2" fill="#007bff"/>
+          <rect x="340" y="102" width="26" height="14" rx="2" fill="#007bff"/>
+          <rect x="374" y="102" width="26" height="14" rx="2" fill="#007bff"/>
+          <rect x="470" y="86" width="26" height="34" rx="4" fill="#de1414"/>
+          <rect x="466" y="80" width="34" height="8" rx="3" fill="#b30f0f"/>
+          <rect x="228" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="250" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="272" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="294" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="316" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="338" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="360" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="382" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+          <rect x="404" y="126" width="14" height="14" rx="2" fill="#cfe6ff"/>
+        </g>
+        <g transform="translate(596 86)">
+          <rect x="0" y="0" width="58" height="104" rx="10" fill="#ffffff" stroke="#007bff" stroke-width="3"/>
+          <rect x="8" y="14" width="42" height="68" rx="4" fill="#eef6ff"/>
+          <rect x="18" y="30" width="6" height="26" rx="2" fill="#007bff"/>
+          <rect x="28" y="22" width="6" height="34" rx="2" fill="#007bff"/>
+          <rect x="38" y="14" width="6" height="42" rx="2" fill="#de1414"/>
+          <circle cx="29" cy="92" r="3" fill="#cfe6ff"/>
+        </g>
+        <path d="M120 208 Q150 196 180 208 T240 208 T300 208 T360 208 T420 208" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    {{TOC}}
+
+    <article>
+      {{CONTENT}}
+    </article>
+
+    <aside class="cta">
+      <p><strong>Comparez les eSIM pour votre croisière</strong></p>
+      <p>Prix, volumes et couverture par destination, mis à jour en continu.</p>
+      <a class="button" href="https://mybestsim.com/fr/">Comparer les offres</a>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 MyBestSim — <a href="https://mybestsim.com/fr/">comparateur eSIM indépendant</a>. Article publié à titre de démonstration.</p>
+  </div>
+</footer>
+</body>
+</html>
