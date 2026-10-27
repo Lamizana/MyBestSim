@@ -1,7 +1,7 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
 
-.PHONY: install run test lint clean
+.PHONY: install run test lint check clean
 
 install:
 	python3 -m venv $(VENV)
@@ -12,6 +12,9 @@ run:
 
 test:
 	$(PYTHON) -m pytest
+
+check:
+	$(PYTHON) -c "from mybestsim.config import DATA_DIR; from mybestsim.etl import clean_data, load_raw; df = clean_data(load_raw(DATA_DIR)); print(f'{len(df)} offres valides')"
 
 lint:
 	$(PYTHON) -m ruff check .

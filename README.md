@@ -28,7 +28,7 @@ data & automatisation).
 │   ├── metrics.py          # six KPI + série des meilleures offres
 │   └── graphiques.py       # spécifications Altair
 ├── data/raw/               # 18 CSV fournisseurs, jamais modifiés
-├── tests/                  # 44 tests
+├── tests/                  # 47 tests
 └── docs/
     ├── FONCTIONS.md        # détail des fonctions
     ├── enonce-test.pdf     # sujet du test
@@ -60,7 +60,8 @@ pip install -e ".[dev]"
 |---|---|---|
 | `make install` | `python3 -m venv .venv` puis `pip install -e ".[dev]"` | crée l'environnement |
 | `make run` | `python -m streamlit run app.py` | lance l'application |
-| `make test` | `python -m pytest` | exécute les 44 tests |
+| `make test` | `python -m pytest` | exécute les 47 tests |
+| `make check` | validation sans Streamlit | vérifie `data/raw/` |
 | `make lint` | `ruff check .` | vérifie le style |
 | `make clean` | `rm -rf …` | supprime les caches |
 
@@ -120,7 +121,8 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 | Règle | Vérifié par |
 |---|---|
 | aucune colonne obligatoire vide (`data_gb` excepté si illimité) | `clean_data` |
-| `sku` unique | `clean_data` |
+| `sku` unique : doublons exacts dédupliqués, conflits refusés | `load_raw` puis `clean_data` |
+| fichier identique à un autre | `load_raw` (ignoré, avertissement) |
 | `currency` = `EUR` | `clean_data` |
 | `network` ∈ {`4G`, `5G`} | `clean_data` |
 | `top_up` ∈ {`oui`, `non`} | `clean_data` |
@@ -150,7 +152,7 @@ un code de sortie non nul.
 make test
 ```
 
-44 tests couvrent les invariants des données réelles (5 056 lignes, 653
+47 tests couvrent les invariants des données réelles (5 056 lignes, 653
 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, la série des
 meilleures offres (1 113 combinaisons, minimum et départage), la structure des
 graphiques, le rendu de l'application et le rejet des cas invalides.

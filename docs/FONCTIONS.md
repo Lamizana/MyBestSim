@@ -43,6 +43,11 @@ Lit tous les CSV du dossier, vérifie que les en-têtes sont identiques à
 `EXPECTED_COLUMNS`, puis empile les tables. Échoue si le dossier est vide ou
 si un fichier a un schéma différent.
 
+Un fichier dont l'empreinte SHA-256 est déjà vue est ignoré avec un
+avertissement. Les lignes portant le même `sku` sont ensuite dédoublonnées si
+elles sont identiques ; si leurs valeurs divergent, la lecture échoue en
+nommant le SKU, les fichiers et les colonnes en cause.
+
 ### `clean_data(raw: pd.DataFrame) -> pd.DataFrame`
 
 Type, valide et enrichit. Ne modifie pas `raw`. Les contrôles sont bloquants :
@@ -122,10 +127,10 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-44 tests, cinq fichiers :
+47 tests, cinq fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
-  d'un en-tête différent ;
+  d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;
 - `tests/test_clean.py` — invariants du nettoyage et cas de rejet ;
 - `tests/test_metrics.py` — six KPI, histogramme, meilleures offres, structure
   de `compute_metrics` ;

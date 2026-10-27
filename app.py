@@ -205,9 +205,7 @@ def _tableau_offres(offres: list) -> None:
         column_config={
             "Destination": st.column_config.TextColumn(width="medium"),
             "Fournisseur min": st.column_config.TextColumn(width="small"),
-            "Prix min": st.column_config.NumberColumn(
-                format="%.2f €", width="small"
-            ),
+            "Prix min": st.column_config.NumberColumn(format="%.2f €", width="small"),
             "Fournisseur max": st.column_config.TextColumn(width="small"),
             "Prix max": st.column_config.NumberColumn(
                 format="%.2f €", width="small", alignment="right"
@@ -241,6 +239,14 @@ def afficher_offres(metrics: dict) -> None:
         "**Prix max** : l'offre la plus chère pour la même destination, tous "
         "fournisseurs confondus. **Écart** : surcoût de la plus chère par "
         "rapport à la moins chère. Le tableau est triable."
+    )
+
+    st.markdown(
+        "Ce tableau compare les opportunités tarifaires par destination :  \n"
+        "- **Prix min :** offre la moins chère (avec le nom du fournisseur).  \n"
+        "- **Prix max :** offre la plus chère pour la même destination.  \n"
+        "- **Écart :** surcoût à payer entre l'offre la plus chère et la moins chère.  \n\n"
+        "*Cliquez sur l'en-tête d'une colonne pour trier le tableau.*"
     )
 
     gauche, droite = st.columns(2)
@@ -336,6 +342,7 @@ def main() -> None:
         metrics = charger_metriques()
     except (OSError, ValueError) as erreur:
         st.error(f"Impossible de calculer les KPI : {erreur}")
+        st.caption("Vérifiez data/raw : un fichier a peut-être été dupliqué.")
         st.stop()
 
     colonne = st.columns([0.5, 8, 0.5], gap="small")
