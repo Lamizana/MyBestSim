@@ -181,16 +181,27 @@ def afficher_prix_go(metrics: dict) -> None:
             border=True, key="carte_median_go", height=443, vertical_alignment="center"
         ),
     ):
-        st.caption("PRIX MÉDIAN AU GO")
-        st.markdown(f"### {format_fr(metrics['series']['prix_go_median'], 2)} €")
-        st.caption(f"sur {format_fr(finies)} offres à volume limité")
+        st.subheader(":blue[Prix médian au Go]", text_alignment="center")
+        st.markdown(
+            f"### {format_fr(metrics['series']['prix_go_median'], 2)} €",
+            text_alignment="center",
+        )
+        st.caption(
+            f"*sur **{format_fr(finies)}** offres à volume limité*",
+            text_alignment="center",
+        )
 
         st.divider()
 
-        st.caption("DU 1 GO AU 50 GO")
+        st.subheader(":blue[Évolution du coût]", text_alignment="center")
         st.markdown(
-            f"### {format_fr(serie[0]['prix_go'], 2)} € → "
-            f"{format_fr(serie[-1]['prix_go'], 2)} €"
+            f"### **{format_fr(serie[0]['prix_go'], 2)} €** → "
+            f"**{format_fr(serie[-1]['prix_go'], 2)} €**",
+            text_alignment="center",
+        )
+        st.caption(
+            f"*du {serie[0]['libelle']} au {serie[-1]['libelle']}*",
+            text_alignment="center",
         )
 
 
