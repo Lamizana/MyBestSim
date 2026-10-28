@@ -17,8 +17,6 @@ Choisir une **eSIM croisière** ne se résume pas à comparer des prix : la mer 
 - **Votre itinéraire décide du forfait.** Méditerranée, Caraïbes, Europe du Nord et transatlantique n'appellent pas les mêmes couvertures.
 - **Installez l'eSIM avant d'embarquer**, en Wi-Fi, et désactivez le roaming des données.
 
-> **Image suggérée** — Un navire de croisière au large, un téléphone posé sur le bastingage, mer calme. Alt : « voyageuse consultant une eSIM sur le pont d'un navire de croisière ».
-
 ## Mer et port : deux réseaux, deux logiques
 
 Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se connecter aux antennes des opérateurs partenaires, exactement comme une carte SIM physique. Le problème n'est pas l'eSIM : c'est la **distance aux antennes**.
@@ -35,61 +33,8 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 
 
 <figure class="figure">
-  <svg viewBox="0 0 600 280" role="img" aria-labelledby="fig-mer fig-port">
-    <title id="fig-mer">En mer : le navire se connecte par satellite.</title>
-    <title id="fig-port">À quai : l'eSIM capte le réseau mobile terrestre.</title>
-    <rect x="0" y="0" width="290" height="280" rx="12" fill="#eef6ff"/>
-    <rect x="310" y="0" width="290" height="280" rx="12" fill="#f7f8fa"/>
-    <text x="22" y="34" font-family="Poppins, sans-serif" font-size="18" font-weight="700" fill="#007bff">EN MER</text>
-    <text x="332" y="34" font-family="Poppins, sans-serif" font-size="18" font-weight="700" fill="#007bff">À QUAI</text>
-
-    <g fill="#007bff">
-      <rect x="118" y="58" width="34" height="18" rx="3"/>
-      <rect x="104" y="62" width="12" height="10" rx="2" opacity="0.7"/>
-      <rect x="154" y="62" width="12" height="10" rx="2" opacity="0.7"/>
-    </g>
-    <path d="M135 80 Q150 100 168 138" fill="none" stroke="#007bff" stroke-width="2" stroke-dasharray="5 5" opacity="0.7"/>
-
-    <path d="M52 178 Q90 168 128 178 T204 178 T280 178 V236 H52 Z" fill="#1e90ff" opacity="0.35"/>
-    <rect x="88" y="150" width="120" height="26" rx="5" fill="#ffffff"/>
-    <rect x="98" y="132" width="86" height="18" rx="4" fill="#ffffff"/>
-    <rect x="106" y="137" width="12" height="8" rx="1" fill="#007bff"/>
-    <rect x="124" y="137" width="12" height="8" rx="1" fill="#007bff"/>
-    <rect x="142" y="137" width="12" height="8" rx="1" fill="#007bff"/>
-    <rect x="160" y="137" width="12" height="8" rx="1" fill="#007bff"/>
-    <rect x="188" y="124" width="12" height="18" rx="2" fill="#de1414"/>
-    <path d="M60 206 Q90 196 120 206 T180 206 T240 206" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
-
-    <g stroke="#007bff" stroke-width="2.5" fill="none" stroke-linecap="round">
-      <path d="M420 96 V150"/>
-      <path d="M408 108 H432"/>
-      <path d="M410 124 H430"/>
-    </g>
-    <circle cx="420" cy="90" r="5" fill="#de1414"/>
-    <path d="M398 82 Q420 60 442 82" fill="none" stroke="#007bff" stroke-width="2" opacity="0.6"/>
-    <path d="M390 72 Q420 42 450 72" fill="none" stroke="#007bff" stroke-width="2" opacity="0.35"/>
-    <path d="M420 96 Q460 120 486 148" fill="none" stroke="#007bff" stroke-width="2" stroke-dasharray="5 5" opacity="0.7"/>
-
-    <g>
-      <rect x="330" y="176" width="38" height="60" fill="#ffffff" stroke="#e4e7ec"/>
-      <rect x="338" y="186" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="350" y="186" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="338" y="200" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="350" y="200" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="374" y="156" width="44" height="80" fill="#ffffff" stroke="#e4e7ec"/>
-      <rect x="382" y="166" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="394" y="166" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="382" y="180" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="394" y="180" width="8" height="8" fill="#cfe6ff"/>
-      <rect x="330" y="236" width="200" height="10" rx="3" fill="#e4e7ec"/>
-      <rect x="486" y="128" width="42" height="76" rx="8" fill="#ffffff" stroke="#007bff" stroke-width="2.5"/>
-      <rect x="492" y="138" width="30" height="48" rx="3" fill="#eef6ff"/>
-      <rect x="500" y="150" width="4" height="18" rx="1" fill="#007bff"/>
-      <rect x="508" y="144" width="4" height="24" rx="1" fill="#de1414"/>
-      <circle cx="507" cy="196" r="2.5" fill="#cfe6ff"/>
-    </g>
-  </svg>
-  <figcaption>À gauche, la liaison satellite du navire en mer. À droite, le réseau mobile terrestre que l'eSIM capte à quai.</figcaption>
+  <img src="images/shema_02.jpeg" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy">
+  <figcaption>En mer, le navire passe par un satellite ; à l'escale, l'eSIM se connecte au réseau local.</figcaption>
 </figure>
 
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
@@ -183,6 +128,11 @@ Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent
 - **L'activation trop tôt.** Certains forfaits démarrent à la première connexion ; d'autres à l'installation. Lisez la règle.
 - **Les données en arrière-plan.** Photos, mises à jour et sauvegardes peuvent consommer sans que vous regardiez.
 
+<figure class="figure">
+  <img src="images/shema_01.jpeg" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy">
+  <figcaption>Le récapitulatif : itinéraire, pièges à éviter et préparation avant l'embarquement.</figcaption>
+</figure>
+
 ## Comparer les offres sans se tromper
 
 Pour une croisière, comparez dans cet ordre :
@@ -194,8 +144,6 @@ Pour une croisière, comparez dans cet ordre :
 5. **le prix**, en dernier.
 
 Le [comparateur MyBestSim](https://mybestsim.com/fr/) affiche les offres par destination, durée et volume. Pour une croisière multi-pays, comparez d'abord une eSIM régionale, puis vérifiez les pays manquants au cas par cas.
-
-> **Capture suggérée** — Le comparateur filtré sur « Espagne, 10 Go, 15 jours », avec la mention « capture MyBestSim ».
 
 ## FAQ
 

@@ -145,6 +145,7 @@ def rendre() -> None:
     (SITE / "index.html").write_text(page, encoding="utf-8")
 
     shutil.copy2(ARTICLE / "og.png", SITE / "og.png")
+    shutil.copytree(ARTICLE / "images", SITE / "images")
     shutil.copy2(RACINE / "assets" / "logo_wordmark.png", SITE / "logo_wordmark.png")
     shutil.copy2(RACINE / "assets" / "logo.png", SITE / "logo.png")
 
