@@ -33,7 +33,7 @@
   - [Étapes](#étapes)
 - [Bibliothèques](#bibliothèques)
 - [Utilisation](#utilisation)
-- [Écran](#écran)
+- [Fonctionnalités \& Écrans du Dashboard](#fonctionnalités--écrans-du-dashboard)
 - [Contrat de données](#contrat-de-données)
 - [Décisions](#décisions)
 - [Tests](#tests)
@@ -112,7 +112,10 @@ S'y ajoutent deux séries :
 
 ## Comment ça marche
 
-L'application recalcule tout en mémoire, au démarrage, depuis `data/raw/` : `load_raw` → `clean_data` → `compute_metrics`. Aucun artefact intermédiaire, aucune étape de build.
+L'application recalcule tout en mémoire, au démarrage, depuis :
+- **`data/raw/`** : `load_raw` → `clean_data` → `compute_metrics`.
+
+> Aucun artefact intermédiaire, aucune étape de build.
 
 ```console
 data/raw/*.csv
@@ -138,7 +141,7 @@ dict { meta, kpi, series }
 
 ### Prérequis
 
-- Python 3.11 ou plus récent (3.12 recommandé)
+- **Python 3.11** ou plus récent (3.12 recommandé)
 - `make` pour les raccourcis
 - `uv` pour construire la page de l'article
 
@@ -200,13 +203,15 @@ Le point d'entrée de l'application est `app.py`.
 
 ---
 
-## Écran
+## Fonctionnalités & Écrans du Dashboard
 
-1. **Chiffres clés** — six cartes, chacune avec une ligne de contexte.
-2. **Répartition par fournisseur** — barres horizontales triées.
-3. **Distribution des prix** — histogramme par tranche de 10 €, tranches à partir de 100 € en rouge.
-4. **Prix au Go** — médiane par forfait et écart interquartile p25–p75, avec une carte de synthèse : 2,55 €/Go de médiane globale, de 6,71 € (1 Go) à 1,18 € (50 Go).
-5. **Meilleures offres par destination** — sélection du volume et de la durée, podium des trois destinations les moins chères, onglets Pays / Régions, recherche, tableau triable.
+| Section | Description | Rendu & Indicateurs visuels |
+| :--- | :--- | :--- |
+| **1. Chiffres clés** | Métriques globales du catalogue | 6 cartes `st.metric` avec infobulle de définition (`help`) |
+| **2. Répartition par fournisseur** | Volume d'offres par opérateur | Graphique en barres horizontales trié par ordre décroissant |
+| **3. Distribution des prix** | Dispersion des tarifs | Histogramme par tranche de 10 € *(tranches ≥ 100 € en rouge)* |
+| **4. Prix au Go** | Coût au Gigaoctet selon le volume | Médiane et écart interquartile (p25–p75) + carte de synthèse (2,55 €/Go de médiane) |
+| **5. Meilleures offres** | Comparatif détaillé par destination | Filtres par volume/durée, podium du Top 3, onglets Pays/Régions et tableau triable |
 
 ---
 
@@ -236,7 +241,8 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 | `data_gb` vide **si et seulement si** `is_unlimited` | `clean_data` |
 | en-têtes égaux aux 12 colonnes attendues | `load_raw` |
 
-Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête avec un code de sortie non nul.
+> [!INFO]
+> Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête avec un code de sortie non nul.
 
 ---
 
@@ -256,7 +262,9 @@ Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête av
 make test
 ```
 
-81 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides. Une suite dédiée (`tests/test_etl_cas.py`) éprouve l'ETL sur des CSV générés : schéma, doublons, conflits, devises, réseaux, prix, durées, illimité, zones, BOM et lignes mal formées.
+81 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides.
+
+Une suite dédiée (`tests/test_etl_cas.py`) éprouve l'ETL sur des CSV générés : schéma, doublons, conflits, devises, réseaux, prix, durées, illimité, zones, BOM et lignes mal formées.
 
 La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` sur Python 3.12 à chaque push vers `main` et à chaque pull request.
 
@@ -274,8 +282,8 @@ La CI (`.github/workflows/ci.yml`) exécute `ruff` et `pytest` sur Python 3.12 �
 
 ## Publications
 
-- **En ligne** — [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) : page HTML brandée, déployée par GitHub Pages, avec métadonnées SEO et données structurées.
-- **Source** — [article/internet-croisiere-esim.md](article/internet-croisiere-esim.md) : Markdown de référence ; la page est générée par `make article`.
+- **En ligne** : [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) : page HTML brandée, déployée par GitHub Pages, avec métadonnées SEO et données structurées.
+- **Source** :  [article/internet-croisiere-esim.md](article/internet-croisiere-esim.md) : Markdown de référence, la page est générée par `make article`.
 
 ---
 
@@ -296,7 +304,7 @@ MyBestSim/
 │   ├── graphiques.py      # spécifications Altair
 │   └── check.py           # validation sans Streamlit
 ├── tests/                 # 81 tests
-├── docs/                  # FONCTIONS.md, sujet, archives
+├── docs/                  # FONCTIONS.md, sujet
 ├── Makefile               # install / run / test / lint / check / article / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
 ├── requirements.txt       # dépendances épinglées pour Streamlit Cloud
@@ -311,7 +319,6 @@ MyBestSim/
 | --- | --- |
 | [`docs/FONCTIONS.md`](docs/FONCTIONS.md) | rôles et signatures des fonctions |
 | [`docs/enonce-test.pdf`](docs/enonce-test.pdf) | sujet du test de recrutement |
-| [`docs/archive/`](docs/archive/) | plans de travail successifs |
 
 ---
 
@@ -349,5 +356,5 @@ Les messages de commit suivent [Conventional Commits](https://www.conventionalco
 
 ## Remerciements
 
-- **MyBestSim** (Etienne Tillier) : sujet du test et jeu de données fournisseur.
+- **MyBestSim** : sujet du test et jeu de données fournisseur.
 - **42 Angoulême** : formation et cadre méthodologique.
