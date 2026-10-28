@@ -190,7 +190,42 @@ Choisissez d'abord votre **itinéraire**, puis une eSIM qui couvre **chaque port
 
 ---
 
-**À propos de l'auteur** — MyBestSim est un comparateur eSIM indépendant. Nous comparons les offres selon la destination, la durée et le volume, et publions des guides pratiques pour rester connecté sans mauvaise surprise.
+<aside class="author-box" aria-label="À propos de l'auteur">
+  <div class="author-box__main">
+    <div class="author-box__avatar">
+      <img src="logo.png" alt="Logo MyBestSim" width="100" height="100">
+    </div>
+
+    <div class="author-box__content">
+      <p class="author-box__eyebrow">À propos de l'auteur</p>
+      <p class="author-box__name">MyBestSim</p>
+      <p class="author-box__bio">MyBestSim est un comparateur eSIM indépendant. Nous comparons les offres selon la destination, la durée et le volume, et publions des guides pratiques pour rester connecté sans mauvaise surprise.</p>
+    </div>
+  </div>
+
+  <div class="author-box__socials">
+    <a class="author-box__social author-box__social--instagram" href="https://www.instagram.com/mybestsim/" target="_blank" rel="noopener noreferrer" aria-label="Instagram MyBestSim" title="Instagram">
+      <svg class="author-box__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+        <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+        <circle cx="12" cy="12" r="4"></circle>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+      </svg>
+    </a>
+
+    <a class="author-box__social author-box__social--facebook" href="https://www.facebook.com/people/Mybestsim/61568955372340/" target="_blank" rel="noopener noreferrer" aria-label="Facebook MyBestSim" title="Facebook">
+      <svg class="author-box__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"></path>
+      </svg>
+    </a>
+
+    <a class="author-box__social author-box__social--youtube" href="https://www.youtube.com/@MyBestSim" target="_blank" rel="noopener noreferrer" aria-label="YouTube MyBestSim" title="YouTube">
+      <svg class="author-box__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"></rect>
+        <path d="M10 9l6 3-6 3z" fill="#ff0000"></path>
+      </svg>
+    </a>
+  </div>
+</aside>
 
 *Divulgation : MyBestSim utilise des liens d'affiliation. Si vous achetez via nos liens, nous pouvons percevoir une commission, sans frais supplémentaires pour vous. Nos classements restent indépendants.*
 
