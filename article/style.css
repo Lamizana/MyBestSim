@@ -25,12 +25,17 @@ body {
   margin: 0;
   font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color: var(--text);
-  background: #fff;
   line-height: 1.72;
   font-size: 18px;
 }
-h1, h2, h3, .toc p, article th, article details.faq-item summary {
+body, .site-header, article td, .faq-item {
+  background: #fff;
+}
+h1, h2, h3, .toc p, article th, .faq-item summary {
   font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+h1, article h2, article h3, .toc p, .faq-item summary {
+  color: var(--navy);
 }
 a {
   color: var(--blue-dark);
@@ -63,7 +68,6 @@ a:hover {
 }
 .site-header {
   border-bottom: 1px solid var(--border);
-  background: #fff;
 }
 .site-header .wrap {
   display: flex;
@@ -108,7 +112,6 @@ h1 {
   font-size: clamp(2rem, 4.5vw, 2.5rem);
   line-height: 1.14;
   letter-spacing: -0.01em;
-  color: var(--navy);
   text-align: center;
   margin: 6px auto 10px;
   max-width: var(--content);
@@ -140,7 +143,6 @@ article h2 {
   font-size: 30px;
   line-height: 1.22;
   letter-spacing: -0.01em;
-  color: var(--navy);
   margin: 2.3em 0 0.7em;
 }
 article h2::after {
@@ -154,7 +156,6 @@ article h2::after {
 }
 article h3 {
   font-size: 1.25rem;
-  color: var(--navy);
   margin: 1.7em 0 0.5em;
 }
 article p, article li {
@@ -169,30 +170,28 @@ article li {
 article strong {
   font-weight: 600;
 }
-article details.faq-item {
+.faq-item {
   border: 1px solid var(--line);
   border-radius: var(--radius-inner);
   margin: 0 0 0.8em;
-  background: #fff;
   overflow: hidden;
 }
-article details.faq-item summary {
+.faq-item summary {
   cursor: pointer;
   list-style: none;
   padding: 14px 18px;
   font-weight: 600;
-  color: var(--navy);
 }
-article details.faq-item summary::-webkit-details-marker {
+.faq-item summary::-webkit-details-marker {
   display: none;
 }
-article details.faq-item summary::marker {
+.faq-item summary::marker {
   content: "";
 }
-article details.faq-item[open] summary {
+.faq-item[open] summary {
   border-bottom: 1px solid var(--line);
 }
-article details.faq-item > p {
+.faq-item > p {
   padding: 0 18px 14px;
   margin: 0;
 }
@@ -254,22 +253,9 @@ article th {
 article td {
   padding: 12px 16px;
   border-top: 1px solid var(--line);
-  background: #fff;
 }
 article tbody tr:nth-child(even) td {
   background: var(--mist);
-}
-article thead th:first-child {
-  border-top-left-radius: var(--radius-inner);
-}
-article thead th:last-child {
-  border-top-right-radius: var(--radius-inner);
-}
-article tbody tr:last-child td:first-child {
-  border-bottom-left-radius: var(--radius-inner);
-}
-article tbody tr:last-child td:last-child {
-  border-bottom-right-radius: var(--radius-inner);
 }
 .toc {
   margin: 8px auto 28px;
@@ -284,7 +270,6 @@ article tbody tr:last-child td:last-child {
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--navy);
   text-transform: uppercase;
 }
 .toc ol {
@@ -327,7 +312,6 @@ article tbody tr:last-child td:last-child {
 }
 .cta .button:hover {
   background: var(--blue-dark);
-  color: #fff;
 }
 .site-footer {
   margin-top: 48px;
