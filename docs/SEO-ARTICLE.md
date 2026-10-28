@@ -51,7 +51,8 @@ la cohérence entre le visible et le balisé comptent autant.
 - Un seul `<h1>`, neuf `<h2>`, cinq `<h3>`.
 - Sommaire généré depuis les titres, ancres vérifiées.
 - 11 liens vers MyBestSim, tous en 200 au moment de l'audit.
-- Sources externes : GSMA et Starlink Maritime.
+- Sources externes : GSMA, Starlink Maritime, Carnival et Royal Caribbean.
+- 2 figures avec `figcaption`, 3 tableaux avec `<caption>`.
 - Divulgation d'affiliation visible.
 - Date de publication et date de mise à jour affichées.
 
@@ -72,8 +73,9 @@ Instagram, Facebook et YouTube. Le logo éditeur est un PNG **600 × 60**.
 
 - Hero : `mbs_intro_02`, variantes **760** et **1400** px, `srcset`,
   `sizes`, `fetchpriority="high"`.
-- Schémas : variantes **900** et **1400** px, `loading="lazy"`,
-  `decoding="async"`.
+- Schémas : `esim-croisiere-mer-port` et `esim-croisiere-itineraire`,
+  variantes **900** et **1400** px, `loading="lazy"`, `decoding="async"`,
+  légende visible.
 - Toutes les images ont un `alt` descriptif, une largeur et une hauteur.
 - Avatar : 200 × 200, affiché 100 × 100, `loading="lazy"`.
 - Favicon : 48 × 48.
@@ -144,6 +146,16 @@ navigateur choisir selon la densité de l'écran et la largeur.
 
 Les originaux 1400 px restent pour les écrans haute densité et le JSON-LD.
 
+### Légendes et sources
+
+Les deux schémas ont une `figcaption` visible, et les trois tableaux une
+`<caption>`. Cela donne un contexte textuel aux images et aux tableaux, utile
+pour la recherche d'images, les lecteurs d'écran et les extraits enrichis.
+
+Les politiques internet de Carnival et Royal Caribbean sont liées directement
+dans les sources. Une affirmation sur les compagnies de croisière sans lien
+officiel est plus faible qu'une source vérifiable.
+
 ### Accessibilité et SEO
 
 `scope="col"`, les `alt`, le lien d'évitement, le focus visible et les
@@ -173,6 +185,7 @@ Résultats attendus :
 - 8 questions dans `FAQPage` ;
 - 3 niveaux dans `BreadcrumbList` ;
 - 10/10 `<th scope="col">` ;
+- 3 `<caption>` et 2 `<figcaption>` ;
 - 5 images, 0 sans `alt` ;
 - 0 ancre cassée, 0 identifiant dupliqué ;
 - 11 liens MyBestSim en 200 ;

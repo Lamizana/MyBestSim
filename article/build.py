@@ -27,6 +27,11 @@ SOCIALS = [
     "https://www.facebook.com/people/Mybestsim/61568955372340/",
     "https://www.youtube.com/@MyBestSim",
 ]
+TABLE_CAPTIONS = {
+    "Option": "Comparer les options de connexion en mer et à quai",
+    "Itinéraire": "Quelle eSIM choisir selon l'itinéraire de croisière",
+    "Usage": "Consommation de données indicative par usage",
+}
 
 MOIS = [
     "janvier", "février", "mars", "avril", "mai", "juin",
@@ -51,6 +56,24 @@ def lire_front_matter(texte: str) -> tuple[dict, str]:
 def date_francaise(iso: str) -> str:
     jour = date.fromisoformat(iso)
     return f"{jour.day} {MOIS[jour.month - 1]} {jour.year}"
+
+
+def ajouter_captions(contenu: str) -> str:
+    """Ajoute une caption aux tableaux connus, d'après leur premier en-tête."""
+    def remplacer(bloc: re.Match) -> str:
+        tableau = bloc.group(0)
+        entete = re.search(r"<th[^>]*>(.*?)</th>", tableau, flags=re.S)
+        if not entete:
+            return tableau
+        titre = html.unescape(re.sub(r"<[^>]+>", "", entete.group(1))).strip()
+        caption = TABLE_CAPTIONS.get(titre)
+        if not caption:
+            return tableau
+        return tableau.replace(
+            "<table>", f"<table>\n<caption>{html.escape(caption)}</caption>", 1
+        )
+
+    return re.sub(r"<table>.*?</table>", remplacer, contenu, flags=re.S)
 
 
 def construire_faq(contenu: str) -> dict | None:
@@ -155,6 +178,7 @@ def rendre() -> None:
     if brief:
         contenu = contenu.replace(brief_html, "", 1)
 
+    contenu = ajouter_captions(contenu)
     contenu = contenu.replace("<table>", '<div class="table-wrap"><table>')
     contenu = contenu.replace("</table>", "</table></div>")
     contenu = contenu.replace("<th>", '<th scope="col">')

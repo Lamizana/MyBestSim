@@ -32,6 +32,7 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 
 <figure class="figure">
   <img src="images/esim-croisiere-mer-port.jpeg" srcset="images/esim-croisiere-mer-port-900.jpeg 900w, images/esim-croisiere-mer-port.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy" decoding="async">
+  <figcaption>En mer, la connexion passe par un satellite ; à quai, l’eSIM capte le réseau terrestre.</figcaption>
 </figure>
 
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
@@ -127,6 +128,7 @@ Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent
 
 <figure class="figure">
   <img src="images/esim-croisiere-itineraire.jpeg" srcset="images/esim-croisiere-itineraire-900.jpeg 900w, images/esim-croisiere-itineraire.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy" decoding="async">
+  <figcaption>Récapitulatif : choisir l’eSIM selon l’itinéraire, éviter les pièges et préparer le téléphone avant l’embarquement.</figcaption>
 </figure>
 
 ## Comparer les offres sans se tromper
@@ -243,7 +245,8 @@ Choisissez d'abord votre **itinéraire**, puis une eSIM qui couvre **chaque port
     <ul>
       <li><a href="https://www.gsma.com/esim/">GSMA, eSIM</a></li>
       <li><a href="https://www.starlink.com/maritime">Starlink Maritime</a></li>
-      <li>Politiques internet des compagnies de croisière (Carnival, Royal Caribbean).</li>
+      <li><a href="https://www.carnival.com/onboard/onboard-internet">Carnival — Internet à bord</a></li>
+      <li><a href="https://www.royalcaribbean.com/faq/questions/connect-onboard-internet-wifi">Royal Caribbean — Internet à bord</a></li>
     </ul>
   </div>
 </footer>
