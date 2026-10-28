@@ -10,12 +10,15 @@ author: MyBestSim
 
 Choisir une **eSIM croisière** ne se résume pas à comparer des prix : la mer et les escales n'utilisent pas le même réseau.
 
-**En bref**
-
-- **En pleine mer, une eSIM de voyage classique ne capte rien.** Le Wi-Fi du navire, transmis par satellite, reste la solution pour les jours de navigation.
-- **À quai, une eSIM reprend la main** : elle se connecte aux réseaux mobiles du pays d'escale, souvent pour quelques euros.
-- **Votre itinéraire décide du forfait.** Méditerranée, Caraïbes, Europe du Nord et transatlantique n'appellent pas les mêmes couvertures.
-- **Installez l'eSIM avant d'embarquer**, en Wi-Fi, et désactivez le roaming des données.
+<div class="brief">
+  <p class="brief-title">En bref</p>
+  <ul>
+    <li><strong>En pleine mer, une eSIM de voyage classique ne capte rien.</strong> Le Wi-Fi du navire, transmis par satellite, reste la solution pour les jours de navigation.</li>
+    <li><strong>À quai, une eSIM reprend la main</strong> : elle se connecte aux réseaux mobiles du pays d'escale, souvent pour quelques euros.</li>
+    <li><strong>Votre itinéraire décide du forfait.</strong> Méditerranée, Caraïbes, Europe du Nord et transatlantique n'appellent pas les mêmes couvertures.</li>
+    <li><strong>Installez l'eSIM avant d'embarquer</strong>, en Wi-Fi, et désactivez le roaming des données.</li>
+  </ul>
+</div>
 
 ## Mer et port : deux réseaux, deux logiques
 

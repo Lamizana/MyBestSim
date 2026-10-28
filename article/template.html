@@ -100,7 +100,7 @@ h1 {
 }
 .meta { color: var(--muted); font-size: 0.88rem; max-width: 900px; margin: 0 auto 22px; }
 .hero {
-  max-width: 880px;
+  max-width: 760px;
   margin: 6px auto 26px;
   border-radius: 14px;
   overflow: hidden;
@@ -123,15 +123,25 @@ article p, article li { font-size: 1rem; }
 article ul, article ol { padding-left: 1.3em; }
 article li { margin: 0.35em 0; }
 article strong { font-weight: 600; }
-article blockquote {
-  margin: 24px 0;
-  padding: 18px 20px;
-  background: var(--soft);
-  border-left: 4px solid var(--blue);
-  border-radius: 0 var(--radius) var(--radius) 0;
+.brief {
+  max-width: 900px;
+  margin: 0 auto 26px;
+  padding: 18px 22px;
+  background: linear-gradient(180deg, #e7f0fc, #ffffff);
+  border: 1px solid #c7dcf6;
+  border-left: 5px solid #1e63d7;
+  border-radius: 14px;
 }
-article blockquote p { margin: 0 0 8px; }
-article blockquote p:last-child { margin-bottom: 0; }
+.brief-title {
+  margin: 0 0 10px;
+  color: #0e2b4d;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.brief ul { margin: 0; padding-left: 1.2em; }
+.brief li { margin: 0.35em 0; }
 article hr { border: 0; border-top: 1px solid var(--border); margin: 42px 0; }
 .table-wrap {
   width: calc(100% + 198px);
@@ -171,18 +181,18 @@ article thead th:last-child { border-top-right-radius: 12px; }
 article tbody tr:last-child td:first-child { border-bottom-left-radius: 12px; }
 article tbody tr:last-child td:last-child { border-bottom-right-radius: 12px; }
 .toc {
-  margin: 8px auto 30px;
+  margin: 8px auto 28px;
   max-width: 900px;
-  padding: 16px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: #fff;
+  padding: 16px 22px;
+  border: 1px solid #e2e8f2;
+  border-radius: 14px;
+  background: #f6f8fc;
 }
-.toc p { margin: 0 0 8px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
+.toc p { margin: 0 0 8px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; color: #0e2b4d; text-transform: uppercase; }
 .toc ol { margin: 0; padding-left: 1.1em; }
 .toc li { margin: 0.3em 0; font-size: 0.92rem; }
-.toc a { color: var(--text); text-decoration: none; }
-.toc a:hover { color: var(--blue-dark); text-decoration: underline; }
+.toc a { color: #1e63d7; text-decoration: none; }
+.toc a:hover { color: #0e2b4d; text-decoration: underline; }
 .cta {
   margin: 48px auto 8px;
   max-width: 900px;
