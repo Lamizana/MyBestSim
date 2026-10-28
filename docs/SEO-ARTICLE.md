@@ -84,7 +84,7 @@ Instagram, Facebook et YouTube. Le logo éditeur est un PNG **600 × 60**.
 
 ### Technique
 
-- CSS externe, **9 266 octets** (≈ 9,0 Kio), une seule requête.
+- CSS externe, **9 616 octets** (≈ 9,4 Kio), une seule requête.
 - Aucun JavaScript.
 - `preload` du hero avec `imagesrcset` pour le LCP.
 - `scope="col"` sur les 10 en-têtes de tableau.
