@@ -34,7 +34,6 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 
 <figure class="figure">
   <img src="images/shema_02.jpeg" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy">
-  <figcaption>En mer, le navire passe par un satellite ; à l'escale, l'eSIM se connecte au réseau local.</figcaption>
 </figure>
 
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
@@ -130,7 +129,6 @@ Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent
 
 <figure class="figure">
   <img src="images/shema_01.jpeg" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy">
-  <figcaption>Le récapitulatif : itinéraire, pièges à éviter et préparation avant l'embarquement.</figcaption>
 </figure>
 
 ## Comparer les offres sans se tromper
