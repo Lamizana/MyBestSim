@@ -324,6 +324,7 @@ def afficher_offres(metrics: dict) -> None:
     st.subheader(":blue[Meilleures offres par destination]")
     st.caption(
         "Ce tableau compare les offres tarifaires par destination :  \n"
+        "- **Podium :** Classement des 3 destinations les moins chères pour le volume/durée sélectionnés.  \n"
         "- **Prix min :** L'offre la moins chère, fournisseur indiqué.  \n"
         "- **Prix max :** L'offre la plus chère, tous fournisseurs confondus.  \n"
         "- **Écart :** Surcoût en % de la plus chère par rapport à la moins chère.  \n\n"
@@ -365,24 +366,18 @@ def afficher_offres(metrics: dict) -> None:
             .lower()
         )
 
-        selection = list(pays[:10])
         if recherche:
-            for offre in pays:
-                if recherche in offre["destination"].lower():
-                    if offre not in selection:
-                        selection.append(offre)
-                    break
-
-        if not selection:
-            st.info("Aucune offre pour ce forfait.")
+            resultats = [
+                offre for offre in pays if recherche in offre["destination"].lower()
+            ]
         else:
-            _podium(selection)
-            tableau = (
-                [offre for offre in pays if recherche in offre["destination"].lower()]
-                if recherche
-                else pays
-            )
-            _tableau_offres(tableau)
+            resultats = list(pays)
+
+        if not resultats:
+            st.info("Aucune offre ne correspond à cette recherche.")
+        else:
+            _podium(resultats)
+            _tableau_offres(resultats)
 
     with onglet_regions:
         if not zones:
@@ -395,10 +390,11 @@ def afficher_offres(metrics: dict) -> None:
 def afficher_methodologie(metrics: dict) -> None:
     data = metrics["kpi"]["data_gb_moyenne"]
     illimitees = metrics["meta"]["illimitees"]
+    nb_fichiers = len(list(DATA_DIR.glob("*.csv")))
     with st.expander(":blue[**Méthodologie et définitions**]", expanded=False):
         st.markdown(
-            f"- {format_fr(metrics['meta']['lignes'])} offres lues dans les 18 "
-            "fichiers fournisseurs, aucune ligne rejetée.\n"
+            f"- {format_fr(metrics['meta']['lignes'])} offres valides lues depuis "
+            f"{nb_fichiers} fichiers fournisseurs dans `data/raw/`.\n"
             f"- Moyenne de data calculée sur les {format_fr(data['nb_offres'])} "
             "offres à volume fini ; les offres illimitées sont exclues et ne "
             "valent jamais 0 Go.\n"

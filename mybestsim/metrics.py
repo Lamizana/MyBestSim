@@ -4,6 +4,8 @@ Aucune dépendance à Streamlit : un DataFrame propre entre, des dictionnaires
 et des listes sérialisables sortent.
 """
 
+import math
+
 import pandas as pd
 
 from mybestsim.config import DEVISE, SEUIL_PRIX
@@ -46,7 +48,9 @@ def mean_price(df: pd.DataFrame) -> dict:
 
 def prix_go_par_volume(df: pd.DataFrame) -> list:
     """Médiane du prix au Go par volume, avec quartiles (offres finies)."""
-    finies = df.loc[~df["is_unlimited"]].copy()
+    finies = df.loc[~df["is_unlimited"] & df["data_gb"].notna()].copy()
+    finies = finies[finies["data_gb"] > 0]
+    finies = finies[finies["price"] > 0]
     finies["prix_go"] = finies["price"] / finies["data_gb"]
 
     resultat = []
@@ -67,7 +71,10 @@ def prix_go_par_volume(df: pd.DataFrame) -> list:
 
 def prix_go_median(df: pd.DataFrame) -> float:
     """Médiane du prix au Go sur les offres finies."""
-    finies = df.loc[~df["is_unlimited"]]
+    finies = df.loc[~df["is_unlimited"] & df["data_gb"].notna()]
+    finies = finies[(finies["data_gb"] > 0) & (finies["price"] > 0)]
+    if finies.empty:
+        return 0.0
     return round(float((finies["price"] / finies["data_gb"]).median()), 2)
 
 
@@ -94,19 +101,28 @@ def provider_distribution(df: pd.DataFrame) -> list:
     ]
 
 
-def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int = 160) -> list:
+def price_histogram(df: pd.DataFrame, largeur: int = 10, maximum: int | None = None) -> list:
     """Répartition des prix par tranche, pour l'histogramme de la page."""
+    if maximum is None:
+        prix_max = float(df["price"].max())
+        maximum = int(math.ceil(prix_max / largeur) * largeur)
+        if maximum < prix_max:
+            maximum += largeur
     bornes = list(range(0, maximum + largeur, largeur))
     tranches = pd.cut(df["price"], bins=bornes, right=False)
     comptes = tranches.value_counts(sort=False).sort_index()
-    return [
-        {
-            "min": int(intervalle.left),
-            "max": int(intervalle.right),
-            "offres": int(nombre),
-        }
-        for intervalle, nombre in comptes.items()
-    ]
+    resultat = []
+    for intervalle, nombre in comptes.items():
+        if pd.isna(nombre):
+            continue
+        resultat.append(
+            {
+                "min": int(intervalle.left),
+                "max": int(intervalle.right),
+                "offres": int(nombre),
+            }
+        )
+    return resultat
 
 
 def meilleures_offres(df: pd.DataFrame) -> list:

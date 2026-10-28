@@ -153,7 +153,7 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 
 ## Tests
 
-81 tests, six fichiers :
+88 tests, sept fichiers :
 
 - `tests/test_ingest.py` — lecture des 18 fichiers, refus d'un dossier vide ou
   d'un en-tête différent, fichiers identiques, doublons exacts et conflits ;
@@ -163,6 +163,8 @@ Application Streamlit, sans calcul : elle appelle `compute_metrics` et affiche.
 - `tests/test_metrics.py` — six KPI, prix au Go, histogramme, meilleures
   offres, structure de `compute_metrics` ;
 - `tests/test_graphiques.py` — structure des trois graphiques Altair ;
+- `tests/test_export.py` — export CSV UTF-8 avec BOM, colonnes dérivées,
+  préservation des accents ;
 - `tests/test_app.py` — rendu, six métriques, prix au Go, méthodologie,
   recherche vide.
 
