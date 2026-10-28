@@ -19,7 +19,6 @@ SITE = ARTICLE / "_site"
 RACINE = ARTICLE.parent
 
 SITE_URL = "https://lamizana.github.io/MyBestSim/"
-OG_IMAGE = SITE_URL + "og.png"
 
 MOIS = [
     "janvier", "février", "mars", "avril", "mai", "juin",
@@ -119,7 +118,6 @@ def rendre() -> None:
             "url": "https://mybestsim.com/fr/",
         },
         "mainEntityOfPage": {"@type": "WebPage", "@id": SITE_URL},
-        "image": OG_IMAGE,
         "isPartOf": {
             "@type": "WebSite",
             "name": "MyBestSim",
@@ -132,7 +130,6 @@ def rendre() -> None:
         "{{TITLE}}": html.escape(meta.get("title", ""), quote=True),
         "{{DESCRIPTION}}": html.escape(meta.get("description", ""), quote=True),
         "{{CANONICAL}}": SITE_URL,
-        "{{OG_IMAGE}}": OG_IMAGE,
         "{{DATE_FR}}": date_francaise(meta["date"]),
         "{{DATE_ISO}}": meta.get("date", ""),
         "{{READING_TIME}}": str(minutes),
@@ -150,7 +147,6 @@ def rendre() -> None:
     SITE.mkdir(parents=True)
     (SITE / "index.html").write_text(page, encoding="utf-8")
 
-    shutil.copy2(ARTICLE / "og.png", SITE / "og.png")
     shutil.copytree(ARTICLE / "images", SITE / "images")
     shutil.copy2(RACINE / "assets" / "logo_wordmark.png", SITE / "logo_wordmark.png")
     shutil.copy2(RACINE / "assets" / "logo.png", SITE / "logo.png")
