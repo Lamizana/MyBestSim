@@ -82,8 +82,8 @@ def afficher_entete(metrics: dict, export_csv: bytes, nb_colonnes: int) -> None:
             "illimitées sont exclues de la moyenne de data."
         )
         st.caption(
-            "Six indicateurs clés, le détail par fournisseur et par tranche de "
-            "prix, puis les meilleures offres par destination."
+            "Six indicateurs clés, répartition par fournisseur, distribution des "
+            "prix, prix au Go et meilleures offres par destination."
         )
 
     with droite:
