@@ -120,6 +120,15 @@ article h2 {
   color: #0e2b4d;
   margin: 2.3em 0 0.7em;
 }
+article h2::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 4px;
+  border-radius: 999px;
+  background: #f7b500;
+  margin-top: 0.45em;
+}
 article h3 {
   font-size: 1.25rem;
   color: #0e2b4d;
@@ -129,6 +138,25 @@ article p, article li { font-size: 18px; }
 article ul, article ol { padding-left: 1.3em; }
 article li { margin: 0.35em 0; }
 article strong { font-weight: 600; }
+article details.faq-item {
+  border: 1px solid #e2e8f2;
+  border-radius: 12px;
+  margin: 0 0 0.8em;
+  background: #ffffff;
+  overflow: hidden;
+}
+article details.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 600;
+  color: #0e2b4d;
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+article details.faq-item summary::-webkit-details-marker { display: none; }
+article details.faq-item summary::marker { content: ""; }
+article details.faq-item[open] summary { border-bottom: 1px solid #e2e8f2; }
+article details.faq-item > p { padding: 0 18px 14px; margin: 0; }
 .brief {
   max-width: 900px;
   margin: 0 auto 26px;

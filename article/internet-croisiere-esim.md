@@ -142,29 +142,45 @@ Le [comparateur MyBestSim](https://mybestsim.com/fr/) affiche les offres par des
 
 ## FAQ
 
-**Une eSIM fonctionne-t-elle en pleine mer ?**
-Une eSIM de voyage classique non : elle dépend des réseaux terrestres. En mer, il faut le Wi-Fi du navire ou une eSIM spécialisée qui couvre explicitement la zone maritime et votre navire.
+<details class="faq-item">
+<summary>Une eSIM fonctionne-t-elle en pleine mer ?</summary>
+<p>Une eSIM de voyage classique non : elle dépend des réseaux terrestres. En mer, il faut le Wi-Fi du navire ou une eSIM spécialisée qui couvre explicitement la zone maritime et votre navire.</p>
+</details>
 
-**Quelle eSIM croisière pour la Méditerranée ?**
-Une eSIM régionale Europe de 5 à 10 Go couvre la plupart des escales. Vérifiez les pays hors UE de votre itinéraire.
+<details class="faq-item">
+<summary>Quelle eSIM croisière pour la Méditerranée ?</summary>
+<p>Une eSIM régionale Europe de 5 à 10 Go couvre la plupart des escales. Vérifiez les pays hors UE de votre itinéraire.</p>
+</details>
 
-**Une eSIM régionale suffit-elle pour les Caraïbes ?**
-Souvent, mais pas toujours : certaines îles manquent. Contrôlez la liste des destinations avant d'acheter.
+<details class="faq-item">
+<summary>Une eSIM régionale suffit-elle pour les Caraïbes ?</summary>
+<p>Souvent, mais pas toujours : certaines îles manquent. Contrôlez la liste des destinations avant d'acheter.</p>
+</details>
 
-**Puis-je utiliser WhatsApp avec une eSIM ?**
-Oui, en données mobiles ou en Wi-Fi. Les appels et SMS classiques dépendent de votre ligne principale, pas de l'eSIM.
+<details class="faq-item">
+<summary>Puis-je utiliser WhatsApp avec une eSIM ?</summary>
+<p>Oui, en données mobiles ou en Wi-Fi. Les appels et SMS classiques dépendent de votre ligne principale, pas de l'eSIM.</p>
+</details>
 
-**Dois-je garder ma SIM française active ?**
-Oui pour recevoir des SMS (banque, codes), avec le roaming désactivé. L'eSIM sert uniquement aux données.
+<details class="faq-item">
+<summary>Dois-je garder ma SIM française active ?</summary>
+<p>Oui pour recevoir des SMS (banque, codes), avec le roaming désactivé. L'eSIM sert uniquement aux données.</p>
+</details>
 
-**Le Wi-Fi du navire ou une eSIM ?**
-Les deux, pour des usages différents : Wi-Fi en mer, eSIM à quai. Le Wi-Fi seul peut suffire si vous n'avez que peu d'escales.
+<details class="faq-item">
+<summary>Le Wi-Fi du navire ou une eSIM ?</summary>
+<p>Les deux, pour des usages différents : Wi-Fi en mer, eSIM à quai. Le Wi-Fi seul peut suffire si vous n'avez que peu d'escales.</p>
+</details>
 
-**Combien de Go pour 7 jours de croisière ?**
-3 à 5 Go couvrent généralement les escales, hors vidéo et partage de connexion.
+<details class="faq-item">
+<summary>Combien de Go pour 7 jours de croisière ?</summary>
+<p>3 à 5 Go couvrent généralement les escales, hors vidéo et partage de connexion.</p>
+</details>
 
-**Peut-on partager la connexion d'une eSIM ?**
-Cela dépend du forfait. Vérifiez la mention « hotspot » ou « partage de connexion » avant l'achat.
+<details class="faq-item">
+<summary>Peut-on partager la connexion d'une eSIM ?</summary>
+<p>Cela dépend du forfait. Vérifiez la mention « hotspot » ou « partage de connexion » avant l'achat.</p>
+</details>
 
 ## Le bon choix, en une phrase
 
