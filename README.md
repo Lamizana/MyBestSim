@@ -41,6 +41,7 @@
 - [Publications](#publications)
 - [Structure du projet](#structure-du-projet)
 - [Documentation](#documentation)
+- [Utilisation de l'IA](#utilisation-de-lia)
 - [Contribuer](#contribuer)
 - [Auteur](#auteur)
 - [Remerciements](#remerciements)

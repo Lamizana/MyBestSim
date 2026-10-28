@@ -78,7 +78,7 @@ def afficher_entete(metrics: dict, export_csv: bytes, nb_colonnes: int) -> None:
         st.markdown(
             "Comparer les prix, les volumes de données et la couverture des "
             "opérateurs du catalogue importé.  \n"
-            "Les indicateurs portent sur les offres valides ; les offres "
+            "Les indicateurs portent sur les offres valides, les offres "
             "illimitées sont exclues de la moyenne de data."
         )
         st.caption(
