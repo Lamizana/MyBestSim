@@ -3,6 +3,7 @@ title: "Internet en croisière : quelle eSIM choisir ?"
 description: "Mer ou port, Méditerranée ou Caraïbes : la méthode pour choisir une eSIM de croisière utile, éviter le roaming maritime et payer le juste prix."
 slug: internet-croisiere-esim
 date: 2026-10-27
+updated: 2026-10-28
 author: MyBestSim
 ---
 
@@ -30,7 +31,7 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 
 
 <figure class="figure">
-  <img src="images/shema_02.jpeg" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy">
+  <img src="images/shema_02.jpeg" srcset="images/shema_02-900.jpeg 900w, images/shema_02.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy" decoding="async">
 </figure>
 
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
@@ -125,7 +126,7 @@ Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent
 - **Les données en arrière-plan.** Photos, mises à jour et sauvegardes peuvent consommer sans que vous regardiez.
 
 <figure class="figure">
-  <img src="images/shema_01.jpeg" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy">
+  <img src="images/shema_01.jpeg" srcset="images/shema_01-900.jpeg 900w, images/shema_01.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy" decoding="async">
 </figure>
 
 ## Comparer les offres sans se tromper
@@ -186,14 +187,18 @@ Le [comparateur MyBestSim](https://mybestsim.com/fr/) affiche les offres par des
 
 Choisissez d'abord votre **itinéraire**, puis une eSIM qui couvre **chaque port**, et gardez le Wi-Fi du navire pour les jours en mer. C'est la combinaison la plus simple, la plus sûre et la plus économique.
 
-[Comparer les eSIM pour ma croisière](https://mybestsim.com/fr/)
+<aside class="cta cta--inline" aria-label="Comparer les eSIM pour votre croisière">
+  <p><strong>Comparez les eSIM pour votre croisière</strong></p>
+  <p>Prix, volumes et couverture par destination, mis à jour en continu.</p>
+  <a class="button" href="https://mybestsim.com/fr/">Comparer les offres</a>
+</aside>
 
 ---
 
-<aside class="author-box" aria-label="À propos de l'auteur">
+<aside class="author-box" aria-label="À propos">
   <div class="author-box__main">
     <div class="author-box__avatar">
-      <img src="logo.png" alt="Logo MyBestSim" width="100" height="100">
+      <img src="images/avatar.png" alt="Logo MyBestSim" width="100" height="100" loading="lazy" decoding="async">
     </div>
 
     <div class="author-box__content">
@@ -227,6 +232,18 @@ Choisissez d'abord votre **itinéraire**, puis une eSIM qui couvre **chaque port
   </div>
 </aside>
 
-*Divulgation : MyBestSim utilise des liens d'affiliation. Si vous achetez via nos liens, nous pouvons percevoir une commission, sans frais supplémentaires pour vous. Nos classements restent indépendants.*
+<footer class="article-meta">
+  <div class="article-meta__disclosure">
+    <p class="article-meta__label">Divulgation</p>
+    <p>MyBestSim utilise des liens d'affiliation. Si vous achetez via nos liens, nous pouvons percevoir une commission, sans frais supplémentaires pour vous. Nos classements restent indépendants.</p>
+  </div>
 
-**Sources** — [GSMA, eSIM](https://www.gsma.com/esim/), [Starlink Maritime](https://www.starlink.com/maritime), politiques internet des compagnies de croisière (Carnival, Royal Caribbean).
+  <div class="article-meta__sources">
+    <p class="article-meta__label">Sources</p>
+    <ul>
+      <li><a href="https://www.gsma.com/esim/">GSMA, eSIM</a></li>
+      <li><a href="https://www.starlink.com/maritime">Starlink Maritime</a></li>
+      <li>Politiques internet des compagnies de croisière (Carnival, Royal Caribbean).</li>
+    </ul>
+  </div>
+</footer>

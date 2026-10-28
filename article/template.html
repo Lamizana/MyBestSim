@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr-FR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,11 +17,13 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="{{TITLE}}">
 <meta name="twitter:description" content="{{DESCRIPTION}}">
-<link rel="icon" href="logo.png" type="image/png">
+<link rel="icon" href="images/favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">{{JSONLD}}</script>
+{{FAQ_JSONLD}}
+{{BREADCRUMB_JSONLD}}
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,7 +51,7 @@
     <p class="meta">Publié le <time datetime="{{DATE_ISO}}">{{DATE_FR}}</time> · {{READING_TIME}} min de lecture</p>
 
     <figure class="hero">
-      <img src="images/mbs_intro_02.jpeg" alt="Voyageuse consultant une eSIM sur son smartphone, sur le pont d'un navire de croisière" width="1400" height="1045" fetchpriority="high">
+      <img src="images/mbs_intro_02.jpeg" srcset="images/mbs_intro_02-760.jpeg 760w, images/mbs_intro_02.jpeg 1400w" sizes="(max-width: 640px) calc(100vw - 36px), 760px" alt="Voyageuse consultant une eSIM sur son smartphone, sur le pont d'un navire de croisière" width="1400" height="1045" fetchpriority="high">
     </figure>
 
     {{BRIEF}}
@@ -59,12 +61,6 @@
     <article>
       {{CONTENT}}
     </article>
-
-    <aside class="cta">
-      <p><strong>Comparez les eSIM pour votre croisière</strong></p>
-      <p>Prix, volumes et couverture par destination, mis à jour en continu.</p>
-      <a class="button" href="https://mybestsim.com/fr/">Comparer les offres</a>
-    </aside>
   </div>
 </main>
 
