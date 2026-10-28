@@ -11,7 +11,7 @@ author: MyBestSim
 Choisir une **eSIM croisière** ne se résume pas à comparer des prix : la mer et les escales n'utilisent pas le même réseau.
 
 <div class="brief">
-  <p>En bref, ce que vous allez découvrir dans cet article : une eSIM de voyage classique fonctionne à quai, pas en pleine mer, où seule la connexion satellite du navire reste disponible. Vous saurez comment choisir votre forfait selon votre itinéraire — Méditerranée, Caraïbes, Europe du Nord, transatlantique —, combien de données prévoir, comment installer l'eSIM avant l'embarquement et quels pièges éviter pour ne pas payer le roaming maritime.</p>
+  <p>En bref, ce que vous allez découvrir dans cet article : une eSIM de voyage classique fonctionne à quai, pas en pleine mer, où seule la connexion satellite du navire reste disponible. Vous saurez comment choisir votre forfait selon votre itinéraire, combien de données prévoir, comment installer l'eSIM avant l'embarquement et quels pièges éviter pour ne pas payer le roaming maritime.</p>
 </div>
 
 ## Mer et port : deux réseaux, deux logiques
