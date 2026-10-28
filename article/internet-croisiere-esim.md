@@ -12,7 +12,7 @@ author: MyBestSim
 Choisir une **eSIM croisière** ne se résume pas à comparer des prix : la mer et les escales n'utilisent pas le même réseau.
 
 <div class="brief">
-  <p>En bref, ce que vous allez découvrir dans cet article : une eSIM de voyage classique fonctionne à quai, pas en pleine mer, où seule la connexion satellite du navire reste disponible. Vous saurez comment choisir votre forfait selon votre itinéraire, combien de données prévoir, comment installer l'eSIM avant l'embarquement et quels pièges éviter pour ne pas payer le roaming maritime.</p>
+  <p>En bref, ce que vous allez découvrir dans cet article : une eSIM de voyage classique fonctionne à quai, rarement en pleine mer. Hors couverture terrestre, l'eSIM classique ne fonctionne généralement pas et il faut passer par le Wi-Fi du navire ou par son réseau maritime/satellite. Vous saurez comment choisir votre forfait selon votre itinéraire, combien de données prévoir, comment installer l'eSIM avant l'embarquement et quels pièges éviter pour ne pas payer le roaming maritime.</p>
 </div>
 
 ## Mer et port : deux réseaux, deux logiques
@@ -42,7 +42,7 @@ Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin
 Avant de comparer les prix, répondez à une seule question : **où le bateau sera-t-il ?**
 
 - **Combien de jours en mer ?** Un transatlantique peut aligner six à huit jours de navigation d'affilée. Une croisière de sept nuits en Méditerranée en compte souvent un ou deux.
-- **Quels ports ?** Chaque escale est un pays différent. Une eSIM « Europe » ne couvre pas les Caraïbes, et une eSIM « mondiale » ne signifie pas « en mer ».
+- **Quels ports ?** Les escales peuvent concerner plusieurs pays ou zones différentes. Une eSIM « Europe » ne couvre pas les Caraïbes, et une eSIM « mondiale » ne signifie pas « en mer ». Vérifiez bien la couverture par pays pour chaque escale de votre itinéraire.
 - **Quels jours à terre ?** Une excursion de huit heures ne demande pas le même forfait qu'une journée entière en autonomie.
 
 Une eSIM se juge sur sa **couverture pays par pays**, pas sur son nom. Vérifiez la liste des destinations incluses, la présence du pays de chaque escale, la durée de validité et les règles de partage de connexion.
@@ -105,14 +105,14 @@ En croisière, l'eSIM ne sert qu'à terre. Inutile donc de payer 20 Go si vous p
 | Vidéos, sauvegarde cloud | 3 Go et plus par semaine |
 | Partage de connexion vers un ordinateur | 2 à 5 Go par semaine |
 
-Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent le plus souvent. Pour 15 jours et un usage actif, visez 10 Go. Le [calculateur de données](https://mybestsim.com/fr/calculateur-de-donnee-voyage/) de MyBestSim permet d'affiner selon vos habitudes.
+Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent le plus souvent. Pour 15 jours et un usage actif, visez 10 Go. Ces volumes sont des ordres de grandeur : ils dépendent de votre usage (streaming, partage de connexion) et des jours en mer où l'eSIM terrestre est généralement inutilisable. Le [calculateur de données](https://mybestsim.com/fr/calculateur-de-donnee-voyage/) de MyBestSim permet d'affiner selon vos habitudes.
 
 ## Le setup avant l'embarquement
 
-1. **Vérifiez la compatibilité eSIM** de votre téléphone ([liste des modèles](https://mybestsim.com/fr/telephones-compatibles-esim/)).
-2. **Achetez et installez l'eSIM chez vous**, en Wi-Fi stable, avant de partir.
+1. **Vérifiez la compatibilité eSIM** de votre téléphone ([liste des modèles](https://mybestsim.com/fr/telephones-compatibles-esim/)). Consultez aussi le guide constructeur : [Apple](https://support.apple.com/fr-fr/118669) ou [Google Pixel](https://support.google.com/pixelphone/answer/16115470?hl=fr).
+2. **Achetez et installez l'eSIM chez vous**, en Wi-Fi stable, avant de partir. Une eSIM est un profil numérique, pas une carte physique.
 3. **Nommez les lignes** : « SIM domicile », « eSIM croisière », « Wi-Fi navire ».
-4. **Désactivez le roaming des données** sur votre SIM principale.
+4. **Gérez le roaming intelligemment** : désactivez le roaming des données sur votre SIM principale pour éviter la double facturation. Si votre forfait eSIM de voyage l'exige explicitement, activez le roaming uniquement sur cette ligne eSIM.
 5. **Activez le mode avion en mer**, puis le Wi-Fi si vous utilisez internet à bord.
 6. **Téléchargez cartes et contenus hors ligne** avant chaque journée en mer.
 7. **Conservez le QR code et les identifiants** : certains profils ne se réinstallent pas après suppression.
@@ -147,22 +147,22 @@ Le [comparateur MyBestSim](https://mybestsim.com/fr/) affiche les offres par des
 
 <details class="faq-item">
 <summary>Une eSIM fonctionne-t-elle en pleine mer ?</summary>
-<p>Une eSIM de voyage classique non : elle dépend des réseaux terrestres. En mer, il faut le Wi-Fi du navire ou une eSIM spécialisée qui couvre explicitement la zone maritime et votre navire.</p>
+<p>Généralement non pour une eSIM de voyage classique : elle dépend des réseaux terrestres. En mer, il faut le Wi-Fi du navire ou une eSIM spécialisée qui couvre explicitement la zone maritime et votre navire. Certains navires utilisent des réseaux satellite/maritime, mais ce n'est pas le cas de la majorité des eSIM grand public.</p>
 </details>
 
 <details class="faq-item">
 <summary>Quelle eSIM croisière pour la Méditerranée ?</summary>
-<p>Une eSIM régionale Europe de 5 à 10 Go couvre la plupart des escales. Vérifiez les pays hors UE de votre itinéraire.</p>
+<p>Une eSIM régionale Europe de 5 à 10 Go couvre la plupart des escales. Vérifiez les pays hors UE de votre itinéraire (Monténégro, Turquie, Albanie, etc.).</p>
 </details>
 
 <details class="faq-item">
 <summary>Une eSIM régionale suffit-elle pour les Caraïbes ?</summary>
-<p>Souvent, mais pas toujours : certaines îles manquent. Contrôlez la liste des destinations avant d'acheter.</p>
+<p>Souvent, mais pas toujours : certaines îles manquent ou sont couvertes par le réseau du navire plutôt que par un opérateur local. Contrôlez la liste des destinations avant d'acheter.</p>
 </details>
 
 <details class="faq-item">
 <summary>Puis-je utiliser WhatsApp avec une eSIM ?</summary>
-<p>Oui, en données mobiles ou en Wi-Fi. Les appels et SMS classiques dépendent de votre ligne principale, pas de l'eSIM.</p>
+<p>Oui, sur une eSIM data-only, WhatsApp fonctionne en données (messages, appels VoIP) via l'eSIM ou le Wi-Fi. Les appels/SMS classiques dépendent généralement de votre ligne principale. Consommez bien les données si vous utilisez les appels VoIP en itinérance ou en mer via le Wi-Fi du navire.</p>
 </details>
 
 <details class="faq-item">
@@ -243,10 +243,12 @@ Choisissez d'abord votre **itinéraire**, puis une eSIM qui couvre **chaque port
   <div class="article-meta__sources">
     <p class="article-meta__label">Sources</p>
     <ul>
-      <li><a href="https://www.gsma.com/esim/">GSMA, eSIM</a></li>
+      <li><a href="https://www.gsma.com/esim/">GSMA — eSIM</a></li>
       <li><a href="https://www.starlink.com/maritime">Starlink Maritime</a></li>
       <li><a href="https://www.carnival.com/onboard/onboard-internet">Carnival — Internet à bord</a></li>
       <li><a href="https://www.royalcaribbean.com/faq/questions/connect-onboard-internet-wifi">Royal Caribbean — Internet à bord</a></li>
+      <li><a href="https://support.apple.com/fr-fr/118669">Apple — Configurer une eSIM sur iPhone</a></li>
+      <li><a href="https://support.google.com/pixelphone/answer/16115470?hl=fr">Google Pixel — Configurer une eSIM</a></li>
     </ul>
   </div>
 </footer>
