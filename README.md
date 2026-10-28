@@ -241,7 +241,7 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 | `data_gb` vide **si et seulement si** `is_unlimited` | `clean_data` |
 | en-têtes égaux aux 12 colonnes attendues | `load_raw` |
 
-> [!INFO]
+> [!NOTE]
 > Chaque échec indique les SKU ou le fichier fautif, et le programme s'arrête avec un code de sortie non nul.
 
 ---
