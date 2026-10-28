@@ -150,6 +150,7 @@ def rendre() -> None:
     shutil.copytree(ARTICLE / "images", SITE / "images")
     shutil.copy2(RACINE / "assets" / "logo_wordmark.png", SITE / "logo_wordmark.png")
     shutil.copy2(RACINE / "assets" / "logo.png", SITE / "logo.png")
+    shutil.copy2(ARTICLE / "style.css", SITE / "style.css")
 
     (SITE / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
     (SITE / "sitemap.xml").write_text(
