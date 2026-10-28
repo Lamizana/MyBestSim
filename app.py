@@ -26,7 +26,7 @@ from mybestsim.config import (
     VOLUME_DEFAUT,
     VOLUMES,
 )
-from mybestsim.etl import clean_data, load_raw
+from mybestsim.etl import clean_data, load_raw, to_csv_bytes
 from mybestsim.metrics import compute_metrics
 
 
@@ -47,16 +47,17 @@ def version_donnees() -> str:
 
 
 @st.cache_data(show_spinner="Lecture des 18 fichiers fournisseurs…")
-def charger_metriques(version: str) -> dict:
-    """Lit les CSV bruts, nettoie et calcule les six KPI, une fois par version.
+def charger_donnees(version: str) -> tuple[pd.DataFrame, dict]:
+    """Lit les CSV bruts, nettoie et calcule les KPI, une fois par version.
 
     `version` n'entre pas dans le calcul : elle sert uniquement de clé de cache,
     pour que toute modification de etl.py ou metrics.py force le recalcul.
     """
-    return compute_metrics(clean_data(load_raw(DATA_DIR)))
+    offres = clean_data(load_raw(DATA_DIR))
+    return offres, compute_metrics(offres)
 
 
-def afficher_entete(metrics: dict) -> None:
+def afficher_entete(metrics: dict, export_csv: bytes, nb_colonnes: int) -> None:
     meta = metrics["meta"]
     nb_fichiers = len(list(DATA_DIR.glob("*.csv")))
 
@@ -91,6 +92,17 @@ def afficher_entete(metrics: dict) -> None:
             st.badge(f"Volume : **{format_fr(meta['lignes'])}** offres", color="blue")
             st.badge(f"Sources : **{nb_fichiers}** fichiers", color="yellow")
             st.badge(f"Devise : **{meta['devise']}**", color="blue")
+            st.download_button(
+                "Exporter le CSV clean",
+                data=export_csv,
+                file_name="mybestsim_offres_clean.csv",
+                mime="text/csv",
+                width="stretch",
+                help=(
+                    f"CSV nettoyé : {format_fr(meta['lignes'])} lignes, "
+                    f"{nb_colonnes} colonnes, UTF-8."
+                ),
+            )
 
 
 def afficher_kpi(metrics: dict) -> None:
@@ -418,15 +430,16 @@ def main() -> None:
         st.logo(str(LOGO_MARQUE), size="large")
 
     try:
-        metrics = charger_metriques(version_donnees())
+        offres, metrics = charger_donnees(version_donnees())
     except (OSError, ValueError) as erreur:
         st.error(f"Impossible de calculer les KPI : {erreur}")
         st.caption("Vérifiez data/raw : un fichier a peut-être été dupliqué.")
         st.stop()
 
+    csv_clean = to_csv_bytes(offres)
     colonne = st.columns([0.5, 8, 0.5], gap="small")
     with colonne[1]:
-        afficher_entete(metrics)
+        afficher_entete(metrics, csv_clean, len(offres.columns))
         st.divider()
         afficher_kpi(metrics)
         st.divider()

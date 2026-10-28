@@ -51,6 +51,12 @@ class AppTestSuite(unittest.TestCase):
             ],
         )
 
+    def test_bouton_export_csv(self):
+        self.assertEqual(len(self.page.download_button), 1)
+        bouton = self.page.download_button[0]
+        self.assertEqual(bouton.label, "Exporter le CSV clean")
+        self.assertIn("UTF-8", bouton.help)
+
     def test_methodologie(self):
         texte = "\n".join(element.value for element in self.page.markdown)
         self.assertIn("illimitées sont exclues", texte)

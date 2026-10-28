@@ -1,7 +1,8 @@
-"""Lecture et validation des CSV fournisseurs.
+"""Lecture, validation et export des CSV fournisseurs.
 
 ``load_raw`` ingère les fichiers et contrôle le schéma ; ``clean_data``
-applique le contrat de valeurs et ajoute les colonnes dérivées.
+applique le contrat de valeurs et ajoute les colonnes dérivées ;
+``to_csv_bytes`` sérialise le DataFrame propre en CSV.
 """
 
 import csv
@@ -233,3 +234,13 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     )
 
     return df
+
+
+def to_csv_bytes(offres: pd.DataFrame) -> bytes:
+    """Sérialise les offres propres en CSV UTF-8 avec BOM.
+
+    Le BOM permet à Excel de reconnaître les accents. Les colonnes dérivées
+    ``is_unlimited`` et ``is_region`` sont incluses, comme dans le DataFrame
+    produit par ``clean_data``.
+    """
+    return offres.to_csv(index=False).encode("utf-8-sig")

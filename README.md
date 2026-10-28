@@ -173,7 +173,7 @@ pip install -e ".[dev]"
 | [`pandas`](https://pandas.pydata.org/) | lecture, validation et agrégation des CSV |
 | [`streamlit`](https://streamlit.io/) | interface web et cache de calcul |
 | [`altair`](https://altair-viz.github.io/) | graphiques Vega-Lite |
-| [`pytest`](https://docs.pytest.org/) | 81 tests |
+| [`pytest`](https://docs.pytest.org/) | 88 tests |
 | [`ruff`](https://docs.astral.sh/ruff/) | lint et style |
 | [`uv`](https://docs.astral.sh/uv/) | construction de la page article |
 
@@ -184,7 +184,7 @@ pip install -e ".[dev]"
 | Commande | Effet |
 | --- | --- |
 | `make run` | lance l'application sur `localhost:8501` |
-| `make test` | exécute les 81 tests |
+| `make test` | exécute les 88 tests |
 | `make check` | valide `data/raw/` sans lancer Streamlit |
 | `make lint` | vérifie le style avec Ruff |
 | `make article` | construit la page HTML de l'article dans `article/_site/` |
@@ -212,6 +212,7 @@ Le point d'entrée de l'application est `app.py`.
 | **3. Distribution des prix** | Dispersion des tarifs | Histogramme par tranche de 10 € *(tranches ≥ 100 € en rouge)* |
 | **4. Prix au Go** | Coût au Gigaoctet selon le volume | Médiane et écart interquartile (p25–p75) + carte de synthèse (2,55 €/Go de médiane) |
 | **5. Meilleures offres** | Comparatif détaillé par destination | Filtres par volume/durée, podium du Top 3, onglets Pays/Régions et tableau triable |
+| **6. Export CSV** | Téléchargement du catalogue nettoyé | Bouton `st.download_button`, 5 056 lignes × 14 colonnes, UTF-8 avec BOM |
 
 ---
 
@@ -262,7 +263,7 @@ Règles de validation, toutes bloquantes (aucune correction silencieuse) :
 make test
 ```
 
-81 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache et le rejet des cas invalides.
+88 tests couvrent les invariants des données réelles (5 056 lignes, 653 illimitées, 778 zones, moyenne de 14,49 Go), les six KPI, le prix au Go, la série des meilleures offres, la structure des graphiques, le rendu de l'application, la clé de cache, l'export CSV et le rejet des cas invalides.
 
 Une suite dédiée (`tests/test_etl_cas.py`) éprouve l'ETL sur des CSV générés : schéma, doublons, conflits, devises, réseaux, prix, durées, illimité, zones, BOM et lignes mal formées.
 
@@ -303,7 +304,7 @@ MyBestSim/
 │   ├── metrics.py         # KPI et séries
 │   ├── graphiques.py      # spécifications Altair
 │   └── check.py           # validation sans Streamlit
-├── tests/                 # 82 tests
+├── tests/                 # 88 tests
 ├── docs/                  # FONCTIONS.md, SEO-ARTICLE.md, sujet
 ├── Makefile               # install / run / test / lint / check / article / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
