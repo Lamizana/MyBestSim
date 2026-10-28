@@ -179,6 +179,7 @@ article hr {
   margin-top: 8px;
   font-size: 0.85rem;
   color: var(--muted);
+  text-align: center;
 }
 article table {
   width: 100%;
