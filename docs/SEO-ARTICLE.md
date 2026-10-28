@@ -51,7 +51,8 @@ la cohérence entre le visible et le balisé comptent autant.
 - Un seul `<h1>`, neuf `<h2>`, cinq `<h3>`.
 - Sommaire généré depuis les titres, ancres vérifiées.
 - 11 liens vers MyBestSim, tous en 200 au moment de l'audit.
-- Sources externes : GSMA, Starlink Maritime, Carnival et Royal Caribbean.
+- Sources externes : GSMA, Starlink Maritime, Carnival, Royal Caribbean,
+  Apple et Google.
 - 2 figures avec `figcaption`, 3 tableaux avec `<caption>`.
 - Divulgation d'affiliation visible.
 - Date de publication et date de mise à jour affichées.
@@ -83,7 +84,7 @@ Instagram, Facebook et YouTube. Le logo éditeur est un PNG **600 × 60**.
 
 ### Technique
 
-- CSS externe, **9,6 Ko**, une seule requête.
+- CSS externe, **9 266 octets** (≈ 9,0 Kio), une seule requête.
 - Aucun JavaScript.
 - `preload` du hero avec `imagesrcset` pour le LCP.
 - `scope="col"` sur les 10 en-têtes de tableau.
@@ -108,6 +109,13 @@ canonique, et le sitemap ne déclare qu'une URL. C'est cohérent, mais l'URL ne
 contient pas le mot-clé. Un chemin `/internet-cruisiere-esim/` serait
 meilleur ; il impliquerait une redirection et un nouveau canonical, donc il
 est laissé pour plus tard.
+
+**Décision retenue : canonical auto-référente.** Cette page est une version
+de démonstration autonome, pas une copie publiée sur `mybestsim.com`. Elle ne
+cherche donc pas à consolider ses signaux vers le site officiel. Si l'article
+est un jour publié sur `mybestsim.com`, il faudra pointer `canonical`,
+`og:url`, `mainEntityOfPage` et le dernier item du `BreadcrumbList` vers
+l'URL officielle, puis retirer ou canonicaliser cette version GitHub.
 
 ### Pourquoi pas d'OG image
 
@@ -153,8 +161,10 @@ Les deux schémas ont une `figcaption` visible, et les trois tableaux une
 pour la recherche d'images, les lecteurs d'écran et les extraits enrichis.
 
 Les politiques internet de Carnival et Royal Caribbean sont liées directement
-dans les sources. Une affirmation sur les compagnies de croisière sans lien
-officiel est plus faible qu'une source vérifiable.
+dans les sources. Les guides d'installation Apple et Google sont également
+cités pour la procédure eSIM. Une affirmation sur les compagnies de croisière
+ou sur une manipulation technique sans lien officiel est plus faible qu'une
+source vérifiable.
 
 ### Accessibilité et SEO
 
@@ -189,7 +199,7 @@ Résultats attendus :
 - 5 images, 0 sans `alt` ;
 - 0 ancre cassée, 0 identifiant dupliqué ;
 - 11 liens MyBestSim en 200 ;
-- 82 tests, `ruff` propre.
+- 88 tests, `ruff` propre.
 
 L'audit compare aussi la page locale et la version en ligne : les deux
 exposent le même title, la même description, le même canonical et les mêmes
@@ -203,8 +213,10 @@ données structurées.
 - FAQ enrichies non garanties.
 - Search Console : le sitemap est prêt, mais son envoi et le suivi de
   couverture restent manuels.
-- Le lien GSMA renvoie 403 aux requêtes automatisées ; il fonctionne
-  probablement dans un navigateur, à vérifier manuellement.
+- Le lien GSMA renvoie 403 aux requêtes automatisées (`curl`) ; il reste à
+  vérifier manuellement dans un navigateur.
+- Certains contrastes restent à renforcer pour viser 4,5:1 : survol des liens,
+  bouton CTA, lien d'évitement et nom de l'auteur.
 - GitHub Pages met le CSS en cache 10 minutes : après un déploiement, faire
   un rechargement forcé avant de conclure à un bug.
 
