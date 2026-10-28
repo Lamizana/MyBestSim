@@ -31,7 +31,7 @@ Une eSIM est un profil SIM numérique. Elle permet à votre téléphone de se co
 
 
 <figure class="figure">
-  <img src="images/shema_02.jpeg" srcset="images/shema_02-900.jpeg 900w, images/shema_02.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy" decoding="async">
+  <img src="images/esim-croisiere-mer-port.jpeg" srcset="images/esim-croisiere-mer-port-900.jpeg 900w, images/esim-croisiere-mer-port.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie : en pleine mer, la connexion passe par un satellite ; à l'escale, l'eSIM capte le réseau mobile terrestre" width="1400" height="781" loading="lazy" decoding="async">
 </figure>
 
 Le bon réflexe est donc simple : **mode avion en mer, Wi-Fi du navire si besoin, eSIM dès que vous descendez**. Cette combinaison évite les factures surprises sans priver des données utiles là où elles fonctionnent.
@@ -126,7 +126,7 @@ Pour une croisière de 7 jours avec une escale par jour, **3 à 5 Go** suffisent
 - **Les données en arrière-plan.** Photos, mises à jour et sauvegardes peuvent consommer sans que vous regardiez.
 
 <figure class="figure">
-  <img src="images/shema_01.jpeg" srcset="images/shema_01-900.jpeg 900w, images/shema_01.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy" decoding="async">
+  <img src="images/esim-croisiere-itineraire.jpeg" srcset="images/esim-croisiere-itineraire-900.jpeg 900w, images/esim-croisiere-itineraire.jpeg 1400w" sizes="(max-width: 1146px) calc(100vw - 36px), 900px" alt="Infographie récapitulative : adapter l'eSIM à l'itinéraire, éviter les erreurs et préparer son téléphone avant l'embarquement" width="1400" height="1045" loading="lazy" decoding="async">
 </figure>
 
 ## Comparer les offres sans se tromper
