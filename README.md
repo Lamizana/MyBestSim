@@ -324,6 +324,17 @@ MyBestSim/
 
 ---
 
+## Utilisation de l'IA
+
+Ce projet a été réalisé avec l'assistance d'un agent IA dans une démarche à la fois pragmatique et pédagogique.
+
+- **Revue et audit** : Relecture complète du code, identification de points d'amélioration (cache Streamlit, synchronisation UI, robustesse ETL) et proposition de correctifs ciblés.
+- **Débogage** : Aide au diagnostic de cas concrets (invalidation du cache, désynchronisation podium/tableau) avec validation systématique.
+- **Qualité et tests** : Renforcement de la rigueur (protection contre valeurs invalides, histogramme dynamique) tout en gardant tous les tests existants au vert.
+- **Documentation** : Clarification et mise à jour du README, de `docs/FONCTIONS.md` et des explications dans l'interface.
+
+**Démarche** : chaque suggestion a été comprise, analysée et testée manuellement avant intégration. Les modifications ont été validées avec `ruff` et `pytest` (88 tests). L'IA a servi d'accélérateur et de sparring partner technique, sans se substituer à la réflexion : l'architecture, les choix et la validation finale restent sous mon contrôle.
+
 ## Contribuer
 
 Projet personnel réalisé dans le cadre d'un test de recrutement : les corrections et les remarques sont bienvenues via une **issue** ou une **pull request**.
