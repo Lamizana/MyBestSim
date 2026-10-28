@@ -64,7 +64,11 @@ def afficher_entete(metrics: dict) -> None:
     gauche, droite = st.columns([2.5, 1], gap="large", vertical_alignment="center")
 
     with gauche:
-        st.caption("Dashboard comparatif fournisseurs **eSIM** - *Test de recrutement*")
+        st.caption(
+            "Dashboard comparatif de fournisseurs **eSIM** - "
+            "[Code source](https://github.com/Lamizana/MyBestSim) · "
+            "[Article de Blog](https://lamizana.github.io/MyBestSim/)."
+        )
 
         st.title(
             f"{format_fr(meta['lignes'])} :blue[offres comparées], "
@@ -437,9 +441,9 @@ def main() -> None:
         st.divider()
         afficher_methodologie(metrics)
         st.caption(
-            "Réalisé dans le cadre du test de recrutement **:blue[MyBest]:red[Sim]** - "
-            "[code source](https://github.com/Lamizana/MyBestSim) · "
-            "[article (partie 2)](https://lamizana.github.io/MyBestSim/)."
+            "Réalisé dans le cadre d'un test de recrutement **:blue[MyBest]:red[Sim]** - "
+            "[Code source](https://github.com/Lamizana/MyBestSim) · "
+            "[Article de Blog](https://lamizana.github.io/MyBestSim/)."
         )
 
 
