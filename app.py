@@ -324,7 +324,7 @@ def afficher_offres(metrics: dict) -> None:
     st.subheader(":blue[Meilleures offres par destination]")
     st.caption(
         "Ce tableau compare les offres tarifaires par destination :  \n"
-        "- **Podium :** Classement des 3 destinations les moins chères pour le volume/durée sélectionnés.  \n"
+        "- **Podium :** Top 3 des destinations les moins chères pour le forfait choisi.  \n"
         "- **Prix min :** L'offre la moins chère, fournisseur indiqué.  \n"
         "- **Prix max :** L'offre la plus chère, tous fournisseurs confondus.  \n"
         "- **Écart :** Surcoût en % de la plus chère par rapport à la moins chère.  \n\n"
