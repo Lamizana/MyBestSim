@@ -20,6 +20,7 @@ RACINE = ARTICLE.parent
 
 SITE_URL = "https://lamizana.github.io/MyBestSim/"
 IMAGE_ARTICLE = SITE_URL + "images/mbs_intro_02.jpeg"
+IMAGE_ARTICLE_16X9 = SITE_URL + "images/mbs_intro_02-16x9.jpeg"
 LOGO_PUBLISHER = SITE_URL + "images/logo_publisher.png"
 SOCIALS = [
     "https://www.instagram.com/mybestsim/",
@@ -173,6 +174,14 @@ def rendre() -> None:
     mots = re.findall(r"\w+", re.sub(r"<[^>]+>", " ", contenu))
     minutes = max(1, round(len(mots) / 200))
 
+    date_maj = meta.get("updated", "")
+    mise_a_jour = ""
+    if date_maj and date_maj != meta.get("date"):
+        mise_a_jour = (
+            f' · Mis à jour le <time datetime="{date_maj}">'
+            f"{date_francaise(date_maj)}</time>"
+        )
+
     donnees = {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -181,7 +190,7 @@ def rendre() -> None:
         "datePublished": meta.get("date", ""),
         "dateModified": meta.get("updated", meta.get("date", "")),
         "inLanguage": "fr-FR",
-        "image": [IMAGE_ARTICLE],
+        "image": [IMAGE_ARTICLE, IMAGE_ARTICLE_16X9],
         "author": {
             "@type": "Organization",
             "name": "MyBestSim",
@@ -214,6 +223,8 @@ def rendre() -> None:
         "{{CANONICAL}}": SITE_URL,
         "{{DATE_FR}}": date_francaise(meta["date"]),
         "{{DATE_ISO}}": meta.get("date", ""),
+        "{{UPDATED}}": mise_a_jour,
+        "{{UPDATED_ISO}}": date_maj or meta.get("date", ""),
         "{{READING_TIME}}": str(minutes),
         "{{H1}}": titre_html,
         "{{BRIEF}}": brief_html,
