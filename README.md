@@ -1,11 +1,5 @@
 <div align="center">
 
-<img src="assets/logo_wordmark.png" alt="MyBestSim" width="220">
-
-<h1>MyBestSim — dashboard eSIM</h1>
-
-<p><strong>Consolide 18 catalogues fournisseurs, valide la donnée et compare 5 056 offres eSIM.</strong></p>
-
 <p>
   <a href="https://mybestsim-dashboard.streamlit.app"><img src="https://img.shields.io/badge/D%C3%A9mo-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Démo Streamlit"></a>
   <a href="https://github.com/Lamizana/MyBestSim"><img src="https://img.shields.io/badge/Code-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Code source"></a>
@@ -14,7 +8,11 @@
   <a href="https://mybestsim.com"><img src="https://img.shields.io/badge/Contexte-Test%20de%20recrutement-8A2BE2?style=for-the-badge" alt="Test de recrutement"></a>
 </p>
 
-<p>Créé le 26/10/2026 · Dernière mise à jour : 28/10/2026</p>
+<img src="assets/logo.png" alt="MyBestSim" width="220">
+
+<h1>MyBestSim</h1>
+<p><strong>Dashboard eSIM</strong></p>
+<p><em>Consolide 18 catalogues fournisseurs, valide la donnée et compare 5 056 offres eSIM.</em></p>
 
 </div>
 
@@ -53,20 +51,25 @@
 
 ## À propos
 
-Ce dashboard consolide les 18 fichiers CSV fournisseurs du catalogue eSIM MyBestSim, contrôle la qualité de la donnée et calcule les indicateurs de prix, de volume et de couverture. Il a été réalisé dans le cadre du test de recrutement MyBestSim (partie 1 : data & automatisation) et déployé sur Streamlit Community Cloud.
+Ce dashboard consolide les **18 fichiers CSV** fournisseurs du catalogue eSIM **MyBestSim**, contrôle la qualité de la donnée et calcule les indicateurs de prix, de volume et de couverture. Il a été réalisé dans le cadre du test de recrutement MyBestSim  et déployé sur Streamlit Community Cloud.
 
+<div align="center">
+  
 | Ressource | Lien |
 | --- | --- |
 | Application en ligne | [mybestsim-dashboard.streamlit.app](https://mybestsim-dashboard.streamlit.app) |
-| Code source | [github.com/Lamizana/MyBestSim](https://github.com/Lamizana/MyBestSim) |
-| Article en ligne (partie 2) | [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) |
+| Article en ligne  | [Internet en croisière : quelle eSIM choisir ?](https://lamizana.github.io/MyBestSim/) |
 | Source de l'article | [article/internet-croisiere-esim.md](article/internet-croisiere-esim.md) |
 | Sujet du test | [docs/enonce-test.pdf](docs/enonce-test.pdf) |
+
+</div>
 
 ---
 
 ## Stack technique
 
+<div align="center">
+  
 | Catégorie | Technologie | Badge |
 | --- | --- | --- |
 | **Langage** | Python 3.12 | [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/) |
@@ -78,12 +81,16 @@ Ce dashboard consolide les 18 fichiers CSV fournisseurs du catalogue eSIM MyBest
 | **Hébergement** | Streamlit Community Cloud | [![Streamlit Cloud](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/cloud) |
 | **Article** | GitHub Pages | [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-en%20ligne-222222?style=flat-square&logo=githubpages&logoColor=white)](https://lamizana.github.io/MyBestSim/) |
 
+</div>
+
 ---
 
 ## KPI
 
 Les six indicateurs demandés par le sujet, calculés sur les 5 056 offres :
 
+<div align="center">
+  
 | KPI | Valeur |
 |---|---|
 | Nombre total de cartes | 5 056 |
@@ -93,7 +100,13 @@ Les six indicateurs demandés par le sujet, calculés sur les 5 056 offres :
 | Prix moyen | 29,30 € (médiane 20,70 €) |
 | Répartition par fournisseur | 18 fournisseurs, Airalo 722 → 4S eSIM 92 |
 
-S'y ajoutent deux séries : **1 113 combinaisons** destination × volume × durée (54 destinations, 7 volumes, 3 durées) pour les meilleures offres par destination, et `prix_go_volume`, la médiane du prix au Go par forfait avec ses quartiles. Toutes offres finies confondues, la médiane est de **2,55 €/Go** ; les 653 offres illimitées sont exclues et traitées à part (prix médian 51,28 €).
+</div>
+
+S'y ajoutent deux séries :
+- **1 113 combinaisons** destination × volume × durée (54 destinations, 7 volumes, 3 durées) pour les meilleures offres par destination.
+- **Prix du Go par volume de donées** : la médiane du prix au Go par forfait avec ses quartiles.
+  - Toutes offres finies confondues, la médiane est de **2,55 €/Go**.
+  - les 653 offres illimitées sont exclues et traitées à part (prix médian 51,28 €).
 
 ---
 
