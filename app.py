@@ -67,6 +67,8 @@ def afficher_entete(metrics: dict, export_csv: bytes, nb_colonnes: int) -> None:
     with gauche:
         st.caption(
             "Dashboard comparatif de fournisseurs **eSIM** - "
+            "Projet de démonstration réalisé dans le cadre "
+            "de test de recrutement.  \nPage non officielle : "
             "[Code source](https://github.com/Lamizana/MyBestSim) · "
             "[Article de Blog](https://lamizana.github.io/MyBestSim/)."
         )
