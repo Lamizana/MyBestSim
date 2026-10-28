@@ -303,8 +303,8 @@ MyBestSim/
 │   ├── metrics.py         # KPI et séries
 │   ├── graphiques.py      # spécifications Altair
 │   └── check.py           # validation sans Streamlit
-├── tests/                 # 81 tests
-├── docs/                  # FONCTIONS.md, sujet
+├── tests/                 # 82 tests
+├── docs/                  # FONCTIONS.md, SEO-ARTICLE.md, sujet
 ├── Makefile               # install / run / test / lint / check / article / clean
 ├── pyproject.toml         # dépendances, Ruff, pytest
 ├── requirements.txt       # dépendances épinglées pour Streamlit Cloud
@@ -318,6 +318,7 @@ MyBestSim/
 | Fichier | Descriptif |
 | --- | --- |
 | [`docs/FONCTIONS.md`](docs/FONCTIONS.md) | rôles et signatures des fonctions |
+| [`docs/SEO-ARTICLE.md`](docs/SEO-ARTICLE.md) | stratégie SEO de l'article et maintenance |
 | [`docs/enonce-test.pdf`](docs/enonce-test.pdf) | sujet du test de recrutement |
 
 ---
