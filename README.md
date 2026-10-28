@@ -142,9 +142,10 @@ dict { meta, kpi, series }
 
 ### Prérequis
 
-- **Python 3.11** ou plus récent (3.12 recommandé)
+- **Python 3.11** ou plus récent (3.12 recommandé). Python 3.10 n'est pas
+  supporté par Streamlit 1.66.
 - `make` pour les raccourcis
-- `uv` pour construire la page de l'article
+- `uv` pour créer l'environnement Python 3.12 et construire la page de l'article
 
 ### Étapes
 
@@ -154,12 +155,23 @@ cd MyBestSim
 make install
 ```
 
+`make install` recrée le venv `.venv` avec Python 3.12 via `uv`, puis installe
+les dépendances avec `pip`.
+
 Ou manuellement :
 
 ```bash
-python3 -m venv .venv
+uv venv --python 3.12 --seed .venv
 source .venv/bin/activate
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
+```
+
+Si `uv` n'est pas disponible mais que `python3.12` l'est :
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
 ```
 
 > [!NOTE]
@@ -176,7 +188,7 @@ pip install -e ".[dev]"
 | [`altair`](https://altair-viz.github.io/) | graphiques Vega-Lite |
 | [`pytest`](https://docs.pytest.org/) | 88 tests |
 | [`ruff`](https://docs.astral.sh/ruff/) | lint et style |
-| [`uv`](https://docs.astral.sh/uv/) | construction de la page article |
+| [`uv`](https://docs.astral.sh/uv/) | environnement Python 3.12 et page article |
 
 ---
 

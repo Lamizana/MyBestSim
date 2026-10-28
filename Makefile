@@ -1,10 +1,12 @@
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
+PYTHON_VERSION ?= 3.12
 
 .PHONY: install run test lint check article clean
 
 install:
-	python3 -m venv $(VENV)
+	uv venv $(VENV) --python $(PYTHON_VERSION) --seed --clear
+	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install -e ".[dev]"
 
 run:
