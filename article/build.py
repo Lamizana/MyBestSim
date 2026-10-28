@@ -89,6 +89,11 @@ def rendre() -> None:
     if h1:
         contenu = contenu.replace(h1.group(0), "", 1)
 
+    brief = re.search(r'<div class="brief">.*?</div>', contenu, flags=re.S)
+    brief_html = brief.group(0) if brief else ""
+    if brief:
+        contenu = contenu.replace(brief_html, "", 1)
+
     contenu = contenu.replace("<table>", '<div class="table-wrap"><table>')
     contenu = contenu.replace("</table>", "</table></div>")
 
@@ -132,6 +137,7 @@ def rendre() -> None:
         "{{DATE_ISO}}": meta.get("date", ""),
         "{{READING_TIME}}": str(minutes),
         "{{H1}}": titre_html,
+        "{{BRIEF}}": brief_html,
         "{{TOC}}": construire_sommaire(md.toc_tokens),
         "{{JSONLD}}": json.dumps(donnees, ensure_ascii=False),
         "{{CONTENT}}": contenu,
